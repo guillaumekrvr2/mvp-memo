@@ -1,6 +1,6 @@
 // navigation/HomeStackNavigator.jsx
 import React from 'react'
-import { createNativeStackNavigator, TransitionPresets } from '@react-navigation/stack'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import HomeScreen from '../screens/HomeScreen'
 import NumbersScreen from '../screens/NumbersScreen'
 
@@ -11,7 +11,7 @@ export default function HomeStackNavigator() {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        ...TransitionPresets.SlideFromRightIOS
+        animation: 'slide_from_right',
     }} >
       <Stack.Screen name="HomeMain" component={HomeScreen} />
       <Stack.Screen name="Numbers" component={NumbersScreen} />
