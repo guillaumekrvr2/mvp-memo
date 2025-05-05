@@ -46,19 +46,27 @@ export default function MemoScreen({ route, navigation }) {
   const progress = total > 0 ? (objectif - timeLeft) / objectif : 0
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back-outline" size={28} color="#fff" />
-        </TouchableOpacity>
-        <View style={styles.progressContainer}>
-        <View style={[styles.progressBar, { width: `${(objectif - timeLeft) / objectif * 100}%` }]} />
-        </View>
-        <TouchableOpacity onPress={() => navigation.replace('Recall', { objectif, temps })}>
-          <Text style={styles.done}>Done</Text>
-        </TouchableOpacity>
-      </View>
+
+  <SafeAreaView style={styles.container}>
+    {/* 1) HeaderControls : uniquement Back + Done */}
+    <View style={styles.headerControls}>
+     <TouchableOpacity onPress={() => navigation.goBack()}>
+       <Ionicons name="chevron-back-outline" size={28} color="#fff" />
+     </TouchableOpacity>
+     <TouchableOpacity onPress={() => navigation.replace('Recall', { objectif, temps })}>
+      <Text style={styles.done}>Done</Text>
+     </TouchableOpacity>
+    </View>
+
+    {/* 2) ProgressBar à part, 4px de haut */}
+    <View style={styles.progressContainer}>
+      <View
+        style={[
+          styles.progressBar,
+          { width: `${((objectif - timeLeft) / objectif) * 100}%` }
+        ]}
+      />
+    </View>
 
       {/* Grille */}
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -108,29 +116,27 @@ export default function MemoScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
 
-  header: {
+  // Ligne de contrôles (Back / Done)
+  headerControls: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 4
+    paddingVertical: 8,
   },
   progressContainer: {
-    flex: 1,
     height: 4,
     backgroundColor: '#333',
     borderRadius: 2,
     overflow: 'hidden',
-    marginHorizontal: 16
+    marginHorizontal: 16,
+    marginBottom: 12
   },
     // plein de la barre
   progressBar: {
     height: '100%',
     backgroundColor: '#fff'
-  },
-  progressContainer: {
-    flex: 1,
-    marginHorizontal: 16
-  },
+  }, 
   done: {
     color: '#fff',
     fontSize: 16,
