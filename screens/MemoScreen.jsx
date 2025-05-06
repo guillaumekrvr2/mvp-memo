@@ -6,11 +6,11 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity, 
-  Easing
+  TouchableOpacity,
+  Animated,    // 🔄 ajouté
+  Easing       // 🔄 ajouté
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { Animated } from 'react-native'
 
 export default function MemoScreen({ route, navigation }) {
   const { objectif, temps } = route.params
@@ -44,22 +44,17 @@ export default function MemoScreen({ route, navigation }) {
     rows.push(numbers.slice(i, i + cols))
   }
 
-  // 5) Progression en % (pour la barre)
-  const progress = totalTime > 0
-  ? (totalTime - timeLeft) / totalTime
-  : 0
-
-  // Animated value pour la barre
-  const animProgress = useRef(new Animated.Value(0)).current
-
-  // À chaque changement de progress, on déclenche un Animated.timing
+  // 5) Animated progress pour la barre (animation continue)
+  const animProgress = useRef(new Animated.Value(0)).current  // 🔄
   useEffect(() => {
-  Animated.timing(animProgress, {
-    toValue: progress,
-    duration: 800,            // lissage des pas
-    useNativeDriver: false    // on anime la largeur
-  }).start()
-  }, [progress])
+    animProgress.setValue(0)                                 // 🔄 ré-init à 0
+    Animated.timing(animProgress, {                          // 🔄 animation unique
+      toValue: 1,
+      duration: totalTime * 1000,
+      easing: Easing.linear,
+      useNativeDriver: false
+    }).start()
+  }, [totalTime])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -71,13 +66,13 @@ export default function MemoScreen({ route, navigation }) {
         </TouchableOpacity>
 
         <View style={styles.progressContainer}>
-          {/* Animated.View pour une transition lisse */}
+          {/* 🔄 Animated.View pour progression parfaitement lisse */}
           <Animated.View
             style={[
               styles.progressBar,
               {
                 width: animProgress.interpolate({
-                 inputRange: [0, 1],
+                  inputRange: [0, 1],
                   outputRange: ['0%', '100%']
                 })
               }
@@ -151,8 +146,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 8,
-    marginTop: 10,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    marginTop: 30
   },
   progressContainer: {
     flex: 1,
@@ -160,8 +155,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#333',
     borderRadius: 2,
     overflow: 'hidden',
-    marginHorizontal: 12,
-    marginTop: 20,
+    marginHorizontal: 12
   },
   progressBar: {
     height: '100%',
@@ -177,7 +171,7 @@ const styles = StyleSheet.create({
   scroll: {
     paddingHorizontal: 20,
     paddingTop: 16,
-    alignItems: 'center' // centre horizontalement toutes les lignes
+    alignItems: 'center'
   },
   row: {
     flexDirection: 'row',
@@ -203,7 +197,7 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
 
-  // --- CONTROLES DE NAVIGATION DE HIGHLIGHT ---
+  // --- CONTRÔLES DE NAVIGATION DE HIGHLIGHT ---
   controls: {
     flexDirection: 'row',
     justifyContent: 'space-around',
