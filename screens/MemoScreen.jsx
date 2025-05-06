@@ -1,14 +1,16 @@
 // screens/MemoScreen.jsx
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   SafeAreaView,
   View,
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity, 
+  Easing
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { Animated } from 'react-native'
 
 export default function MemoScreen({ route, navigation }) {
   const { objectif, temps } = route.params
@@ -47,6 +49,18 @@ export default function MemoScreen({ route, navigation }) {
   ? (totalTime - timeLeft) / totalTime
   : 0
 
+  // Animated value pour la barre
+  const animProgress = useRef(new Animated.Value(0)).current
+
+  // À chaque changement de progress, on déclenche un Animated.timing
+  useEffect(() => {
+  Animated.timing(animProgress, {
+    toValue: progress,
+    duration: 800,            // lissage des pas
+    useNativeDriver: false    // on anime la largeur
+  }).start()
+  }, [progress])
+
   return (
     <SafeAreaView style={styles.container}>
 
@@ -57,10 +71,16 @@ export default function MemoScreen({ route, navigation }) {
         </TouchableOpacity>
 
         <View style={styles.progressContainer}>
-          <View
+          {/* Animated.View pour une transition lisse */}
+          <Animated.View
             style={[
               styles.progressBar,
-              { width: `${Math.round(progress * 100)}%` }
+              {
+                width: animProgress.interpolate({
+                 inputRange: [0, 1],
+                  outputRange: ['0%', '100%']
+                })
+              }
             ]}
           />
         </View>
@@ -140,7 +160,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#333',
     borderRadius: 2,
     overflow: 'hidden',
-    marginHorizontal: 12
+    marginHorizontal: 12,
+    marginTop: 20,
   },
   progressBar: {
     height: '100%',

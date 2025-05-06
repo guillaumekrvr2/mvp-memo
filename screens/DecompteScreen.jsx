@@ -4,7 +4,7 @@ import { SafeAreaView, View, Text, StyleSheet } from 'react-native'
 
 export default function DecompteScreen({ route, navigation }) {
   const { objectif, temps } = route.params
-  const [counter, setCounter] = useState(5)
+  const [counter, setCounter] = useState(3)
 
   useEffect(() => {
     if (counter <= 0) {
