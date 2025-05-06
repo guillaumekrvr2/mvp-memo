@@ -23,7 +23,8 @@ export default function MemoScreen({ route, navigation }) {
   }, [objectif])
 
   // 2) Chrono
-  const [timeLeft, setTimeLeft] = useState(parseInt(temps, 10) || 0)
+  const totalTime = parseInt(temps, 10) || 0
+  const [timeLeft, setTimeLeft] = useState(totalTime)
   useEffect(() => {
     if (timeLeft <= 0) return
     const id = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
@@ -42,7 +43,9 @@ export default function MemoScreen({ route, navigation }) {
   }
 
   // 5) Progression en % (pour la barre)
-  const progress = total > 0 ? (objectif - timeLeft) / objectif : 0
+  const progress = totalTime > 0
+  ? (totalTime - timeLeft) / totalTime
+  : 0
 
   return (
     <SafeAreaView style={styles.container}>
