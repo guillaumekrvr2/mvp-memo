@@ -7,8 +7,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Animated,    // 🔄 ajouté
-  Easing       // 🔄 ajouté
+  Animated,
+  Easing
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 
@@ -44,11 +44,14 @@ export default function MemoScreen({ route, navigation }) {
     rows.push(numbers.slice(i, i + cols))
   }
 
-  // 5) Animated progress pour la barre (animation continue)
-  const animProgress = useRef(new Animated.Value(0)).current  // 🔄
+  // 5) Prépare la chaîne de chiffres pour la highlight card
+  const highlightDigits = rows[highlightRow]?.join('') || ''
+
+  // 6) Animation continue de la barre de progression
+  const animProgress = useRef(new Animated.Value(0)).current
   useEffect(() => {
-    animProgress.setValue(0)                                 // 🔄 ré-init à 0
-    Animated.timing(animProgress, {                          // 🔄 animation unique
+    animProgress.setValue(0)
+    Animated.timing(animProgress, {
       toValue: 1,
       duration: totalTime * 1000,
       easing: Easing.linear,
@@ -59,14 +62,13 @@ export default function MemoScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
 
-      {/* HEADER : chevron back + progress + Done */}
+      {/* HEADER : Back + Barre + Done */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back-outline" size={28} color="#fff" />
         </TouchableOpacity>
 
         <View style={styles.progressContainer}>
-          {/* 🔄 Animated.View pour progression parfaitement lisse */}
           <Animated.View
             style={[
               styles.progressBar,
@@ -85,6 +87,13 @@ export default function MemoScreen({ route, navigation }) {
         >
           <Text style={styles.done}>Done</Text>
         </TouchableOpacity>
+      </View>
+
+      {/* HIGHLIGHT CARD */}
+      <View style={styles.highlightCard}>
+        <Text style={styles.highlightCardText}>
+          {highlightDigits}
+        </Text>
       </View>
 
       {/* GRILLE */}
@@ -112,7 +121,7 @@ export default function MemoScreen({ route, navigation }) {
         ))}
       </ScrollView>
 
-      {/* CONTRÔLES : déplacer le highlight par rangée */}
+      {/* CONTRÔLES DU HIGHLIGHT */}
       <View style={styles.controls}>
         <TouchableOpacity
           onPress={() =>
@@ -164,6 +173,22 @@ const styles = StyleSheet.create({
   done: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: '600'
+  },
+
+  // --- HIGHLIGHT CARD ---
+  highlightCard: {
+    alignSelf: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#fff',
+    marginVertical: 16
+  },
+  highlightCardText: {
+    color: '#fff',
+    fontSize: 24,
     fontWeight: '600'
   },
 
