@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons'
 export default function MemoScreen({ route, navigation }) {
   const { objectif, temps } = route.params
 
-  // 1) Génération des chiffres à mémoriser
+  // 1) Génération des chiffres
   const [numbers, setNumbers] = useState([])
   useEffect(() => {
     const arr = Array.from({ length: objectif }, () =>
@@ -44,10 +44,10 @@ export default function MemoScreen({ route, navigation }) {
     rows.push(numbers.slice(i, i + cols))
   }
 
-  // 5) Prépare la chaîne de chiffres pour la highlight card
+  // 5) Chaine pour la highlight card
   const highlightDigits = rows[highlightRow]?.join('') || ''
 
-  // 6) Animation continue de la barre de progression
+  // 6) Animation continue de la barre
   const animProgress = useRef(new Animated.Value(0)).current
   useEffect(() => {
     animProgress.setValue(0)
@@ -58,6 +58,18 @@ export default function MemoScreen({ route, navigation }) {
       useNativeDriver: false
     }).start()
   }, [totalTime])
+
+  // 7) Scroll automatique pour garder la rangée visible
+  const scrollViewRef = useRef(null)
+  const ROW_HEIGHT = 48 + 12  // cell height + marginBottom
+  useEffect(() => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({
+        y: highlightRow * ROW_HEIGHT,
+        animated: true
+      })
+    }
+  }, [highlightRow])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -97,7 +109,10 @@ export default function MemoScreen({ route, navigation }) {
       </View>
 
       {/* GRILLE */}
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView
+        ref={scrollViewRef}
+        contentContainerStyle={styles.scroll}
+      >
         {rows.map((row, rowIdx) => (
           <View
             key={rowIdx}
@@ -139,24 +154,22 @@ export default function MemoScreen({ route, navigation }) {
           <Ionicons name="chevron-forward-circle" size={40} color="#fff" />
         </TouchableOpacity>
       </View>
+
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000'
-  },
+  container: { flex: 1, backgroundColor: '#000' },
 
   // --- HEADER ---
   header: {
+    marginTop: 30,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 8,
-    justifyContent: 'space-between',
-    marginTop: 30
+    justifyContent: 'space-between'
   },
   progressContainer: {
     flex: 1,
@@ -222,7 +235,7 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
 
-  // --- CONTRÔLES DE NAVIGATION DE HIGHLIGHT ---
+  // --- CONTROLES DE NAVIGATION DE HIGHLIGHT ---
   controls: {
     flexDirection: 'row',
     justifyContent: 'space-around',
