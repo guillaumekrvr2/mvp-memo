@@ -44,7 +44,7 @@ export default function MemoScreen({ route, navigation }) {
     rows.push(numbers.slice(i, i + cols))
   }
 
-  // 5) Chaine pour la highlight card
+  // 5) Texte de la carte highlight
   const highlightDigits = rows[highlightRow]?.join('') || ''
 
   // 6) Animation continue de la barre
@@ -59,27 +59,32 @@ export default function MemoScreen({ route, navigation }) {
     }).start()
   }, [totalTime])
 
-  // 7) Scroll automatique pour garder la rangée visible
+  // 7) Scroll auto conditionnel
   const scrollViewRef = useRef(null)
-  const ROW_HEIGHT = 48 + 12  // cell height + marginBottom
-  useEffect(() => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({
-        y: highlightRow * ROW_HEIGHT,
-        animated: true
-      })
+  const [scrollHeight, setScrollHeight] = useState(0)
+  const ROW_HEIGHT = 48 + 12 // hauteur cellule + marginBottom
+
+useEffect(() => {
+    if (!scrollViewRef.current || scrollHeight === 0) return
+
+    const visibleCount = Math.floor(scrollHeight / ROW_HEIGHT)
+    // on déclenche quand highlightRow atteint la 2e avant-dernière ligne visible
+    const threshold = Math.max(0, visibleCount - 3)
+    if (highlightRow >= threshold) {
+        // on fait défiler de (highlightRow - threshold) lignes
+        const offset = (highlightRow - threshold) * ROW_HEIGHT
+        scrollViewRef.current.scrollTo({ y: offset, animated: true })
     }
-  }, [highlightRow])
+    }, [highlightRow, scrollHeight])
 
   return (
     <SafeAreaView style={styles.container}>
 
-      {/* HEADER : Back + Barre + Done */}
+      {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back-outline" size={28} color="#fff" />
         </TouchableOpacity>
-
         <View style={styles.progressContainer}>
           <Animated.View
             style={[
@@ -93,7 +98,6 @@ export default function MemoScreen({ route, navigation }) {
             ]}
           />
         </View>
-
         <TouchableOpacity
           onPress={() => navigation.replace('Recall', { objectif, temps })}
         >
@@ -103,15 +107,14 @@ export default function MemoScreen({ route, navigation }) {
 
       {/* HIGHLIGHT CARD */}
       <View style={styles.highlightCard}>
-        <Text style={styles.highlightCardText}>
-          {highlightDigits}
-        </Text>
+        <Text style={styles.highlightCardText}>{highlightDigits}</Text>
       </View>
 
       {/* GRILLE */}
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={styles.scroll}
+        onLayout={e => setScrollHeight(e.nativeEvent.layout.height)}
       >
         {rows.map((row, rowIdx) => (
           <View
@@ -154,7 +157,6 @@ export default function MemoScreen({ route, navigation }) {
           <Ionicons name="chevron-forward-circle" size={40} color="#fff" />
         </TouchableOpacity>
       </View>
-
     </SafeAreaView>
   )
 }
@@ -235,7 +237,7 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
 
-  // --- CONTROLES DE NAVIGATION DE HIGHLIGHT ---
+  // --- CONTROLES ---
   controls: {
     flexDirection: 'row',
     justifyContent: 'space-around',
