@@ -111,10 +111,11 @@ useEffect(() => {
       </View>
 
       {/* GRILLE */}
+      <View style={styles.gridContainer} onLayout={e => setScrollHeight(e.nativeEvent.layout.height)}>
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={styles.scroll}
-        onLayout={e => setScrollHeight(e.nativeEvent.layout.height)}
+        showsVerticalScrollIndicator={false}
       >
         {rows.map((row, rowIdx) => (
           <View
@@ -138,6 +139,7 @@ useEffect(() => {
           </View>
         ))}
       </ScrollView>
+      </View>
 
       {/* CONTRÔLES DU HIGHLIGHT */}
       <View style={styles.controls}>
@@ -208,6 +210,15 @@ const styles = StyleSheet.create({
   },
 
   // --- GRILLE ---
+  gridContainer: {
+    flex: 1,
+    marginHorizontal: 20,
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderRadius: 25,
+    overflow: 'hidden',      // pour que la grille ne déborde pas
+    paddingVertical: 8       // espace top/bottom si vous voulez
+  },
   scroll: {
     paddingHorizontal: 20,
     paddingTop: 16,
