@@ -211,34 +211,39 @@ const styles = StyleSheet.create({
 
   // --- GRILLE ---
   gridContainer: {
-    flex: 1,
-    marginHorizontal: 20,
+    // 75% de la largeur de l’écran, 60% de sa hauteur
+    width: '75%',
+    height: '60%',
+    // centré horizontalement et verticalement
+    alignSelf: 'center',
+    marginVertical: 16,  
     borderWidth: 1,
     borderColor: '#fff',
     borderRadius: 25,
-    overflow: 'hidden',      // pour que la grille ne déborde pas
-    paddingVertical: 8       // espace top/bottom si vous voulez
-  },
+    verflow: 'hidden',
+    paddingVertical: 8
+    },
   scroll: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 12,
     paddingTop: 16,
     alignItems: 'center'
   },
   row: {
     flexDirection: 'row',
-    marginBottom: 12
+    marginBottom: 8, 
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent'
   },
   separator: {
     borderRightWidth: 1,
     borderRightColor: '#444'
   },
   highlightRow: {
-    borderBottomWidth: 2,
     borderBottomColor: '#fff'
   },
   cell: {
-    width: 48,
-    height: 48,
+    width: 42,
+    height: 42,
     justifyContent: 'center',
     alignItems: 'center'
   },
