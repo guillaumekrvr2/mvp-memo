@@ -6,6 +6,7 @@ import DiscoverScreen from '../screens/DiscoverScreen'
 import CommunityScreen from '../screens/CommunityScreen'
 import ShopScreen from '../screens/ShopScreen'
 import { Ionicons } from '@expo/vector-icons'
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 
 const Tab = createBottomTabNavigator()
 
@@ -14,7 +15,6 @@ export default function AppNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: { backgroundColor: '#000', borderTopWidth: 0},      // rend la tab bar noire
         tabBarActiveTintColor: '#fff',                 // icônes/textes actifs en blanc
         tabBarInactiveTintColor: '#888',              // inactifs en gris clair
         tabBarShowLabel: false,               
@@ -28,7 +28,18 @@ export default function AppNavigator() {
         }
       })}
     >
-      <Tab.Screen name="Home" component={HomeStackNavigator} />
+      <Tab.Screen name="Home" component={HomeStackNavigator} options={({ route }) => {
+         // récupère le nom du screen actif dans HomeStackNavigator
+         const nested = getFocusedRouteNameFromRoute(route) ?? 'HomeMain'
+         const hideOn = ['Memorisation', 'Decompte', 'Recall']
+         return {
+           // si on est sur "Memorisation" ou "Décompte", on masque la tabBar
+           tabBarStyle: hideOn.includes(nested)
+               ? { display: 'none' }
+               : { backgroundColor: '#000', borderTopWidth: 0 }
+         }
+       }}
+     />
       <Tab.Screen name="Discover" component={DiscoverScreen} />
       <Tab.Screen name="Community" component={CommunityScreen} />
       <Tab.Screen name="Shop" component={ShopScreen} />

@@ -147,6 +147,8 @@ useEffect(() => {
           onPress={() =>
             setHighlightRow(prev => (prev > 0 ? prev - 1 : 0))
           }
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}  // ← ajoutez ceci
+          activeOpacity={0.7}
         >
           <Ionicons name="chevron-back-circle" size={40} color="#fff" />
         </TouchableOpacity>
@@ -155,6 +157,8 @@ useEffect(() => {
             const maxRow = Math.floor((total - 1) / cols)
             setHighlightRow(prev => (prev < maxRow ? prev + 1 : prev))
           }}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}  // ← et ici
+          activeOpacity={0.7}
         >
           <Ionicons name="chevron-forward-circle" size={40} color="#fff" />
         </TouchableOpacity>

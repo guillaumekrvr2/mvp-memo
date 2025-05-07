@@ -19,6 +19,7 @@ export default function HomeStackNavigator() {
       <Stack.Screen name="Numbers" component={NumbersScreen} />
       <Stack.Screen name="Decompte"   component={DecompteScreen} />
       <Stack.Screen name="Memorisation" component={MemoScreen} />
+      <Stack.Screen name="Recall" component={RecallScreen} />
       {/* Plus tard : ajouterez ici Words, Cards, Binary, etc. */}
     </Stack.Navigator>
   )
