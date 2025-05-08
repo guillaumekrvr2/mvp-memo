@@ -99,7 +99,7 @@ useEffect(() => {
           />
         </View>
         <TouchableOpacity
-          onPress={() => navigation.replace('Recall', { objectif, temps })}
+          onPress={() => navigation.replace('Recall', { objectif, temps, numbers })}
         >
           <Text style={styles.done}>Done</Text>
         </TouchableOpacity>

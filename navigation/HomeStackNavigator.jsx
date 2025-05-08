@@ -5,6 +5,8 @@ import HomeScreen from '../screens/HomeScreen'
 import NumbersScreen from '../screens/NumbersScreen'
 import DecompteScreen  from '../screens/DecompteScreen'
 import MemoScreen     from '../screens/MemoScreen'
+import RecallScreen     from '../screens/RecallScreen'
+import CorrectionScreen from '../screens/CorrectionScreen'
 
 const Stack = createNativeStackNavigator()
 
@@ -20,6 +22,7 @@ export default function HomeStackNavigator() {
       <Stack.Screen name="Decompte"   component={DecompteScreen} />
       <Stack.Screen name="Memorisation" component={MemoScreen} />
       <Stack.Screen name="Recall" component={RecallScreen} />
+      <Stack.Screen name="Correction" component={CorrectionScreen} />
       {/* Plus tard : ajouterez ici Words, Cards, Binary, etc. */}
     </Stack.Navigator>
   )
