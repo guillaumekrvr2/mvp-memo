@@ -9,47 +9,37 @@ import {
   TextInput
 } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import {
-  useNavigation,
-  useFocusEffect
-} from '@react-navigation/native'
+import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 
 export default function NumbersScreen() {
   const navigation = useNavigation()
 
-  // états locaux
-  const [record, setRecord]     = useState(0)
+  const [lastScore, setLastScore] = useState(0)
+  const [lastTime, setLastTime] = useState(null)
   const [objectif, setObjectif] = useState('')
-  const [temps, setTemps]       = useState('')
+  const [temps, setTemps] = useState('')
 
-  // Recharge le record **uniquemenat** quand l’écran regagne le focus
   useFocusEffect(
     useCallback(() => {
-      const loadRecord = async () => {
-        if (!temps) {
-          return   // pas de temps défini, on laisse le record tel quel
-        }
+      const loadLastRecord = async () => {
         try {
-          const key = `record_${temps}`
-          const json = await AsyncStorage.getItem(key)
+          const json = await AsyncStorage.getItem('lastRecord')
           if (json) {
-            const { score } = JSON.parse(json)
-            setRecord(score)
-          } else {
-            setRecord(0)
+            const { score, temps } = JSON.parse(json)
+            setLastScore(score)
+            setLastTime(temps)
           }
         } catch (e) {
-          console.error('Erreur lecture record', e)
+          console.error('Erreur lecture lastRecord', e)
         }
       }
-      loadRecord()
-    }, [temps])
+      loadLastRecord()
+    }, [])
   )
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Top Bar */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back-outline" size={28} color="#fff" />
@@ -59,21 +49,17 @@ export default function NumbersScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Contenu */}
       <View style={styles.content}>
-
-        {/* Boîte paramètre (pour usage futur) */}
         <View style={styles.paramBox}>
-          <Text style={styles.paramText}>Paramètres</Text>
+          <Text style={styles.paramText}>123456</Text>
           <Ionicons name="settings-outline" size={24} color="#fff" />
         </View>
 
-        {/* 2) Record en fonction du temps */}
         <View style={styles.recordRow}>
           <Text style={styles.recordLabel}>Record :</Text>
           <Ionicons name="trophy-outline" size={20} color="#fff" />
           <Text style={styles.recordValue}>
-            {record} nombres mémorisés en {temps || '–'} secondes
+            {lastScore} nombres en {lastTime || '–'} secondes
           </Text>
         </View>
 

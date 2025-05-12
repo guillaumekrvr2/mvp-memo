@@ -17,33 +17,33 @@ export default function CorrectionScreen({ route, navigation }) {
   const total = inputs.length
   const cols = 6
 
-  // 1) State pour savoir quelles cases ont déjà révélé la bonne valeur
   const [revealed, setRevealed] = useState(new Set())
 
-  // 2) Construction des rangées
   const rows = []
   for (let i = 0; i < total; i += cols) {
     rows.push(inputs.slice(i, i + cols))
   }
 
-  // 3) Calcul du score
   const score = inputs.reduce(
     (acc, val, idx) => acc + (val === String(numbers[idx]) ? 1 : 0),
     0
   )
 
-  // 4) Sauvegarde du record
   const saveRecord = async () => {
     try {
+      // save per-duration record
       const key = `record_${temps}`
       const existing = await AsyncStorage.getItem(key)
       let best = existing ? JSON.parse(existing).score : 0
       if (score > best) {
         await AsyncStorage.setItem(key, JSON.stringify({ score }))
-        Alert.alert('Record sauvegardé', `Nouveau record: ${score} nombres mémorisés pour ${temps} sec`)
-      } else {
-        Alert.alert('Pas de nouveau record', `Record actuel: ${best} pour ${temps} sec`)
       }
+      // save lastRecord globally
+      await AsyncStorage.setItem(
+        'lastRecord',
+        JSON.stringify({ score, temps })
+      )
+      Alert.alert('Record sauvegardé', `Score: ${score} en ${temps} sec`)
     } catch (e) {
       console.error('Erreur sauvegarde record', e)
     }
@@ -51,12 +51,8 @@ export default function CorrectionScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* GRILLE DE CORRECTION */}
       <View style={styles.gridContainer}>
-        <ScrollView
-          contentContainerStyle={styles.scroll}
-          showsVerticalScrollIndicator={false}
-        >
+        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
           {rows.map((row, rIdx) => (
             <View key={rIdx} style={styles.row}>
               {row.map((val, cIdx) => {
@@ -64,12 +60,7 @@ export default function CorrectionScreen({ route, navigation }) {
                 const correct = String(numbers[idx])
                 const isCorrect = val === correct
                 const isRevealed = revealed.has(idx)
-                const display = isCorrect
-                  ? correct
-                  : isRevealed
-                  ? correct
-                  : val
-
+                const display = isCorrect ? correct : isRevealed ? correct : val
                 return (
                   <TouchableOpacity
                     key={idx}
@@ -80,17 +71,10 @@ export default function CorrectionScreen({ route, navigation }) {
                     ]}
                     disabled={isCorrect}
                     onPress={() => {
-                      if (!isCorrect) {
-                        setRevealed(prev => new Set(prev).add(idx))
-                      }
+                      if (!isCorrect) setRevealed(prev => new Set(prev).add(idx))
                     }}
                   >
-                    <Text style={[
-                      styles.cellText,
-                      !isCorrect && styles.wrongText
-                    ]}>
-                      {display}
-                    </Text>
+                    <Text style={[styles.cellText, !isCorrect && styles.wrongText]}> {display} </Text>
                   </TouchableOpacity>
                 )
               })}
@@ -99,22 +83,13 @@ export default function CorrectionScreen({ route, navigation }) {
         </ScrollView>
       </View>
 
-      {/* SCORE */}
-      <Text style={styles.scoreText}>
-        Score : {score} / {total}
-      </Text>
+      <Text style={styles.scoreText}>Score : {score} / {total}</Text>
 
-      {/* SAUVEGARDER RECORD */}
-      <TouchableOpacity
-        style={styles.recordButton}
-        onPress={saveRecord}
-      >
-        <Text style={styles.recordButtonText}>
-          Enregistrer comme nouveau record
-        </Text>
+      {/* Save button */}
+      <TouchableOpacity style={styles.recordButton} onPress={saveRecord}>
+        <Text style={styles.recordButtonText}>Enregistrer comme record</Text>
       </TouchableOpacity>
 
-      {/* RETRY */}
       <TouchableOpacity
         style={styles.retryButton}
         onPress={() => navigation.navigate('Numbers')}
