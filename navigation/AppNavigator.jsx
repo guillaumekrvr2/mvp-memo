@@ -1,6 +1,7 @@
 // navigation/AppNavigator.jsx
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { TouchableOpacity } from 'react-native'
 import HomeStackNavigator from '../navigation/HomeStackNavigator'
 import DiscoverScreen from '../screens/DiscoverScreen'
 import CommunityScreen from '../screens/CommunityScreen'
@@ -16,7 +17,10 @@ export default function AppNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: '#fff',                 // icônes/textes actifs en blanc
-        tabBarInactiveTintColor: '#888',              // inactifs en gris clair
+        tabBarInactiveTintColor: '#888',  
+        tabBarButton: (props) => (
+          <TouchableOpacity {...props} activeOpacity={0.7} />
+               ),            // inactifs en gris clair
         tabBarShowLabel: false,               
         tabBarIcon: ({ color, size }) => {
           let iconName
