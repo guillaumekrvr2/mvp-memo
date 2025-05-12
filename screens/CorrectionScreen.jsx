@@ -6,11 +6,14 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Ionicons } from '@expo/vector-icons'
 
 export default function CorrectionScreen({ route, navigation }) {
-  const { inputs, numbers } = route.params
+  const { inputs, numbers, temps } = route.params
   const total = inputs.length
   const cols = 6
 
@@ -28,6 +31,23 @@ export default function CorrectionScreen({ route, navigation }) {
     (acc, val, idx) => acc + (val === String(numbers[idx]) ? 1 : 0),
     0
   )
+
+  // 4) Sauvegarde du record
+  const saveRecord = async () => {
+    try {
+      const key = `record_${temps}`
+      const existing = await AsyncStorage.getItem(key)
+      let best = existing ? JSON.parse(existing).score : 0
+      if (score > best) {
+        await AsyncStorage.setItem(key, JSON.stringify({ score }))
+        Alert.alert('Record sauvegardé', `Nouveau record: ${score} nombres mémorisés pour ${temps} sec`)
+      } else {
+        Alert.alert('Pas de nouveau record', `Record actuel: ${best} pour ${temps} sec`)
+      }
+    } catch (e) {
+      console.error('Erreur sauvegarde record', e)
+    }
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -83,6 +103,16 @@ export default function CorrectionScreen({ route, navigation }) {
       <Text style={styles.scoreText}>
         Score : {score} / {total}
       </Text>
+
+      {/* SAUVEGARDER RECORD */}
+      <TouchableOpacity
+        style={styles.recordButton}
+        onPress={saveRecord}
+      >
+        <Text style={styles.recordButtonText}>
+          Enregistrer comme nouveau record
+        </Text>
+      </TouchableOpacity>
 
       {/* RETRY */}
       <TouchableOpacity
@@ -150,8 +180,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 16
   },
-  retryButton: {
+  recordButton: {
     marginTop: 20,
+    paddingHorizontal: 30,
+    paddingVertical: 12,
+    backgroundColor: '#000',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#fff',
+    alignSelf: 'center',
+    alignItems: 'center'
+  },
+  recordButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14
+  },
+  retryButton: {
+    marginTop: 12,
     paddingHorizontal: 30,
     paddingVertical: 12,
     backgroundColor: '#fff',

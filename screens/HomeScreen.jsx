@@ -2,6 +2,7 @@
 import React from 'react'
 import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import { Ionicons } from '@expo/vector-icons'
 
 // Import des SVG via react-native-svg-transformer
 const LogoImg = require('../assets/icons/Memorize_icon.png')
@@ -20,7 +21,7 @@ export default function HomeScreen() {
           <Image source={LogoImg} style={styles.logo} />
           <Text style={styles.title}>Memorize</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Community')}>
-            <Image source={UserImg} style={styles.userIcon} />
+            <Ionicons name="person-outline" size={28} color="#fff" /> 
           </TouchableOpacity>
         </View>
 
