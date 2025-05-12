@@ -33,6 +33,13 @@ export default function MemoScreen({ route, navigation }) {
     return () => clearTimeout(id)
   }, [timeLeft])
 
+  //  Auto‐navigation vers RecallScreen quand le temps est écoulé
+  useEffect(() => {
+     if (timeLeft <= 0) {
+       navigation.replace('Recall', { objectif, temps, numbers })
+      }
+    }, [timeLeft, navigation, objectif, temps, numbers])
+
   // 3) Highlight par rangée
   const [highlightRow, setHighlightRow] = useState(0)
   const total = numbers.length
