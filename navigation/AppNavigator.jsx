@@ -9,6 +9,7 @@ import ShopScreen from '../screens/ShopScreen'
 import { Ionicons } from '@expo/vector-icons'
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 import Header from '../components/Header' // ← import nécessaire
+import { Vibration } from 'react-native'; 
 
 const Tab = createBottomTabNavigator()
 
@@ -20,6 +21,11 @@ const commonTabBarStyle = {
 export default function AppNavigator() {
   return (
     <Tab.Navigator
+      screenListeners={{
+        tabPress: () => {
+          Vibration.vibrate(10);
+      },
+    }}
       screenOptions={({ route }) => ({
         header: ({ navigation }) => <Header navigation={navigation} />,
         tabBarActiveTintColor: '#fff',                 // icônes/textes actifs en blanc

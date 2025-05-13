@@ -250,7 +250,8 @@ const styles = StyleSheet.create({
     borderRightColor: '#444'
   },
   highlightRow: {
-    borderBottomColor: '#fff'
+    borderBottomColor: '#fff',
+    borderBottomRadius: 20
   },
   cell: {
     width: 42,

@@ -1,10 +1,11 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native'
+import { SafeAreaView, View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 const LogoImg = require('../assets/icons/Memorize_icon.png')
 
 export default function Header({ navigation, back }) {
   return (
+    <SafeAreaView style={styles.safeArea}>
     <View style={styles.container}>
       {/* Zone de gauche : back + logo */}
       <View style={styles.leftContainer}>
@@ -20,7 +21,7 @@ export default function Header({ navigation, back }) {
       </View>
 
       {/* Titre centré */}
-      <Text style={styles.title}>Memorize</Text>
+      <Text style={styles.title}>memorize</Text>
 
       {/* Icône de profil à droite */}
       <TouchableOpacity
@@ -30,10 +31,14 @@ export default function Header({ navigation, back }) {
         <Ionicons name="person-outline" size={26} color="#fff" />
       </TouchableOpacity>
     </View>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+     backgroundColor: '#000',     // 2) on force un fond noir sous la barre système
+  },
   container: {
     height: 60,
     justifyContent: 'center',
@@ -63,6 +68,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 20,
     fontWeight: '600',
+    letterSpacing: 7.5,
   },
   profileButton: {
     position: 'absolute',
