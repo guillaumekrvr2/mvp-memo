@@ -17,20 +17,14 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.topBar}>
-          <Image source={LogoImg} style={styles.logo} />
-          <Text style={styles.title}>Memorize</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Community')}>
-            <Ionicons name="person-outline" size={28} color="#fff" /> 
-          </TouchableOpacity>
-        </View>
-
       
       <View style={styles.grid}>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Numbers')}><Text style={styles.buttonText}>Numbers</Text></TouchableOpacity>
         <TouchableOpacity style={styles.button}><Text style={styles.buttonText}>Cards</Text></TouchableOpacity>
         <TouchableOpacity style={styles.button}><Text style={styles.buttonText}>Words</Text></TouchableOpacity>
         <TouchableOpacity style={styles.button}><Text style={styles.buttonText}>Binary</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.button}><Text style={styles.buttonText}>Names</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.button}><Text style={styles.buttonText}>Images</Text></TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.learnMore}>

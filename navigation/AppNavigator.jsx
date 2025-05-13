@@ -8,18 +8,25 @@ import CommunityScreen from '../screens/CommunityScreen'
 import ShopScreen from '../screens/ShopScreen'
 import { Ionicons } from '@expo/vector-icons'
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
+import Header from '../components/Header' // ← import nécessaire
 
 const Tab = createBottomTabNavigator()
+
+const commonTabBarStyle = {
+  backgroundColor: '#000',
+  borderTopWidth: 0
+}
 
 export default function AppNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerShown: false,
+        header: ({ navigation }) => <Header navigation={navigation} />,
         tabBarActiveTintColor: '#fff',                 // icônes/textes actifs en blanc
-        tabBarInactiveTintColor: '#888',  
+        tabBarActiveBackgroundColor: '#000',
+        tabBarInactiveBackgroundColor: '#000',  
         tabBarButton: (props) => (
-          <TouchableOpacity {...props} activeOpacity={0.7} />
+          <TouchableOpacity {...props} activeOpacity={0.7} style={[props.style, { backgroundColor: 'transparent' }]}/>
                ),            // inactifs en gris clair
         tabBarShowLabel: false,               
         tabBarIcon: ({ color, size }) => {
@@ -44,9 +51,9 @@ export default function AppNavigator() {
          }
        }}
      />
-      <Tab.Screen name="Discover" component={DiscoverScreen} />
-      <Tab.Screen name="Community" component={CommunityScreen} />
-      <Tab.Screen name="Shop" component={ShopScreen} />
+      <Tab.Screen name="Discover" component={DiscoverScreen} options={{ tabBarStyle: commonTabBarStyle }}/>
+      <Tab.Screen name="Community" component={CommunityScreen} options={{ tabBarStyle: commonTabBarStyle }}/>
+      <Tab.Screen name="Shop" component={ShopScreen} options={{ tabBarStyle: commonTabBarStyle }}/>
     </Tab.Navigator>
   )
 }

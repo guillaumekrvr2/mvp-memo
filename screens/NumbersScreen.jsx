@@ -40,14 +40,6 @@ export default function NumbersScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back-outline" size={28} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Community')}>
-          <Ionicons name="person-outline" size={28} color="#fff" />
-        </TouchableOpacity>
-      </View>
 
       <View style={styles.content}>
         <View style={styles.paramBox}>
@@ -59,7 +51,7 @@ export default function NumbersScreen() {
           <Text style={styles.recordLabel}>Record :</Text>
           <Ionicons name="trophy-outline" size={20} color="#fff" />
           <Text style={styles.recordValue}>
-            {lastScore} nombres en {lastTime || '–'} secondes
+            {lastScore} nombres en {lastTime || '0'} secondes
           </Text>
         </View>
 
