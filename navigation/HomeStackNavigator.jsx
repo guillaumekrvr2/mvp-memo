@@ -24,7 +24,7 @@ export default function HomeStackNavigator() {
       <Stack.Screen name="Decompte"   component={DecompteScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="Memorisation" component={MemoScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="Recall" component={RecallScreen} options={{ headerShown: false }}/>
-      <Stack.Screen name="Correction" component={CorrectionScreen} options={{ headerShown: false }}/>
+      <Stack.Screen name="Correction" component={CorrectionScreen} />
       {/* Plus tard : ajouterez ici Words, Cards, Binary, etc. */}
     </Stack.Navigator>
   )
