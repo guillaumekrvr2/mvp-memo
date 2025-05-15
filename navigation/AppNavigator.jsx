@@ -1,6 +1,8 @@
 // navigation/AppNavigator.jsx
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { PlatformPressable } from '@react-navigation/elements'  // ← on importe PlatformPressable
+import { Vibration } from 'react-native'
 import Header from '../components/Header'
 import HomeStackNavigator from '../navigation/HomeStackNavigator'
 import DiscoverScreen from '../screens/DiscoverScreen'
@@ -33,7 +35,29 @@ export default function AppNavigator() {
          headerShown: showHeader,
         tabBarActiveTintColor: '#fff',                 // icônes/textes actifs en blanc
         tabBarInactiveTintColor: '#888',              // inactifs en gris clair
-        tabBarShowLabel: false,               
+        tabBarShowLabel: false,
+        // → fond noir pour toute la tabBar
+        tabBarStyle: {
+          backgroundColor: '#000',
+          borderTopWidth: 0,
+          elevation: 0,    // supprime l’ombre Android
+          shadowOpacity: 0 // supprime l’ombre iOS
+        },
+         // → on remplace le bouton par PlatformPressable, sans ripple et sans opacité
+         tabBarButton: (props) => (
+           <PlatformPressable
+             {...props}
+             android_ripple={{ color: 'transparent' }}
+             pressOpacity={1}
+             onPress={(e) => {
+             Vibration.vibrate(10)       // vibre 10 ms
+             props.onPress?.(e)           // conserve la navigation
+           }}
+           />
+         ),
+        // → désactive le ripple Android et l’opacité iOS (plus de “bulle” grise)
+        tabBarPressColor: 'transparent',
+        tabBarPressOpacity: 1,               
         tabBarIcon: ({ color, size }) => {
           let iconName
           if (route.name === 'Home') iconName = 'home-outline'
