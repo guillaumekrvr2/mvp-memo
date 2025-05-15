@@ -1,3 +1,4 @@
+// Header.jsx
 import React from 'react'
 import { SafeAreaView, View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
@@ -6,38 +7,38 @@ const LogoImg = require('../assets/icons/Memorize_icon.png')
 export default function Header({ navigation, back }) {
   return (
     <SafeAreaView style={styles.safeArea}>
-    <View style={styles.container}>
-      {/* Zone de gauche : back + logo */}
-      <View style={styles.leftContainer}>
-        {back && (
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backButton}
-          >
-            <Ionicons name="chevron-back-outline" size={28} color="#fff" />
-          </TouchableOpacity>
-        )}
-        <Image source={LogoImg} style={styles.logo} />
+      <View style={styles.container}>
+        {/* Zone de gauche : back + logo */}
+        <View style={styles.leftContainer}>
+          {back && (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={styles.backButton}
+            >
+              <Ionicons name="chevron-back-outline" size={28} color="#fff" />
+            </TouchableOpacity>
+          )}
+          <Image source={LogoImg} style={styles.logo} />
+        </View>
+
+        {/* Titre centré */}
+        <Text style={styles.title}>memorize</Text>
+
+        {/* Icône de profil à droite */}
+        <TouchableOpacity
+          onPress={() => navigation.getParent()?.navigate('Login')}
+          style={styles.profileButton}
+        >
+          <Ionicons name="person-outline" size={26} color="#fff" />
+        </TouchableOpacity>
       </View>
-
-      {/* Titre centré */}
-      <Text style={styles.title}>memorize</Text>
-
-      {/* Icône de profil à droite */}
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Community')}
-        style={styles.profileButton}
-      >
-        <Ionicons name="person-outline" size={26} color="#fff" />
-      </TouchableOpacity>
-    </View>
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   safeArea: {
-     backgroundColor: '#000',     // 2) on force un fond noir sous la barre système
+    backgroundColor: '#000',
   },
   container: {
     height: 60,
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#000',
     position: 'relative',
-    marginTop: 10
+    marginTop: 10,
   },
   leftContainer: {
     position: 'absolute',
@@ -74,4 +75,4 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
   },
-})
+});

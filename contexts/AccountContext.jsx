@@ -1,85 +1,102 @@
-// contexts/AccountContext.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const AccountContext = createContext();
 
-const STORAGE_KEY = '@myapp:accounts';
-const ACTIVE_KEY  = '@myapp:active_account';
+const ACCOUNTS_KEY    = '@app:accounts';
+const CURRENT_KEY     = '@app:current_user';
 
 export function AccountProvider({ children }) {
-  const [accounts, setAccounts] = useState([]);
-  const [activeId, setActiveId] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [accounts, setAccounts]     = useState([]);      // liste des comptes
+  const [current, setCurrent]       = useState(null);    // compte connecté
+  const [loading, setLoading]       = useState(true);
 
-  // Au montage : on charge la liste et le compte actif
+  // 1) Chargement au démarrage
   useEffect(() => {
     (async () => {
       try {
-        const rawList = await AsyncStorage.getItem(STORAGE_KEY);
-        const list = rawList ? JSON.parse(rawList) : [];
-        setAccounts(list);
-
-        const storedActive = await AsyncStorage.getItem(ACTIVE_KEY);
-        setActiveId(storedActive);
+        const rawAccounts = await AsyncStorage.getItem(ACCOUNTS_KEY);
+        setAccounts(rawAccounts ? JSON.parse(rawAccounts) : []);
+        const rawCurrent = await AsyncStorage.getItem(CURRENT_KEY);
+        setCurrent(rawCurrent ? JSON.parse(rawCurrent) : null);
       } catch (e) {
-        console.error("Erreur lecture AsyncStorage :", e);
+        console.error('AccountContext load error', e);
       } finally {
         setLoading(false);
       }
     })();
   }, []);
 
-  // Helper pour persister la liste complète
-  const saveAccounts = async newList => {
-    setAccounts(newList);
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newList));
+  // 2) Persistance helper
+  const persist = async (key, value) => {
+    await AsyncStorage.setItem(key, JSON.stringify(value));
   };
 
-  // Ajouter un compte
-  const addAccount = async name => {
-    const id = Date.now().toString();
-    const newAcct = { id, name, score: 0 };
-    const updated = [...accounts, newAcct];
-    await saveAccounts(updated);
-    await setActiveId(id);
-    await AsyncStorage.setItem(ACTIVE_KEY, id);
-  };
-
-  // Supprimer un compte
-  const removeAccount = async id => {
-    const filtered = accounts.filter(a => a.id !== id);
-    await saveAccounts(filtered);
-    if (id === activeId) {
-      const nextActive = filtered[0]?.id || null;
-      setActiveId(nextActive);
-      await AsyncStorage.setItem(ACTIVE_KEY, nextActive);
+  // 3) Création de compte
+  const signUp = async ({ firstName, lastName, email, password }) => {
+    // empêcher doublons d’email
+    if (accounts.find(a => a.email === email)) {
+      throw new Error('Cet email est déjà utilisé');
     }
+    const newAcct = {
+      id: Date.now().toString(),
+      firstName,
+      lastName,
+      email,
+      password,       // pour MVP, stocké en clair
+      records: {}     // ex. { discipline1: 123, discipline2: 45 }
+    };
+    const updated = [...accounts, newAcct];
+    setAccounts(updated);
+    await persist(ACCOUNTS_KEY, updated);
+    // auto-login
+    setCurrent(newAcct);
+    await persist(CURRENT_KEY, newAcct);
   };
 
-  // Sélectionner un compte existant comme actif
-  const selectAccount = async id => {
-    setActiveId(id);
-    await AsyncStorage.setItem(ACTIVE_KEY, id);
+  // 4) Connexion
+  const login = async (email, password) => {
+    const acct = accounts.find(a => a.email === email && a.password === password);
+    if (!acct) throw new Error('Identifiants invalides');
+    setCurrent(acct);
+    await persist(CURRENT_KEY, acct);
   };
 
-  // Mettre à jour le score d’un compte
-  const updateScore = async (id, delta) => {
-    const updated = accounts.map(a =>
-      a.id === id ? { ...a, score: a.score + delta } : a
+  // 5) Déconnexion
+  const logout = async () => {
+    setCurrent(null);
+    await AsyncStorage.removeItem(CURRENT_KEY);
+  };
+
+  // 6) Mise à jour d’un record
+  const updateRecord = async (discipline, value) => {
+    if (!current) return;
+    const updatedCurr = {
+      ...current,
+      records: { 
+        ...current.records,
+        [discipline]: value
+      }
+    };
+    // mise à jour in-place dans la liste
+    const updatedList = accounts.map(a =>
+      a.id === current.id ? updatedCurr : a
     );
-    await saveAccounts(updated);
+    setAccounts(updatedList);
+    setCurrent(updatedCurr);
+    await persist(ACCOUNTS_KEY, updatedList);
+    await persist(CURRENT_KEY, updatedCurr);
   };
 
   return (
     <AccountContext.Provider value={{
       loading,
       accounts,
-      activeId,
-      addAccount,
-      removeAccount,
-      selectAccount,
-      updateScore
+      current,
+      signUp,
+      login,
+      logout,
+      updateRecord,
     }}>
       {children}
     </AccountContext.Provider>
