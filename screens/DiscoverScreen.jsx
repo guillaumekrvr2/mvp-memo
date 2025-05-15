@@ -72,7 +72,7 @@ export default function DiscoverScreen() {
           />
           <TextInput
             style={styles.searchInput}
-            placeholder="Rechercher"
+            placeholder="Rechercher un article"
             placeholderTextColor="#888"
             value={query}
             onChangeText={setQuery}
