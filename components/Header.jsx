@@ -1,10 +1,14 @@
 // Header.jsx
-import React from 'react'
+import React, { useContext } from 'react'
 import { SafeAreaView, View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 const LogoImg = require('../assets/icons/Memorize_icon.png')
+import { AccountContext } from '../contexts/AccountContext'
 
 export default function Header({ navigation, back }) {
+
+  const { current } = useContext(AccountContext)
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -26,7 +30,13 @@ export default function Header({ navigation, back }) {
 
         {/* Icône de profil à droite */}
         <TouchableOpacity
-          onPress={() => navigation.getParent()?.navigate('Login')}
+          onPress={() => {
+           if (current) {
+             navigation.navigate('Profile')
+           } else {
+            navigation.getParent()?.navigate('Login')
+           }
+        }}
           style={styles.profileButton}
         >
           <Ionicons name="person-outline" size={26} color="#fff" />

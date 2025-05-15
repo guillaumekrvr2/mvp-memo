@@ -10,7 +10,7 @@ import LoginScreen from './screens/LoginScreen'
 import SignUpScreen from './screens/SignUpScreen'
 
 // Main tabs
-import AppNavigator from './navigation/AppNavigator'
+import MainStackNavigator from './navigation/MainStackNavigator'
 
 // Thème sombre personnalisé
 const MyTheme = {
@@ -33,8 +33,8 @@ export default function App() {
             initialRouteName="Main"
             screenOptions={{ headerShown: false }}
           >
-            {/* Application principale */}
-            <RootStack.Screen name="Main" component={AppNavigator} />
+          {/* Application principale (onglets + profil) */}
+          <RootStack.Screen name="Main" component={MainStackNavigator} />
 
             {/* Écrans d'authentification */}
             <RootStack.Screen name="Login" component={LoginScreen} />
