@@ -1,17 +1,21 @@
 // screens/CommunityScreen.jsx
-import React, { useContext, useState, useMemo } from 'react';
+
+import React, { useContext, useState, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
-  Dimensions
+  ScrollView
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AccountContext } from '../contexts/AccountContext';
+import { Ionicons } from '@expo/vector-icons';
 
 const DISCIPLINES = [
+  { key: 'global',  label: 'Global' },
   { key: 'numbers', label: 'Numbers' },
   { key: 'cards',   label: 'Cards' },
   { key: 'words',   label: 'Words' },
@@ -20,51 +24,77 @@ const DISCIPLINES = [
   { key: 'images',  label: 'Images' },
 ];
 
-const CARD_WIDTH = 120;
-const CARD_HEIGHT = 120;
-const TAB_SIZE = 100;
-
 export default function CommunityScreen() {
-  const { accounts } = useContext(AccountContext);
+  const { accounts, updateRecord } = useContext(AccountContext);
   const [selected, setSelected] = useState('numbers');
 
-  const sortedAccounts = useMemo(() =>
+  // Sync lastRecord into context when selecting Numbers
+  useFocusEffect(
+    useCallback(() => {
+      if (selected === 'numbers') {
+        (async () => {
+          const json = await AsyncStorage.getItem('lastRecord');
+          if (json) {
+            const { score, temps } = JSON.parse(json);
+            await updateRecord('numbers', { score, time: temps });
+          }
+        })();
+      }
+    }, [selected])
+  );
+
+  // Tri selon la discipline sélectionnée
+  const sorted = useMemo(() =>
     [...accounts].sort((a, b) => {
-      const getValue = acct => {
+      const getVal = acct => {
         if (selected === 'global') {
           return DISCIPLINES.reduce((sum, d) => {
+            if (d.key === 'global') return sum;
             const rec = acct.records?.[d.key];
-            const val = typeof rec === 'object' ? rec.score : rec || 0;
-            return sum + val;
+            return sum + (typeof rec === 'object' ? rec.score : rec || 0);
           }, 0);
         }
         const rec = acct.records?.[selected];
         return typeof rec === 'object' ? rec.score : rec || 0;
       };
-      return getValue(b) - getValue(a);
+      return getVal(b) - getVal(a);
     }), [accounts, selected]
   );
 
-  const renderItem = ({ item }) => {
-    let recordText;
+  const renderCard = ({ item }) => {
+    // contenu réduit pour la vue en grille Cards
+    const rec = item.records?.cards;
+    const score = typeof rec === 'object' ? rec.score : (rec || 0);
+    return (
+      <View style={styles.card}>
+        <Text style={styles.cardName}>
+          {item.firstName}{'\n'}{item.lastName}
+        </Text>
+        <Text style={styles.cardScore}>{score} pts</Text>
+      </View>
+    );
+  };
+
+  const renderRow = ({ item }) => {
+    // vue classique pour toutes les autres disciplines
+    let text;
     if (selected === 'global') {
       const total = DISCIPLINES.reduce((sum, d) => {
+        if (d.key === 'global') return sum;
         const rec = item.records?.[d.key];
         return sum + (typeof rec === 'object' ? rec.score : rec || 0);
       }, 0);
-      recordText = `${total} pts`;
+      text = `${total} pts`;
     } else {
       const rec = item.records?.[selected];
-      if (typeof rec === 'object') {
-        recordText = `${rec.score} éléments en ${rec.time}s`;
-      } else {
-        recordText = `${rec || 0} pts`;
-      }
+      text = typeof rec === 'object'
+        ? `${rec.score} en ${rec.time}s`
+        : `${rec || 0} pts`;
     }
     return (
-      <View style={styles.card}>
+      <View style={styles.row}>
         <Text style={styles.name}>{item.firstName} {item.lastName}</Text>
-        <Text style={styles.record}>{recordText}</Text>
+        <Text style={styles.score}>{text}</Text>
       </View>
     );
   };
@@ -74,18 +104,12 @@ export default function CommunityScreen() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.tabsContainer}
+        contentContainerStyle={styles.tabs}
       >
-        <TouchableOpacity
-          style={[styles.squareTab, selected === 'global' && styles.tabActive]}
-          onPress={() => setSelected('global')}
-        >
-          <Text style={[styles.tabText, selected === 'global' && styles.tabTextActive]}>Global</Text>
-        </TouchableOpacity>
         {DISCIPLINES.map(d => (
           <TouchableOpacity
             key={d.key}
-            style={[styles.squareTab, selected === d.key && styles.tabActive]}
+            style={[styles.tab, selected === d.key && styles.tabActive]}
             onPress={() => setSelected(d.key)}
           >
             <Text style={[styles.tabText, selected === d.key && styles.tabTextActive]}>
@@ -95,16 +119,20 @@ export default function CommunityScreen() {
         ))}
       </ScrollView>
 
-      <Text style={styles.title}>Leaderboard</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.header}>Leaderboard</Text>
+        <Ionicons name="trophy-outline" size={20} color="#fff" />
+      </View>
 
       <FlatList
-        data={sortedAccounts}
-        keyExtractor={item => item.id}
-        renderItem={renderItem}
-        numColumns={2}
-        columnWrapperStyle={{ justifyContent: 'space-between' }}
-        ListEmptyComponent={<Text style={styles.empty}>Aucun participant pour le moment.</Text>}
-        contentContainerStyle={styles.grid}
+        key={selected}
+        data={sorted}
+        keyExtractor={i => i.id}
+        // si Cards, on passe en grille 2 colonnes
+        numColumns={1}
+        renderItem={renderRow}
+        ListEmptyComponent={<Text style={styles.empty}>Aucun participant</Text>}
+        contentContainerStyle={styles.listPadding}
       />
     </View>
   );
@@ -115,68 +143,94 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
     padding: 20,
+    height: 80
   },
-  tabsContainer: {
-    flexDirection: 'row',
-    marginBottom: 20,
+  tabs: {
+    paddingBottom: 10,
   },
-  squareTab: {
-    width: TAB_SIZE,
-    height: TAB_SIZE,
+  tab: {
+    width: 120,
+    height: 120,
     borderWidth: 1,
     borderColor: '#666',
-    borderRadius: 16,
-    marginRight: 12,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000',
-  },
+    marginRight: 12,
+  },  
   tabActive: {
     backgroundColor: '#fff',
     borderColor: '#fff',
   },
   tabText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     textAlign: 'center',
   },
   tabTextActive: {
     color: '#000',
     fontWeight: '600',
   },
-  title: {
+
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  header: {
     color: '#fff',
     fontSize: 20,
     fontWeight: '600',
-    marginBottom: 10,
   },
-  grid: {
-    gap: 12,
+
+  // === pour la grille Cards ===
+  columnWrapper: {
+    justifyContent: 'center',  // centre chaque ligne de 2 cartes
+  },
+  listPadding: {
+    paddingBottom: 20,
   },
   card: {
-    width: CARD_WIDTH,
-    height: CARD_HEIGHT,
+    width: 120,
+    height: 120,
     backgroundColor: '#111',
-    borderRadius: 12,
-    padding: 10,
-    marginBottom: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
+    margin: 10,
+  },
+  cardName: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  cardScore: {
+    color: '#fff',
+    fontSize: 16,
+    marginTop: 6,
+  },
+
+  // === pour la liste classique ===
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
     borderColor: '#333',
   },
   name: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '500',
-    textAlign: 'center',
-    marginBottom: 4,
   },
-  record: {
-    color: '#aaa',
-    fontSize: 14,
-    textAlign: 'center',
+  score: {
+    color: '#fff',
+    fontSize: 16,
   },
+
   empty: {
     color: '#666',
     textAlign: 'center',

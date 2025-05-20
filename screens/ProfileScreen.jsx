@@ -1,39 +1,51 @@
-import React, { useContext, useState, useCallback } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
-import { useFocusEffect } from '@react-navigation/native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { AccountContext } from '../contexts/AccountContext'
+// screens/ProfileScreen.jsx
+import React, { useContext, useEffect, useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AccountContext } from '../contexts/AccountContext';
 
-const DISCIPLINES = ['numbers', 'cards', 'words', 'binary', 'names', 'images']
+const DISCIPLINES = ['numbers', 'cards', 'words', 'binary', 'names', 'images'];
 
 export default function ProfileScreen({ navigation }) {
-  const { current, logout } = useContext(AccountContext)
-  const [lastScore, setLastScore] = useState(null)
-  const [lastTime, setLastTime] = useState(null)
+  const { current, logout } = useContext(AccountContext);
+  const [lastScore, setLastScore] = useState(null);
+  const [lastTime, setLastTime] = useState(null);
 
-  // Charger le dernier record pour 'numbers'
+  // Redirect to login after logout via context
+  useEffect(() => {
+    if (!current) {
+      navigation.replace('Login');
+    }
+  }, [current, navigation]);
+
+  // Load lastRecord for 'numbers' each time the screen is focused
   useFocusEffect(
     useCallback(() => {
       const loadLastRecord = async () => {
         try {
-          const json = await AsyncStorage.getItem('lastRecord')
+          const json = await AsyncStorage.getItem('lastRecord');
           if (json) {
-            const { score, temps } = JSON.parse(json)
-            setLastScore(score)
-            setLastTime(temps)
+            const { score, temps } = JSON.parse(json);
+            setLastScore(score);
+            setLastTime(temps);
           }
         } catch (e) {
-          console.error('Erreur lecture lastRecord', e)
+          console.error('Erreur lecture lastRecord', e);
         }
-      }
-      loadLastRecord()
+      };
+      loadLastRecord();
     }, [])
-  )
+  );
 
   if (!current) {
-    navigation.replace('Login')
-    return null
+    return null;
   }
+
+  const handleLogout = async () => {
+    await logout();
+    // navigation handled in useEffect
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -53,33 +65,27 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.buttonText}>Modifier Mot de passe</Text>
       </TouchableOpacity>
 
-      <Text style={[styles.sectionTitle, { marginTop: 30 }]}>Mes Records</Text>
-      {DISCIPLINES.map(d => {
-        // Pour 'numbers', utiliser lastScore/lastTime
-        if (d === 'numbers') {
-          return (
-            <View key={d} style={styles.recordRow}>
-              <Text style={styles.recordLabel}>{d}</Text>
-              <Text style={styles.recordValue}>
-                {lastScore != null ? `${lastScore} pts (${lastTime}s)` : '0 pts'}
-              </Text>
-            </View>
-          )
-        }
-        const val = current.records[d] != null ? current.records[d] : 0
-        return (
-          <View key={d} style={styles.recordRow}>
-            <Text style={styles.recordLabel}>{d}</Text>
-            <Text style={styles.recordValue}>{val} pts</Text>
-          </View>
-        )
-      })}
+      <Text style={styles.sectionTitle}>Mes Records</Text>
+      {DISCIPLINES.map((d) => (
+        <View key={d} style={styles.recordRow}>
+          <Text style={styles.recordLabel}>{d}</Text>
+          {d === 'numbers' ? (
+            <Text style={styles.recordValue}>
+              {lastScore != null ? `${lastScore} pts (${lastTime}s)` : '0 pts'}
+            </Text>
+          ) : (
+            <Text style={styles.recordValue}>
+              {current.records[d] != null ? `${current.records[d]} pts` : '0 pts'}
+            </Text>
+          )}
+        </View>
+      ))}
 
-      <TouchableOpacity style={[styles.button, styles.logout]} onPress={logout}>
+      <TouchableOpacity style={[styles.button, styles.logout]} onPress={handleLogout}>
         <Text style={styles.buttonText}>Se déconnecter</Text>
       </TouchableOpacity>
     </ScrollView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -101,6 +107,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 20,
     fontWeight: '600',
+    marginTop: 30,
     marginBottom: 10,
   },
   recordRow: {
@@ -110,8 +117,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#333',
   },
-  recordLabel: { color: '#fff', fontSize: 16 },
-  recordValue: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  recordLabel: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  recordValue: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   button: {
     marginTop: 15,
     paddingVertical: 12,
@@ -127,4 +141,4 @@ const styles = StyleSheet.create({
   logout: {
     backgroundColor: '#f66',
   },
-})
+});

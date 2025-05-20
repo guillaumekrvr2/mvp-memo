@@ -16,8 +16,6 @@ export default function HomeStackNavigator() {
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: '#000' },
-        animation: 'slide_from_right',
-        animationDuration: 250,
     }} >
       <Stack.Screen name="HomeMain" component={HomeScreen} />
       <Stack.Screen name="Numbers" component={NumbersScreen} />

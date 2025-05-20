@@ -1,5 +1,5 @@
 // screens/NumbersScreen.jsx
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useContext} from 'react'
 import {
   SafeAreaView,
   View,
@@ -9,12 +9,14 @@ import {
   TextInput
 } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { AccountContext } from '../contexts/AccountContext'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
+import { Vibration } from 'react-native';
 
 export default function NumbersScreen() {
   const navigation = useNavigation()
-
+  const { current, updateRecord } = useContext(AccountContext)
   const [lastScore, setLastScore] = useState(0)
   const [lastTime, setLastTime] = useState(null)
   const [objectif, setObjectif] = useState('')
@@ -23,16 +25,13 @@ export default function NumbersScreen() {
   useFocusEffect(
     useCallback(() => {
       const loadLastRecord = async () => {
-        try {
           const json = await AsyncStorage.getItem('lastRecord')
           if (json) {
             const { score, temps } = JSON.parse(json)
             setLastScore(score)
             setLastTime(temps)
           }
-        } catch (e) {
-          console.error('Erreur lecture lastRecord', e)
-        }
+        await updateRecord('numbers', { score, time: temps })
       }
       loadLastRecord()
     }, [])
@@ -84,12 +83,13 @@ export default function NumbersScreen() {
         {/* 5) Bouton Play */}
         <TouchableOpacity
           style={styles.playButton}
-          onPress={() =>
+          onPress={() => {
+            Vibration.vibrate(100);
             navigation.navigate('Decompte', {
               objectif: parseInt(objectif, 10),
               temps: parseInt(temps, 10)
-            })
-          }
+            });
+          }}
         >
           <Ionicons name="play-circle-outline" size={48} color="#fff" />
         </TouchableOpacity>
