@@ -28,21 +28,6 @@ export default function CommunityScreen() {
   const { accounts, updateRecord } = useContext(AccountContext);
   const [selected, setSelected] = useState('numbers');
 
-  // Sync lastRecord into context when selecting Numbers
-  useFocusEffect(
-    useCallback(() => {
-      if (selected === 'numbers') {
-        (async () => {
-          const json = await AsyncStorage.getItem('lastRecord');
-          if (json) {
-            const { score, temps } = JSON.parse(json);
-            await updateRecord('numbers', { score, time: temps });
-          }
-        })();
-      }
-    }, [selected])
-  );
-
   // Tri selon la discipline sélectionnée
   const sorted = useMemo(() =>
     [...accounts].sort((a, b) => {

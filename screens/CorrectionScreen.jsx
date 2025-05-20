@@ -1,5 +1,5 @@
 // screens/CorrectionScreen.jsx
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import {
   SafeAreaView,
   View,
@@ -9,43 +9,37 @@ import {
   TouchableOpacity,
   Alert
 } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Ionicons } from '@expo/vector-icons'
+import { AccountContext } from '../contexts/AccountContext'
 
 export default function CorrectionScreen({ route, navigation }) {
   const { inputs, numbers, temps } = route.params
   const total = inputs.length
   const cols = 6
 
+  // Récupère la fonction de mise à jour du contexte
+  const { updateRecord } = useContext(AccountContext)
   const [revealed, setRevealed] = useState(new Set())
 
+  // Construction des lignes pour l'affichage
   const rows = []
   for (let i = 0; i < total; i += cols) {
     rows.push(inputs.slice(i, i + cols))
   }
 
+  // Calcul du score
   const score = inputs.reduce(
     (acc, val, idx) => acc + (val === String(numbers[idx]) ? 1 : 0),
     0
   )
 
+  // Enregistre le record via le contexte (pour l'utilisateur courant seulement)
   const saveRecord = async () => {
     try {
-      // save per-duration record
-      const key = `record_${temps}`
-      const existing = await AsyncStorage.getItem(key)
-      let best = existing ? JSON.parse(existing).score : 0
-      if (score > best) {
-        await AsyncStorage.setItem(key, JSON.stringify({ score }))
-      }
-      // save lastRecord globally
-      await AsyncStorage.setItem(
-        'lastRecord',
-        JSON.stringify({ score, temps })
-      )
+      await updateRecord('numbers', { score, time: temps })
       Alert.alert('Record sauvegardé', `Score: ${score} en ${temps} sec`)
     } catch (e) {
       console.error('Erreur sauvegarde record', e)
+      Alert.alert('Erreur', "Impossible de sauvegarder le record.")
     }
   }
 
@@ -85,7 +79,7 @@ export default function CorrectionScreen({ route, navigation }) {
 
       <Text style={styles.scoreText}>Score : {score} / {total}</Text>
 
-      {/* Save button */}
+      {/* Bouton d'enregistrement */}
       <TouchableOpacity style={styles.recordButton} onPress={saveRecord}>
         <Text style={styles.recordButtonText}>Enregistrer comme record</Text>
       </TouchableOpacity>
