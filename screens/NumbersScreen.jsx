@@ -85,12 +85,16 @@ export default function NumbersScreen() {
             />
           </View>
 
-          {/* Time Selector / Static */}
+          {/* Time Selector / Static for Memory League and IAM, Input for Custom */}
           {mode === 'memory-league' ? (
             <View style={styles.staticTimeBox}>
               <Text style={styles.staticTime}>1 minute</Text>
             </View>
-          ) : mode === 'custom' ? (
+          ) : mode === 'iam' ? (
+            <View style={styles.staticTimeBox}>
+              <Text style={styles.staticTime}>5 minutes</Text>
+            </View>
+          ) : (
             <View style={styles.inputBox}>
               <TextInput
                 style={styles.input}
@@ -101,28 +105,18 @@ export default function NumbersScreen() {
                 onChangeText={text => setTemps(parseInt(text, 10) || 0)}
               />
             </View>
-          ) : (
-            <View style={styles.pickerBox}>
-              <Picker
-                selectedValue={temps}
-                onValueChange={setTemps}
-                style={styles.pickerSmall}
-                dropdownIconColor="#fff"
-              >
-                <Picker.Item label="5 minutes" value={300} />
-                <Picker.Item label="15 minutes" value={900} />
-              </Picker>
-            </View>
           )}
         </View>
 
-        {/* Record Box */}
-        <View style={styles.recordBox}>
-          <Ionicons name="trophy-outline" size={20} color="#fff" />
-          <Text style={styles.recordText}>
-            Last best : {lastScore} en {lastTime}s
-          </Text>
-        </View>
+        {/* Record Box - hidden in custom mode */}
+        {mode !== 'custom' && (
+          <View style={styles.recordBox}>
+            <Ionicons name="trophy-outline" size={20} color="#fff" />
+            <Text style={styles.recordText}>
+              Last best : {lastScore} en {lastTime}s
+            </Text>
+          </View>
+        )}
 
         {/* Play Button */}
         <TouchableOpacity
@@ -152,12 +146,10 @@ const styles = StyleSheet.create({
   dropdown: { borderWidth: 1, borderColor: '#fff', borderRadius: 16, overflow: 'hidden', marginBottom: 20 },
   picker: { height: 50, color: '#fff' },
   row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-  inputBox: { flex: 1, backgroundColor: '#111', borderRadius: 16, marginRight: 10 },
-  input: { paddingVertical: 12, paddingHorizontal: 16, color: '#fff', fontSize: 16 },
+  inputBox: { flex: 1, backgroundColor: '#111', borderRadius: 16, marginRight: 10, justifyContent: 'center' },
+  input: { paddingHorizontal: 16, color: '#fff', fontSize: 16, textAlignVertical: 'center' },
   staticTimeBox: { flex: 1, backgroundColor: '#111', borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
   staticTime: { color: '#fff', fontSize: 16 },
-  pickerBox: { flex: 1, borderWidth: 1, borderColor: '#fff', borderRadius: 16, overflow: 'hidden' },
-  pickerSmall: { height: 50, color: '#fff', textAlign: 'center' },
   recordBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#fff', borderRadius: 16, padding: 12, marginBottom: 30 },
   recordText: { color: '#fff', fontSize: 16, marginLeft: 8 },
   playButton: { width: 140, height: 140, borderRadius: 70, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginBottom: 30 },
