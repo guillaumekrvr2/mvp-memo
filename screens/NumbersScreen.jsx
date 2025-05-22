@@ -17,24 +17,29 @@ import { AccountContext } from '../contexts/AccountContext'
 export default function NumbersScreen() {
   const navigation = useNavigation()
   const { current } = useContext(AccountContext)
-  const discRec = current?.records?.numbers || { score: 0, time: 0 }
 
+  // 1) Mode and parameters
   const [mode, setMode] = useState('memory-league')
   const [objectif, setObjectif] = useState('')
   const [temps, setTemps] = useState(60)
-  const [lastScore, setLastScore] = useState(discRec.score)
-  const [lastTime, setLastTime] = useState(discRec.time)
 
-  // Handler de changement de mode + temps par défaut
+  // 2) Retrieve record per mode
+  const allNumRecs = current?.records?.numbers || {}
+  const discRec    = allNumRecs[mode] || { score: 0, time: 0 }
+
+  // 3) Local state for display
+  const [lastScore, setLastScore] = useState(discRec.score)
+  const [lastTime, setLastTime]   = useState(discRec.time)
+
+  // 4) Handle mode change
   const onModeChange = (value) => {
     setMode(value)
-    // default temps: 300 for IAM, 60 for Memory League, empty for custom
     if (value === 'iam') setTemps(300)
     else if (value === 'memory-league') setTemps(60)
     else setTemps(0)
   }
 
-  // Met à jour l'affichage du record à chaque focus
+  // 5) Sync record on focus and when discRec changes
   useFocusEffect(
     useCallback(() => {
       setLastScore(discRec.score)
@@ -52,7 +57,7 @@ export default function NumbersScreen() {
           <Ionicons name="settings-outline" size={24} color="#fff" />
         </View>
 
-        {/* Mode Dropdown */}
+        {/* Mode Picker */}
         <View style={styles.dropdown}>
           <Picker
             selectedValue={mode}
@@ -66,13 +71,13 @@ export default function NumbersScreen() {
           </Picker>
         </View>
 
-        {/* Objectif & Temps */}
+        {/* Objective & Time Row */}
         <View style={styles.row}>
-          {/* Objectif */}
+          {/* Objective Input */}
           <View style={styles.inputBox}>
             <TextInput
               style={styles.input}
-              placeholder="Objectif"
+              placeholder="Nombres de chiffres"
               placeholderTextColor="#666"
               keyboardType="number-pad"
               value={objectif}
@@ -80,7 +85,7 @@ export default function NumbersScreen() {
             />
           </View>
 
-          {/* Temps selon mode */}
+          {/* Time Selector / Static */}
           {mode === 'memory-league' ? (
             <View style={styles.staticTimeBox}>
               <Text style={styles.staticTime}>1 minute</Text>
@@ -92,23 +97,20 @@ export default function NumbersScreen() {
                 placeholder="Temps (s)"
                 placeholderTextColor="#666"
                 keyboardType="number-pad"
-                value={temps > 0 ? temps.toString() : ''}
-                onChangeText={text => {
-                  const num = parseInt(text, 10)
-                  setTemps(isNaN(num) ? 0 : num)
-                }}
+                value={temps > 0 ? String(temps) : ''}
+                onChangeText={text => setTemps(parseInt(text, 10) || 0)}
               />
             </View>
           ) : (
             <View style={styles.pickerBox}>
               <Picker
                 selectedValue={temps}
-                onValueChange={value => setTemps(value)}
+                onValueChange={setTemps}
                 style={styles.pickerSmall}
                 dropdownIconColor="#fff"
               >
-                <Picker.Item key="iam-5" label="5 minutes" value={300} />
-                <Picker.Item key="iam-15" label="15 minutes" value={900} />
+                <Picker.Item label="5 minutes" value={300} />
+                <Picker.Item label="15 minutes" value={900} />
               </Picker>
             </View>
           )}
@@ -127,10 +129,7 @@ export default function NumbersScreen() {
           style={styles.playButton}
           onPress={() => {
             Vibration.vibrate(100)
-            navigation.navigate('Decompte', {
-              objectif: parseInt(objectif, 10),
-              temps: temps
-            })
+            navigation.navigate('Decompte', { objectif: parseInt(objectif, 10), temps, mode })
           }}
         >
           <Text style={styles.playText}>PLAY</Text>
@@ -148,7 +147,7 @@ export default function NumbersScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
   content: { flex: 1, paddingHorizontal: 20, justifyContent: 'center' },
-  paramBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#fff', borderRadius: 20, paddingVertical: 20, paddingHorizontal: 24, justifyContent: 'space-between', marginBottom: 20 },
+  paramBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#fff', borderRadius: 20, padding: 20, justifyContent: 'space-between', marginBottom: 20 },
   paramText: { color: '#fff', fontSize: 28, fontWeight: '600' },
   dropdown: { borderWidth: 1, borderColor: '#fff', borderRadius: 16, overflow: 'hidden', marginBottom: 20 },
   picker: { height: 50, color: '#fff' },
@@ -159,7 +158,7 @@ const styles = StyleSheet.create({
   staticTime: { color: '#fff', fontSize: 16 },
   pickerBox: { flex: 1, borderWidth: 1, borderColor: '#fff', borderRadius: 16, overflow: 'hidden' },
   pickerSmall: { height: 50, color: '#fff', textAlign: 'center' },
-  recordBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#fff', borderRadius: 16, paddingVertical: 12, paddingHorizontal: 20, marginBottom: 30 },
+  recordBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#fff', borderRadius: 16, padding: 12, marginBottom: 30 },
   recordText: { color: '#fff', fontSize: 16, marginLeft: 8 },
   playButton: { width: 140, height: 140, borderRadius: 70, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginBottom: 30 },
   playText: { fontSize: 24, fontWeight: '700', color: '#000' },

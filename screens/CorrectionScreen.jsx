@@ -12,31 +12,39 @@ import {
 import { AccountContext } from '../contexts/AccountContext'
 
 export default function CorrectionScreen({ route, navigation }) {
-  const { inputs, numbers, temps } = route.params
+  // 1) Récupération des params, incluant maintenant `mode`
+  const { inputs, numbers, temps, mode } = route.params
   const total = inputs.length
   const cols = 6
 
-  // Récupère la fonction de mise à jour du contexte
-  const { updateRecord } = useContext(AccountContext)
+  // 2) Contexte et état local pour révéler les bonnes réponses
+  const { updateRecord, current } = useContext(AccountContext)
   const [revealed, setRevealed] = useState(new Set())
 
-  // Construction des lignes pour l'affichage
+  // 3) Préparation de la grille
   const rows = []
   for (let i = 0; i < total; i += cols) {
     rows.push(inputs.slice(i, i + cols))
   }
 
-  // Calcul du score
+  // 4) Calcul du score
   const score = inputs.reduce(
     (acc, val, idx) => acc + (val === String(numbers[idx]) ? 1 : 0),
     0
   )
 
-  // Enregistre le record via le contexte (pour l'utilisateur courant seulement)
+  // 5) Fonction de sauvegarde avec logs de debug
   const saveRecord = async () => {
+    console.log('[CorrectionScreen] saveRecord called with:', { mode, score, time: temps })
     try {
-      await updateRecord('numbers', { score, time: temps })
-      Alert.alert('Record sauvegardé', `Score: ${score} en ${temps} sec`)
+      await updateRecord('numbers', { mode, score, time: temps })
+      // Affiche l'état actuel des records pour vérification
+      console.log('[CorrectionScreen] current.records.numbers:', current.records?.numbers)
+      const saved = current.records?.numbers?.[mode]
+      Alert.alert(
+        'Record sauvegardé',
+        `Mode: ${mode}\nScore: ${saved?.score || score}\nTemps: ${saved?.time || temps}s`
+      )
     } catch (e) {
       console.error('Erreur sauvegarde record', e)
       Alert.alert('Erreur', "Impossible de sauvegarder le record.")
@@ -64,9 +72,7 @@ export default function CorrectionScreen({ route, navigation }) {
                       !isCorrect && styles.wrongCell
                     ]}
                     disabled={isCorrect}
-                    onPress={() => {
-                      if (!isCorrect) setRevealed(prev => new Set(prev).add(idx))
-                    }}
+                    onPress={() => !isCorrect && setRevealed(prev => new Set(prev).add(idx))}
                   >
                     <Text style={[styles.cellText, !isCorrect && styles.wrongText]}> {display} </Text>
                   </TouchableOpacity>

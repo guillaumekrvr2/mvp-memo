@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react'
 import { SafeAreaView, View, Text, StyleSheet } from 'react-native'
 
 export default function DecompteScreen({ route, navigation }) {
-  const { objectif, temps } = route.params
+  const { objectif, temps, mode } = route.params
   const [counter, setCounter] = useState(3)
 
   useEffect(() => {
     if (counter <= 0) {
       // Une fois à zéro, on navigue vers l’écran de mémorisation
-      navigation.replace('Memorisation', { objectif, temps })
+      navigation.replace('Memorisation', { objectif, temps, mode })
       return
     }
     const id = setTimeout(() => setCounter(counter - 1), 1000)

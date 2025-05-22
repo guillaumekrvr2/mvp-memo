@@ -13,8 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 
 export default function MemoScreen({ route, navigation }) {
-  const { objectif, temps } = route.params
-
+  const { objectif, temps, mode } = route.params
   // 1) Génération des chiffres
   const [numbers, setNumbers] = useState([])
   useEffect(() => {
@@ -36,9 +35,9 @@ export default function MemoScreen({ route, navigation }) {
   //  Auto‐navigation vers RecallScreen quand le temps est écoulé
   useEffect(() => {
      if (timeLeft <= 0) {
-       navigation.replace('Recall', { objectif, temps, numbers })
+       navigation.replace('Recall', { objectif, temps, numbers, mode })
       }
-    }, [timeLeft, navigation, objectif, temps, numbers])
+    }, [timeLeft, navigation, objectif, temps, numbers, mode])
 
   // 3) Highlight par rangée
   const [highlightRow, setHighlightRow] = useState(0)
@@ -106,7 +105,8 @@ useEffect(() => {
           />
         </View>
         <TouchableOpacity
-          onPress={() => navigation.replace('Recall', { objectif, temps, numbers })}
+        
+          onPress={() => navigation.replace('Recall', { objectif, temps, numbers, mode })}
         >
           <Text style={styles.done}>Done</Text>
         </TouchableOpacity>

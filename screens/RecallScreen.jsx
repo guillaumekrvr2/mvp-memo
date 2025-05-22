@@ -14,7 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 
 export default function RecallScreen({ route, navigation }) {
-  const { objectif, numbers, temps } = route.params
+  const { objectif, numbers, temps, mode } = route.params
   const total = objectif
   const cols = 6
 
@@ -138,7 +138,7 @@ export default function RecallScreen({ route, navigation }) {
       <TouchableOpacity
         style={styles.validateButton}
         onPress={() =>
-          navigation.navigate('Correction', { inputs, numbers, temps })
+          navigation.navigate('Correction', { inputs, numbers, temps , mode})
         }
       >
         <Text style={styles.validateText}>Valider</Text>

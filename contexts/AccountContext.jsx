@@ -69,24 +69,47 @@ export function AccountProvider({ children }) {
   };
 
   // 6) Mise à jour d’un record
-  const updateRecord = async (discipline, value) => {
-    if (!current) return;
-    const updatedCurr = {
-      ...current,
-      records: { 
-        ...current.records,
-        [discipline]: value
+// dans AccountContext.js, à la place de l’actuel updateRecord :
+const updateRecord = async (discipline, value) => {
+  if (!current) return;
+
+  let newRecords;
+  if (discipline === 'numbers' && value.mode) {
+    // fusionne au lieu d’écraser
+    newRecords = {
+      ...current.records,
+      numbers: {
+        // récupère l’ancien sous-objet numbers (ou vide)
+        ...(current.records.numbers || {}),
+        // ajoute/écrase la clé spécifique au mode choisi
+        [value.mode]: {
+          score: value.score,
+          time:  value.time
+        }
       }
-    };
-    // mise à jour in-place dans la liste
-    const updatedList = accounts.map(a =>
-      a.id === current.id ? updatedCurr : a
-    );
-    setAccounts(updatedList);
-    setCurrent(updatedCurr);
-    await persist(ACCOUNTS_KEY, updatedList);
-    await persist(CURRENT_KEY, updatedCurr);
+    }
+  } else {
+    // comportement inchangé pour les autres épreuves
+    newRecords = {
+      ...current.records,
+      [discipline]: value
+    }
+  }
+
+  const updatedCurr = {
+    ...current,
+    records: newRecords
   };
+  // persistance inchangée
+  const updatedList = accounts.map(a =>
+    a.id === current.id ? updatedCurr : a
+  );
+  setAccounts(updatedList);
+  setCurrent(updatedCurr);
+  await persist(ACCOUNTS_KEY, updatedList);
+  await persist(CURRENT_KEY, updatedCurr);
+};
+
 
   return (
     <AccountContext.Provider value={{
