@@ -77,7 +77,7 @@ export default function NumbersScreen() {
           <View style={styles.inputBox}>
             <TextInput
               style={styles.input}
-              placeholder="Nombres de chiffres"
+              placeholder="Objectif"
               placeholderTextColor="#666"
               keyboardType="number-pad"
               value={objectif}
@@ -109,14 +109,21 @@ export default function NumbersScreen() {
         </View>
 
         {/* Record Box - hidden in custom mode */}
-        {mode !== 'custom' && (
-          <View style={styles.recordBox}>
-            <Ionicons name="trophy-outline" size={20} color="#fff" />
-            <Text style={styles.recordText}>
-              Last best : {lastScore} en {lastTime}s
-            </Text>
-          </View>
-        )}
+        <View style={styles.recordBox}>
+  <Ionicons
+    name="trophy-outline"
+    size={20}
+    color={mode === 'custom' ? 'transparent' : '#fff'}
+  />
+  <Text
+    style={[
+      styles.recordText,
+      mode === 'custom' && { color: 'transparent' }
+    ]}
+  >
+    Last best : {lastScore} en {lastTime}s
+  </Text>
+</View>
 
         {/* Play Button */}
         <TouchableOpacity
@@ -146,12 +153,12 @@ const styles = StyleSheet.create({
   dropdown: { borderWidth: 1, borderColor: '#fff', borderRadius: 16, overflow: 'hidden', marginBottom: 20 },
   picker: { height: 50, color: '#fff' },
   row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-  inputBox: { flex: 1, backgroundColor: '#111', borderRadius: 16, marginRight: 10, justifyContent: 'center' },
-  input: { paddingHorizontal: 16, color: '#fff', fontSize: 16, textAlignVertical: 'center' },
+  inputBox: { flex: 1, backgroundColor: '#111', borderRadius: 16, marginRight: 10, justifyContent: 'center', alignItems: 'center' },
+  input: { paddingHorizontal: 16, color: '#fff', fontSize: 16, textAlignVertical: 'center', alignItems: 'center'},
   staticTimeBox: { flex: 1, backgroundColor: '#111', borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
   staticTime: { color: '#fff', fontSize: 16 },
-  recordBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#fff', borderRadius: 16, padding: 12, marginBottom: 30 },
-  recordText: { color: '#fff', fontSize: 16, marginLeft: 8 },
+  recordBox: { flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 12, marginBottom: 30, alignSelf: 'center'},
+  recordText: {alignItems: 'center', color: '#fff', fontSize: 16, marginLeft: 8 },
   playButton: { width: 140, height: 140, borderRadius: 70, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginBottom: 30 },
   playText: { fontSize: 24, fontWeight: '700', color: '#000' },
   learnMore: { alignSelf: 'center', paddingVertical: 12, paddingHorizontal: 24, backgroundColor: '#fff', borderRadius: 20 },
