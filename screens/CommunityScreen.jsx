@@ -9,8 +9,6 @@ import {
   StyleSheet,
   ScrollView
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AccountContext } from '../contexts/AccountContext';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -25,7 +23,7 @@ const DISCIPLINES = [
 ];
 
 export default function CommunityScreen() {
-  const { accounts, updateRecord } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
   const [selected, setSelected] = useState('numbers');
 
   // Tri selon la discipline sélectionnée
@@ -45,20 +43,6 @@ export default function CommunityScreen() {
       return getVal(b) - getVal(a);
     }), [accounts, selected]
   );
-
-  const renderCard = ({ item }) => {
-    // contenu réduit pour la vue en grille Cards
-    const rec = item.records?.cards;
-    const score = typeof rec === 'object' ? rec.score : (rec || 0);
-    return (
-      <View style={styles.card}>
-        <Text style={styles.cardName}>
-          {item.firstName}{'\n'}{item.lastName}
-        </Text>
-        <Text style={styles.cardScore}>{score} pts</Text>
-      </View>
-    );
-  };
 
   const renderRow = ({ item }) => {
     // vue classique pour toutes les autres disciplines

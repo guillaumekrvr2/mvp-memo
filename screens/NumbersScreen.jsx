@@ -1,5 +1,5 @@
 // screens/NumbersScreen.jsx
-import React, { useState, useCallback, useContext} from 'react'
+import React, { useState, useContext, useCallback } from 'react'
 import {
   SafeAreaView,
   View,
@@ -8,90 +8,124 @@ import {
   TouchableOpacity,
   TextInput
 } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { AccountContext } from '../contexts/AccountContext'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
-import { Vibration } from 'react-native';
+import { Picker } from '@react-native-picker/picker'
+import { Vibration } from 'react-native'
+import { AccountContext } from '../contexts/AccountContext'
 
 export default function NumbersScreen() {
   const navigation = useNavigation()
-  const { current, updateRecord } = useContext(AccountContext)
-  const [lastScore, setLastScore] = useState(0)
-  const [lastTime, setLastTime] = useState(null)
-  const [objectif, setObjectif] = useState('')
-  const [temps, setTemps] = useState('')
+  const { current } = useContext(AccountContext)
+  const discRec = current?.records?.numbers || { score: 0, time: 0 }
 
+  const [mode, setMode] = useState('memory-league')
+  const [objectif, setObjectif] = useState('')
+  const [temps, setTemps] = useState(60)
+  const [lastScore, setLastScore] = useState(discRec.score)
+  const [lastTime, setLastTime] = useState(discRec.time)
+
+  // Handler de changement de mode + temps par défaut, synchronisés
+  const onModeChange = (value) => {
+    let defaultTemps = value === 'iam' ? 300 : 60
+    setMode(value)
+    setTemps(defaultTemps)
+  }
+
+  // Met à jour l'affichage du record à chaque focus
   useFocusEffect(
     useCallback(() => {
-      const loadLastRecord = async () => {
-          const json = await AsyncStorage.getItem('lastRecord')
-          if (json) {
-            const { score, temps } = JSON.parse(json)
-            setLastScore(score)
-            setLastTime(temps)
-          }
-        await updateRecord('numbers', { score, time: temps })
-      }
-      loadLastRecord()
-    }, [])
+      setLastScore(discRec.score)
+      setLastTime(discRec.time)
+    }, [discRec.score, discRec.time])
   )
 
   return (
     <SafeAreaView style={styles.container}>
-
       <View style={styles.content}>
+
+        {/* Param Box */}
         <View style={styles.paramBox}>
-          <Text style={styles.paramText}>123456</Text>
+          <Text style={styles.paramText}>{objectif || '123456'}</Text>
           <Ionicons name="settings-outline" size={24} color="#fff" />
         </View>
 
-        <View style={styles.recordRow}>
-          <Text style={styles.recordLabel}>Record :</Text>
+        {/* Mode Dropdown */}
+        <View style={styles.dropdown}>
+          <Picker
+            selectedValue={mode}
+            onValueChange={onModeChange}
+            style={styles.picker}
+            dropdownIconColor="#fff"
+          >
+            <Picker.Item label="Memory League" value="memory-league" />
+            <Picker.Item label="IAM" value="iam" />
+            <Picker.Item label="Personnalisé" value="custom" />
+          </Picker>
+        </View>
+
+        {/* Objectif & Temps */}
+        <View style={styles.row}>
+          <View style={styles.inputBox}>
+            <TextInput
+              style={styles.input}
+              placeholder="Nombres de chiffres"
+              placeholderTextColor="#666"
+              keyboardType="number-pad"
+              value={objectif}
+              onChangeText={setObjectif}
+            />
+          </View>
+          <View style={styles.pickerBox}>
+            <Picker
+              selectedValue={temps}
+              onValueChange={(value) => setTemps(value)}
+              style={styles.pickerSmall}
+              dropdownIconColor="#fff"
+            >
+              {mode === 'memory-league' && (
+                <Picker.Item label="1 minute" value={60} />
+              )}
+              {mode === 'iam' && [
+  <Picker.Item key="iam-5" label="5 minutes" value={300} />,
+  <Picker.Item key="iam-15" label="15 minutes" value={900} />
+]}
+              {mode !== 'memory-league' && mode !== 'iam' && (
+                <>
+                  <Picker.Item label="1 minute" value={60} />
+                  <Picker.Item label="3 minutes" value={180} />
+                  <Picker.Item label="5 minutes" value={300} />
+                </>
+              )}
+            </Picker>
+          </View>
+        </View>
+
+        {/* Record Box */}
+        <View style={styles.recordBox}>
           <Ionicons name="trophy-outline" size={20} color="#fff" />
-          <Text style={styles.recordValue}>
-            {lastScore} nombres en {lastTime || '0'} secondes
+          <Text style={styles.recordText}>
+            Last best : {lastScore} en {lastTime}s
           </Text>
         </View>
 
-        {/* 3) Objectif */}
-        <View style={styles.inputRow}>
-          <Text style={styles.inputLabel}>Objectif</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Nombre de chiffres"
-            placeholderTextColor="#666"
-            keyboardType="number-pad"
-            value={objectif}
-            onChangeText={setObjectif}
-          />
-        </View>
-
-        {/* 4) Temps */}
-        <View style={styles.inputRow}>
-          <Text style={styles.inputLabel}>Temps (s)</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Secondes"
-            placeholderTextColor="#666"
-            keyboardType="number-pad"
-            value={temps}
-            onChangeText={setTemps}
-          />
-        </View>
-
-        {/* 5) Bouton Play */}
+        {/* Play Button */}
         <TouchableOpacity
           style={styles.playButton}
           onPress={() => {
-            Vibration.vibrate(100);
+            Vibration.vibrate(100)
             navigation.navigate('Decompte', {
               objectif: parseInt(objectif, 10),
-              temps: parseInt(temps, 10)
-            });
+              temps: temps
+            })
           }}
         >
-          <Ionicons name="play-circle-outline" size={48} color="#fff" />
+          <Text style={styles.playText}>PLAY</Text>
+        </TouchableOpacity>
+
+        {/* Learn More */}
+        <TouchableOpacity style={styles.learnMore}>
+          <Text style={styles.learnMoreText}>Learn more</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -100,61 +134,20 @@ export default function NumbersScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
-  topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 40,
-    paddingBottom: 12
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    marginTop: 15
-  },
-  paramBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#111',
-    borderRadius: 16,
-    padding: 16,
-    justifyContent: 'space-between'
-  },
-  paramText: { color: '#fff', fontSize: 20, fontWeight: '600' },
-  recordRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 24
-  },
-  recordLabel: {
-    color: '#fff',
-    fontSize: 16,
-    marginRight: 8
-  },
-  recordValue: {
-    color: '#fff',
-    fontSize: 16,
-    marginLeft: 8
-  },
-  inputRow: {
-    marginTop: 30
-  },
-  inputLabel: {
-    color: '#fff',
-    fontSize: 14,
-    marginBottom: 6
-  },
-  input: {
-    backgroundColor: '#111',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    color: '#fff',
-    fontSize: 16
-  },
-  playButton: {
-    marginTop: 40,
-    alignItems: 'center'
-  }
+  content: { flex: 1, paddingHorizontal: 20, justifyContent: 'center' },
+  paramBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#fff', borderRadius: 20, paddingVertical: 20, paddingHorizontal: 24, justifyContent: 'space-between', marginBottom: 20 },
+  paramText: { color: '#fff', fontSize: 28, fontWeight: '600' },
+  dropdown: { borderWidth: 1, borderColor: '#fff', borderRadius: 16, overflow: 'hidden', marginBottom: 20 },
+  picker: { height: 50, color: '#fff' },
+  row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
+  inputBox: { flex: 1, backgroundColor: '#111', borderRadius: 16, marginRight: 10 },
+  input: { paddingVertical: 12, paddingHorizontal: 16, color: '#fff', fontSize: 16 },
+  pickerBox: { flex: 1, borderWidth: 1, borderColor: '#fff', borderRadius: 16, overflow: 'hidden' },
+  pickerSmall: { height: 50, color: '#fff', textAlign: 'center' },
+  recordBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#fff', borderRadius: 16, paddingVertical: 12,	paddingHorizontal: 20, marginBottom: 30 },
+  recordText: { color: '#fff', fontSize: 16, marginLeft: 8 },
+  playButton: { width: 140, height: 140, borderRadius: 70, backgroundColor: '#fff', justifyContent: 'center',	alignItems: 'center',	alignSelf: 'center', marginBottom: 30 },
+  playText: { fontSize: 24, fontWeight: '700', color: '#000' },
+  learnMore: { alignSelf: 'center', paddingVertical: 12, paddingHorizontal: 24, backgroundColor: '#fff', borderRadius: 20 },
+  learnMoreText: { color: '#000', fontSize: 16, fontWeight: '600' }
 })
