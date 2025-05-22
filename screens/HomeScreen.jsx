@@ -1,8 +1,7 @@
 // screens/HomeScreen.jsx
 import React from 'react'
-import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
+import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { Ionicons } from '@expo/vector-icons'
 
 // Import des SVG via react-native-svg-transformer
 const LogoImg = require('../assets/icons/Memorize_icon.png')

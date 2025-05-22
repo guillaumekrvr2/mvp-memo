@@ -1,6 +1,6 @@
 // screens/CommunityScreen.jsx
 
-import React, { useContext, useState, useMemo, useCallback } from 'react';
+import React, { useContext, useState, useMemo } from 'react';
 import {
   View,
   Text,

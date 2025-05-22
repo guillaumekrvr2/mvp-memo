@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native'
-import Header from '../components/Header'
 
 const PaywallHatImg        = require('../assets/icons/Paywall_hat.png')
 const PaywallHourglassImg  = require('../assets/icons/Paywall_hourglass.png')
