@@ -1,5 +1,4 @@
-// screens/CorrectionScreen.jsx
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import {
   SafeAreaView,
   View,
@@ -38,18 +37,34 @@ export default function CorrectionScreen({ route, navigation }) {
     console.log('[CorrectionScreen] saveRecord called with:', { mode, score, time: temps })
     try {
       await updateRecord('numbers', { mode, score, time: temps })
-      // Affiche l'état actuel des records pour vérification
-      console.log('[CorrectionScreen] current.records.numbers:', current.records?.numbers)
-      const saved = current.records?.numbers?.[mode]
+      // Affiche directement le nouveau record
       Alert.alert(
         'Record sauvegardé',
-        `Mode: ${mode}\nScore: ${saved?.score || score}\nTemps: ${saved?.time || temps}s`
+        `Mode: ${mode}\nScore: ${score}\nTemps: ${temps}s`
       )
     } catch (e) {
       console.error('Erreur sauvegarde record', e)
       Alert.alert('Erreur', "Impossible de sauvegarder le record.")
     }
   }
+
+  // 6) Auto-save record si conditions remplies et mode approprié
+  useEffect(() => {
+    if (mode === 'memory-league' || mode === 'iam') {
+      const record = current.records?.numbers?.[mode]
+      const lastScore = record?.score
+      const lastTime = record?.time
+      // si pas de record précédent, ou si nouveau record
+      if (
+        !record ||
+        (temps === lastTime && score > lastScore) ||
+        (score === lastScore && temps < lastTime)
+      ) {
+        saveRecord()
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [score, temps, mode])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -85,10 +100,7 @@ export default function CorrectionScreen({ route, navigation }) {
 
       <Text style={styles.scoreText}>Score : {score} / {total}</Text>
 
-      {/* Bouton d'enregistrement */}
-      <TouchableOpacity style={styles.recordButton} onPress={saveRecord}>
-        <Text style={styles.recordButtonText}>Enregistrer comme record</Text>
-      </TouchableOpacity>
+      {/* Le bouton manuel d'enregistrement a été retiré */}
 
       <TouchableOpacity
         style={styles.retryButton}
@@ -154,22 +166,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 16
-  },
-  recordButton: {
-    marginTop: 20,
-    paddingHorizontal: 30,
-    paddingVertical: 12,
-    backgroundColor: '#000',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#fff',
-    alignSelf: 'center',
-    alignItems: 'center'
-  },
-  recordButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 14
   },
   retryButton: {
     marginTop: 12,
