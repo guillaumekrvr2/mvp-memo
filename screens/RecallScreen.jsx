@@ -1,5 +1,5 @@
 // screens/RecallScreen.jsx
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import {
   SafeAreaView,
   View,
@@ -18,23 +18,20 @@ export default function RecallScreen({ route, navigation }) {
   const total = objectif
   const cols = 6
 
-  // 1) Crée un ref pour chaque input
-  const inputRefs = useRef([])
-  if (inputRefs.current.length !== total) {
-    inputRefs.current = Array(total)
-      .fill()
-      .map(() => React.createRef())
-  }
+  // 1) Refs pour chaque input
+  const inputRefs = useRef(
+    Array(total).fill().map(() => React.createRef())
+  )
 
-  // 2) États des inputs
-  const [inputs, setInputs] = useState(Array(total).fill(''))
+  // 2) Stockage des valeurs sans state (uncontrolled)
+  const valuesRef = useRef(Array(total).fill(''))
 
-  // 3) Chrono de 4 minutes
+  // 3) Chrono 4 minutes
   const totalTime = 4 * 60
-  const [timeLeft, setTimeLeft] = useState(totalTime)
+  const [timeLeft, setTimeLeft] = React.useState(totalTime)
   useEffect(() => {
     if (timeLeft <= 0) return
-    const id = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
+    const id = setTimeout(() => setTimeLeft(t => t - 1), 1000)
     return () => clearTimeout(id)
   }, [timeLeft])
 
@@ -50,29 +47,45 @@ export default function RecallScreen({ route, navigation }) {
     }).start()
   }, [totalTime])
 
-  // 5) Construction des rangées
+  // 5) Construction des index en lignes
   const rows = []
   for (let i = 0; i < total; i += cols) {
-    rows.push(inputs.slice(i, i + cols))
+    rows.push(
+      Array(cols).fill().map((_, j) => i + j).filter(idx => idx < total)
+    )
   }
 
-  // 6) Gestion de la saisie et focus auto
+  // 6) Saisie & déplacement instantané
   const handleChange = (text, idx) => {
     const clean = text.replace(/[^0-9]/g, '')
-    const newInputs = [...inputs]
-    newInputs[idx] = clean
-    setInputs(newInputs)
+    valuesRef.current[idx] = clean
+    inputRefs.current[idx].current.setNativeProps({ text: clean })
 
-    // focus vers l’input suivant
-    if (clean.length > 0 && idx + 1 < total) {
-      const nextRef = inputRefs.current[idx + 1]
-      nextRef.current && nextRef.current.focus()
+    if (clean && idx + 1 < total) {
+      inputRefs.current[idx + 1].current.focus()
+    }
+  }
+
+  const handleKeyPress = ({ nativeEvent }, idx) => {
+    if (nativeEvent.key === 'Backspace') {
+      const prevValue = valuesRef.current[idx]
+      // 1) Si case vide ⇒ on remonte
+      if (prevValue === '' && idx > 0) {
+        // on efface la case précédente avant de focus
+        valuesRef.current[idx - 1] = ''
+        inputRefs.current[idx - 1].current.setNativeProps({ text: '' })
+        inputRefs.current[idx - 1].current.focus()
+      }
+      // 2) Si elle contenait un chiffre ⇒ on le supprime in-place
+      else {
+        valuesRef.current[idx] = ''
+        inputRefs.current[idx].current.setNativeProps({ text: '' })
+      }
     }
   }
 
   return (
     <SafeAreaView style={styles.container}>
-
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -94,41 +107,27 @@ export default function RecallScreen({ route, navigation }) {
         <View style={{ width: 28 }} />
       </View>
 
-      {/* GRILLE D’INPUTS */}
+      {/* GRILLE SANS SÉPARATEURS */}
       <View style={styles.gridContainer}>
         <ScrollView
           contentContainerStyle={styles.scroll}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="always"
         >
           {rows.map((row, rIdx) => (
             <View key={rIdx} style={styles.row}>
-              {row.map((val, cIdx) => {
-                const idx = rIdx * cols + cIdx
-                return (
-                  <TextInput
-                    ref={inputRefs.current[idx]}
-                    key={idx}
-                    style={[
-                      styles.cellInput,
-                      cIdx < cols - 1 && styles.separator
-                    ]}
-                    keyboardType="number-pad"
-                    maxLength={1}
-                    value={val}
-                    onChangeText={text => handleChange(text, idx)}
-                    onKeyPress={({ nativeEvent }) => {
-                      if (
-                        nativeEvent.key === 'Backspace' &&
-                        inputs[idx] === '' &&
-                        idx > 0
-                      ) {
-                        const prevRef = inputRefs.current[idx - 1]
-                        prevRef.current && prevRef.current.focus()
-                      }
-                    }}
-                  />
-                )
-              })}
+              {row.map(idx => (
+                <TextInput
+                  key={idx}
+                  ref={inputRefs.current[idx]}
+                  style={styles.cellInput}
+                  keyboardType="number-pad"
+                  maxLength={1}
+                  defaultValue=""
+                  onChangeText={text => handleChange(text, idx)}
+                  onKeyPress={e => handleKeyPress(e, idx)}
+                />
+              ))}
             </View>
           ))}
         </ScrollView>
@@ -138,7 +137,12 @@ export default function RecallScreen({ route, navigation }) {
       <TouchableOpacity
         style={styles.validateButton}
         onPress={() =>
-          navigation.navigate('Correction', { inputs, numbers, temps , mode})
+          navigation.navigate('Correction', {
+            inputs: [...valuesRef.current],
+            numbers,
+            temps,
+            mode
+          })
         }
       >
         <Text style={styles.validateText}>Valider</Text>
@@ -150,7 +154,6 @@ export default function RecallScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
 
-  // --- HEADER ---
   header: {
     marginTop: 30,
     flexDirection: 'row',
@@ -172,7 +175,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
 
-  // --- GRILLE CADRÉE ---
   gridContainer: {
     width: '75%',
     height: '60%',
@@ -190,13 +192,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    marginBottom: 8,
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent'
-  },
-  separator: {
-    borderRightWidth: 1,
-    borderRightColor: '#444'
+    marginBottom: 8
   },
   cellInput: {
     width: 42,
@@ -207,7 +203,6 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
 
-  // --- BOUTON VALIDER ---
   validateButton: {
     marginTop: 20,
     paddingHorizontal: 30,
