@@ -68,39 +68,37 @@ export function AccountProvider({ children }) {
     await AsyncStorage.removeItem(CURRENT_KEY);
   };
 
-  // 6) Mise à jour d’un record
-// dans AccountContext.js, à la place de l’actuel updateRecord :
+// 6) Mise à jour d’un record (gère désormais les modes pour toutes les disciplines)
 const updateRecord = async (discipline, value) => {
   if (!current) return;
 
   let newRecords;
-  if (discipline === 'numbers' && value.mode) {
-    // fusionne au lieu d’écraser
+  // si un mode est fourni, on stocke sous records[discipline][mode]
+  if (value.mode) {
+    const existing = current.records[discipline] || {};
     newRecords = {
       ...current.records,
-      numbers: {
-        // récupère l’ancien sous-objet numbers (ou vide)
-        ...(current.records.numbers || {}),
-        // ajoute/écrase la clé spécifique au mode choisi
+      [discipline]: {
+        ...existing,
         [value.mode]: {
           score: value.score,
           time:  value.time
         }
       }
-    }
+    };
   } else {
-    // comportement inchangé pour les autres épreuves
+    // pas de mode : on garde le comportement “classique”
     newRecords = {
       ...current.records,
       [discipline]: value
-    }
+    };
   }
 
   const updatedCurr = {
     ...current,
     records: newRecords
   };
-  // persistance inchangée
+  // mise à jour de la liste et persistance
   const updatedList = accounts.map(a =>
     a.id === current.id ? updatedCurr : a
   );
@@ -109,7 +107,6 @@ const updateRecord = async (discipline, value) => {
   await persist(ACCOUNTS_KEY, updatedList);
   await persist(CURRENT_KEY, updatedCurr);
 };
-
 
   return (
     <AccountContext.Provider value={{

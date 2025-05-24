@@ -1,5 +1,3 @@
-// screens/CommunityScreen.jsx
-
 import React, { useContext, useState, useMemo } from 'react';
 import {
   View,
@@ -10,7 +8,7 @@ import {
   ScrollView
 } from 'react-native';
 import { AccountContext } from '../contexts/AccountContext';
-import { Ionicons } from '@expo/vector-icons';
+import { Picker } from '@react-native-picker/picker';
 
 const DISCIPLINES = [
   { key: 'global',  label: 'Global' },
@@ -22,54 +20,78 @@ const DISCIPLINES = [
   { key: 'images',  label: 'Images' },
 ];
 
+const GAME_MODES = [
+  { key: 'memory-league', label: 'Memory League' },
+  { key: 'iam',         label: 'IAM' },
+];
+
 export default function CommunityScreen() {
   const { accounts } = useContext(AccountContext);
-  const [selected, setSelected] = useState('numbers');
+  const [selectedDiscipline, setSelectedDiscipline] = useState('numbers');
+  const [selectedMode, setSelectedMode] = useState('memoryLeague');
 
-  // Tri selon la discipline sélectionnée
-  const sorted = useMemo(() =>
-    [...accounts].sort((a, b) => {
-      const getVal = acct => {
-        if (selected === 'global') {
-          return DISCIPLINES.reduce((sum, d) => {
-            if (d.key === 'global') return sum;
-            const rec = acct.records?.[d.key];
-            return sum + (typeof rec === 'object' ? rec.score : rec || 0);
+  // Tri selon la discipline et le mode sélectionnés
+  const sorted = useMemo(() => {
+  return [...accounts].sort((a, b) => {
+    const getScore = acct => {
+      if (selectedDiscipline === 'global') {
+        return DISCIPLINES
+          .filter(d => d.key !== 'global')
+          .reduce((sum, d) => {
+            const rec = acct.records?.[d.key]?.[selectedMode];
+            return sum + (rec?.score || 0);
           }, 0);
-        }
-        const rec = acct.records?.[selected];
-        return typeof rec === 'object' ? rec.score : rec || 0;
-      };
-      return getVal(b) - getVal(a);
-    }), [accounts, selected]
-  );
+      }
+      const recContainer = acct.records?.[selectedDiscipline];
+      if (recContainer && typeof recContainer === 'object') {
+        const rec = recContainer[selectedMode];
+        return rec?.score || 0;
+      }
+      return typeof recContainer === 'number'
+        ? recContainer
+        : 0;
+    };
+    return getScore(b) - getScore(a);
+  });
+}, [accounts, selectedDiscipline, selectedMode]);
 
-  const renderRow = ({ item }) => {
-    // vue classique pour toutes les autres disciplines
-    let text;
-    if (selected === 'global') {
-      const total = DISCIPLINES.reduce((sum, d) => {
-        if (d.key === 'global') return sum;
-        const rec = item.records?.[d.key];
-        return sum + (typeof rec === 'object' ? rec.score : rec || 0);
+const renderRow = ({ item }) => {
+  let text;
+  if (selectedDiscipline === 'global') {
+    const total = DISCIPLINES
+      .filter(d => d.key !== 'global')
+      .reduce((sum, d) => {
+        const rec = item.records?.[d.key]?.[selectedMode];
+        return sum + (rec?.score || 0);
       }, 0);
-      text = `${total} pts`;
-    } else {
-      const rec = item.records?.[selected];
-      text = typeof rec === 'object'
-        ? `${rec.score} en ${rec.time}s`
-        : `${rec || 0} pts`;
+    text = `${total} pts`;
+  } else {
+    const recContainer = item.records?.[selectedDiscipline];
+    let rec;
+    if (recContainer && typeof recContainer === 'object') {
+      rec = recContainer[selectedMode];
     }
-    return (
-      <View style={styles.row}>
-        <Text style={styles.name}>{item.firstName} {item.lastName}</Text>
-        <Text style={styles.score}>{text}</Text>
-      </View>
-    );
-  };
+    if (rec) {
+      text = `${rec.score} en ${rec.time}s`;
+    } else {
+      const fallback = typeof recContainer === 'number'
+        ? recContainer
+        : 0;
+      text = `${fallback} pts`;
+    }
+  }
+
+  return (
+    <View style={styles.row}>
+      <Text style={styles.name}>{item.firstName} {item.lastName}</Text>
+      <Text style={styles.score}>{text}</Text>
+    </View>
+  );
+};
 
   return (
     <View style={styles.container}>
+      {/* Sélecteur de discipline */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -78,26 +100,37 @@ export default function CommunityScreen() {
         {DISCIPLINES.map(d => (
           <TouchableOpacity
             key={d.key}
-            style={[styles.tab, selected === d.key && styles.tabActive]}
-            onPress={() => setSelected(d.key)}
+            style={[styles.tab, selectedDiscipline === d.key && styles.tabActive]}
+            onPress={() => setSelectedDiscipline(d.key)}
           >
-            <Text style={[styles.tabText, selected === d.key && styles.tabTextActive]}>
+            <Text style={[styles.tabText, selectedDiscipline === d.key && styles.tabTextActive]}>
               {d.label}
             </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
+      {/* Sélecteur de mode de jeu */}
       <View style={styles.headerRow}>
         <Text style={styles.header}>Leaderboard</Text>
-        <Ionicons name="trophy-outline" size={20} color="#fff" />
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={selectedMode}
+            style={styles.picker}
+            dropdownIconColor="#fff"
+            onValueChange={value => setSelectedMode(value)}
+          >
+            {GAME_MODES.map(m => (
+              <Picker.Item key={m.key} label={m.label} value={m.key} />
+            ))}
+          </Picker>
+        </View>
       </View>
 
       <FlatList
-        key={selected}
+        key={`${selectedMode}-${selectedDiscipline}`}
         data={sorted}
         keyExtractor={i => i.id}
-        // si Cards, on passe en grille 2 colonnes
         numColumns={1}
         renderItem={renderRow}
         ListEmptyComponent={<Text style={styles.empty}>Aucun participant</Text>}
@@ -112,10 +145,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
     padding: 20,
-    height: 80
   },
   tabs: {
     paddingBottom: 10,
+    marginBottom: 8
   },
   tab: {
     width: 120,
@@ -145,45 +178,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginVertical: 12,
   },
   header: {
     color: '#fff',
     fontSize: 20,
     fontWeight: '600',
   },
-
-  // === pour la grille Cards ===
-  columnWrapper: {
-    justifyContent: 'center',  // centre chaque ligne de 2 cartes
+  pickerContainer: {
+    backgroundColor: '#111',
+    borderRadius: 8,
+    height: 40,
+    position: 'relative',  // pour que l'enfant en absolute soit relatif à ce view
+    overflow: 'visible',   // autorise le débordement
   },
+  picker: {
+    width: 160,
+    color: '#fff',
+    position: 'absolute',  // on sort du flux normal
+    top: -20,              // on remonte de moitié de la hauteur en trop               // plein‐largeur à l'intérieur du container
+    right: 0,
+    height: 80,
+  },
+
   listPadding: {
     paddingBottom: 20,
+    marginTop: 8
   },
-  card: {
-    width: 120,
-    height: 120,
-    backgroundColor: '#111',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 10,
-  },
-  cardName: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  cardScore: {
-    color: '#fff',
-    fontSize: 16,
-    marginTop: 6,
-  },
-
-  // === pour la liste classique ===
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
