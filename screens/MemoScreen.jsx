@@ -35,10 +35,12 @@ export default function MemoScreen({ route, navigation }) {
 
   // Auto‐navigation vers RecallScreen quand le temps est écoulé
   useEffect(() => {
-    if (timeLeft <= 0) {
-      navigation.replace('Recall', { objectif, temps, numbers, mode })
-    }
-  }, [timeLeft, navigation, objectif, temps, numbers, mode])
+    const navTimer = setTimeout(() => {
+      navigation.replace('Recall', { objectif, temps, numbers, mode });
+    }, totalTime * 1000);
+  
+    return () => clearTimeout(navTimer);
+  }, [totalTime]);  
 
   // 3) Highlight par groupe dans la grille fixe à 6 colonnes
   const grouping = digitCount
