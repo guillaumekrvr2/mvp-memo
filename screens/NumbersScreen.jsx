@@ -13,10 +13,25 @@ import { Ionicons } from '@expo/vector-icons'
 import { Picker } from '@react-native-picker/picker'
 import { Vibration } from 'react-native'
 import { AccountContext } from '../contexts/AccountContext'
+import { Modal, Button } from 'react-native'
+import { useEffect } from 'react'
 
 export default function NumbersScreen() {
   const navigation = useNavigation()
   const { current } = useContext(AccountContext)
+
+  // 0) Nombre de chiffres et preview
+  const [digitCount, setDigitCount] = useState(6)
+  const [previewDigits, setPreviewDigits] = useState([])
+  const [modalVisible, setModalVisible] = useState(false)
+
+  // Générer un aperçu aléatoire de `digitCount` chiffres
+  useEffect(() => {
+    const arr = Array.from({ length: digitCount }, () =>
+      Math.floor(Math.random() * 10)
+    )
+    setPreviewDigits(arr)
+  }, [digitCount])
 
   // 1) Mode and parameters
   const [mode, setMode] = useState('memory-league')
@@ -51,11 +66,44 @@ export default function NumbersScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
 
-        {/* Param Box */}
-        <View style={styles.paramBox}>
-          <Text style={styles.paramText}>123456</Text>
+        {/* Param Box – cliquable pour ouvrir la modal */}
+        <TouchableOpacity
+          style={styles.paramBox}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.paramText}>
+            {previewDigits.join('')}
+          </Text>
           <Ionicons name="settings-outline" size={24} color="#fff" />
-        </View>
+        </TouchableOpacity>
+
+        {/* Modal de sélection du nombre de chiffres */}
+        <Modal
+          visible={modalVisible}
+          transparent
+          animationType="slide"
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalBackdrop}>
+            <View style={styles.modalContent}>
+              <Text style={{ color: '#fff', marginBottom: 8 }}>Choisir le nombre de chiffres</Text>
+              <Picker
+                selectedValue={digitCount}
+                onValueChange={setDigitCount}
+                style={[styles.picker, { width: '100%' }]}
+                dropdownIconColor="#fff"
+                itemStyle={{ color: '#fff' }}
+              >
+                {[1,2,3,4,5,6].map(n => (
+                  <Picker.Item key={n} label={`${n}`} value={n} />
+                ))}
+              </Picker>
+              <TouchableOpacity style={styles.learnMore} onPress={() => setModalVisible(false)} >
+                <Text style={styles.learnMoreText}>OK</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
 
         {/* Mode Picker */}
         <View style={styles.dropdown}>
@@ -130,7 +178,7 @@ export default function NumbersScreen() {
           style={styles.playButton}
           onPress={() => {
             Vibration.vibrate(100)
-            navigation.navigate('Decompte', { objectif: parseInt(objectif, 10), temps, mode })
+            navigation.navigate('Decompte', { objectif: parseInt(objectif, 10), temps, mode, digitCount })
           }}
         >
           <Text style={styles.playText}>PLAY</Text>
@@ -148,8 +196,8 @@ export default function NumbersScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
   content: { flex: 1, paddingHorizontal: 20, justifyContent: 'center' },
-  paramBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#fff', borderRadius: 20, padding: 20, justifyContent: 'space-between', marginBottom: 20 },
-  paramText: { color: '#fff', fontSize: 28, fontWeight: '600' },
+  paramBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#fff', borderRadius: 20, padding: 20, justifyContent: 'center', marginBottom: 20 },
+  paramText: { color: '#fff', fontSize: 28, fontWeight: '600', marginRight: 12},
   dropdown: { borderWidth: 1, borderColor: '#fff', borderRadius: 16, overflow: 'hidden', marginBottom: 20 },
   picker: { height: 50, color: '#fff' },
   row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
@@ -169,5 +217,19 @@ const styles = StyleSheet.create({
   playButton: { width: 140, height: 140, borderRadius: 70, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginBottom: 30 },
   playText: { fontSize: 24, fontWeight: '700', color: '#000' },
   learnMore: { alignSelf: 'center', paddingVertical: 12, paddingHorizontal: 24, backgroundColor: '#fff', borderRadius: 20 },
-  learnMoreText: { color: '#000', fontSize: 16, fontWeight: '600' }
+  learnMoreText: { color: '#000', fontSize: 16, fontWeight: '600' },
+  // Styles pour la modal
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modalContent: {
+    width: 260,
+    backgroundColor: '#111',
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'center'
+  }
 })

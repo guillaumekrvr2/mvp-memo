@@ -13,7 +13,8 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 
 export default function MemoScreen({ route, navigation }) {
-  const { objectif, temps, mode } = route.params
+  const { objectif, temps, mode, digitCount } = route.params
+
   // 1) Génération des chiffres
   const [numbers, setNumbers] = useState([])
   useEffect(() => {
@@ -32,17 +33,19 @@ export default function MemoScreen({ route, navigation }) {
     return () => clearTimeout(id)
   }, [timeLeft])
 
-  //  Auto‐navigation vers RecallScreen quand le temps est écoulé
+  // Auto‐navigation vers RecallScreen quand le temps est écoulé
   useEffect(() => {
-     if (timeLeft <= 0) {
-       navigation.replace('Recall', { objectif, temps, numbers, mode })
-      }
-    }, [timeLeft, navigation, objectif, temps, numbers, mode])
+    if (timeLeft <= 0) {
+      navigation.replace('Recall', { objectif, temps, numbers, mode })
+    }
+  }, [timeLeft, navigation, objectif, temps, numbers, mode])
 
-  // 3) Highlight par rangée
-  const [highlightRow, setHighlightRow] = useState(0)
+  // 3) Highlight par groupe dans la grille fixe à 6 colonnes
+  const grouping = digitCount
   const total = numbers.length
   const cols = 6
+  const maxGroupIndex = Math.ceil(total / grouping) - 1
+  const [highlightIndex, setHighlightIndex] = useState(0)
 
   // 4) Construction des lignes de 6
   const rows = []
@@ -50,8 +53,10 @@ export default function MemoScreen({ route, navigation }) {
     rows.push(numbers.slice(i, i + cols))
   }
 
-  // 5) Texte de la carte highlight
-  const highlightDigits = rows[highlightRow]?.join('') || ''
+  // 5) Texte de la carte highlight (slice selon digitCount)
+  const highlightDigits = numbers
+    .slice(highlightIndex * grouping, highlightIndex * grouping + grouping)
+    .join('')
 
   // 6) Animation continue de la barre
   const animProgress = useRef(new Animated.Value(0)).current
@@ -70,22 +75,18 @@ export default function MemoScreen({ route, navigation }) {
   const [scrollHeight, setScrollHeight] = useState(0)
   const ROW_HEIGHT = 48 + 12 // hauteur cellule + marginBottom
 
-useEffect(() => {
+  useEffect(() => {
     if (!scrollViewRef.current || scrollHeight === 0) return
-
     const visibleCount = Math.floor(scrollHeight / ROW_HEIGHT)
-    // on déclenche quand highlightRow atteint la 2e avant-dernière ligne visible
     const threshold = Math.max(0, visibleCount - 3)
-    if (highlightRow >= threshold) {
-        // on fait défiler de (highlightRow - threshold) lignes
-        const offset = (highlightRow - threshold) * ROW_HEIGHT
-        scrollViewRef.current.scrollTo({ y: offset, animated: true })
+    if (highlightIndex * grouping / cols >= threshold) {
+      const offset = ((highlightIndex * grouping) / cols - threshold) * ROW_HEIGHT
+      scrollViewRef.current.scrollTo({ y: offset, animated: true })
     }
-    }, [highlightRow, scrollHeight])
+  }, [highlightIndex, scrollHeight, grouping])
 
   return (
     <SafeAreaView style={styles.container}>
-
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -104,10 +105,7 @@ useEffect(() => {
             ]}
           />
         </View>
-        <TouchableOpacity
-        
-          onPress={() => navigation.replace('Recall', { objectif, temps, numbers, mode })}
-        >
+        <TouchableOpacity onPress={() => navigation.replace('Recall', { objectif, temps, numbers, mode })}>
           <Text style={styles.done}>Done</Text>
         </TouchableOpacity>
       </View>
@@ -118,53 +116,56 @@ useEffect(() => {
       </View>
 
       {/* GRILLE */}
-      <View style={styles.gridContainer} onLayout={e => setScrollHeight(e.nativeEvent.layout.height)}>
-      <ScrollView
-        ref={scrollViewRef}
-        contentContainerStyle={styles.scroll}
-        showsVerticalScrollIndicator={false}
+      <View
+        style={styles.gridContainer}
+        onLayout={e => setScrollHeight(e.nativeEvent.layout.height)}
       >
-        {rows.map((row, rowIdx) => (
-          <View
-            key={rowIdx}
-            style={[
-              styles.row,
-              rowIdx === highlightRow && styles.highlightRow
-            ]}
-          >
-            {row.map((n, colIdx) => (
-              <View
-                key={colIdx}
-                style={[
-                  styles.cell,
-                  colIdx < cols - 1 && styles.separator
-                ]}
-              >
-                <Text style={styles.cellText}>{n}</Text>
-              </View>
-            ))}
-          </View>
-        ))}
-      </ScrollView>
+        <ScrollView
+          ref={scrollViewRef}
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+        >
+          {rows.map((row, rowIdx) => (
+            <View key={rowIdx} style={styles.row}>
+              {row.map((n, colIdx) => {
+                const globalIdx = rowIdx * cols + colIdx
+                const start = highlightIndex * grouping
+                const end = start + grouping
+                const isHighlighted = globalIdx >= start && globalIdx < end
+                return (
+                  <View
+                    key={colIdx}
+                    style={[
+                      styles.cell,
+                      colIdx < cols - 1 && styles.separator,
+                      isHighlighted && styles.highlightCell
+                    ]}
+                  >
+                    <Text style={styles.cellText}>{n}</Text>
+                  </View>
+                )
+              })}
+            </View>
+          ))}
+        </ScrollView>
       </View>
 
       {/* CONTRÔLES DU HIGHLIGHT */}
       <View style={styles.controls}>
         <TouchableOpacity
           onPress={() =>
-            setHighlightRow(prev => (prev > 0 ? prev - 1 : 0))
+            setHighlightIndex(i => Math.max(0, i - 1))
           }
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}  // ← ajoutez ceci
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           activeOpacity={0.7}
         >
           <Ionicons name="chevron-back-circle" size={40} color="#fff" />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => {
-            const maxRow = Math.floor((total - 1) / cols)
-            setHighlightRow(prev => (prev < maxRow ? prev + 1 : prev))
-          }}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}  // ← et ici
+          onPress={() =>
+            setHighlightIndex(i => Math.min(maxGroupIndex, i + 1))
+          }
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           activeOpacity={0.7}
         >
           <Ionicons name="chevron-forward-circle" size={40} color="#fff" />
@@ -222,18 +223,16 @@ const styles = StyleSheet.create({
 
   // --- GRILLE ---
   gridContainer: {
-    // 75% de la largeur de l’écran, 60% de sa hauteur
     width: '75%',
     height: '60%',
-    // centré horizontalement et verticalement
     alignSelf: 'center',
-    marginVertical: 16,  
+    marginVertical: 16,
     borderWidth: 1,
     borderColor: '#fff',
     borderRadius: 25,
-    verflow: 'hidden',
+    overflow: 'hidden',
     paddingVertical: 8
-    },
+  },
   scroll: {
     paddingHorizontal: 12,
     paddingTop: 16,
@@ -241,17 +240,13 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    marginBottom: 8, 
+    marginBottom: 8,
     borderBottomWidth: 2,
     borderBottomColor: 'transparent'
   },
   separator: {
     borderRightWidth: 1,
     borderRightColor: '#444'
-  },
-  highlightRow: {
-    borderBottomColor: '#fff',
-    borderBottomRadius: 20
   },
   cell: {
     width: 42,
@@ -263,6 +258,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '600'
+  },
+  highlightCell: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 4
   },
 
   // --- CONTROLES ---
