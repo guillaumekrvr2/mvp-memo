@@ -1,20 +1,21 @@
 // screens/NumbersScreen.jsx
-import React, { useState, useContext, useCallback } from 'react'
+import React, { useState, useContext, useCallback, useEffect } from 'react'
 import {
   SafeAreaView,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  TextInput
+  TextInput,
+  Switch,
+  Modal
 } from 'react-native'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import { Picker } from '@react-native-picker/picker'
 import { Vibration } from 'react-native'
 import { AccountContext } from '../contexts/AccountContext'
-import { Modal, Button } from 'react-native'
-import { useEffect } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function NumbersScreen() {
   const navigation = useNavigation()
@@ -38,16 +39,35 @@ export default function NumbersScreen() {
   const [objectif, setObjectif] = useState('')
   const [temps, setTemps] = useState(60)
 
+  // 1b) Auto-advance flag (persisted)
+  const [autoAdvance, setAutoAdvance] = useState(false)
+  const STORAGE_KEY = '@numbers_auto_advance'
+
+  // Load persisted switch
+  useEffect(() => {
+    if (mode === 'custom') {
+      AsyncStorage.getItem(STORAGE_KEY).then(value => {
+        if (value !== null) setAutoAdvance(value === 'true')
+      })
+    }
+  }, [mode])
+
+  // Persist on toggle
+  const onToggleAuto = newValue => {
+    setAutoAdvance(newValue)
+    AsyncStorage.setItem(STORAGE_KEY, newValue.toString())
+  }
+
   // 2) Retrieve record per mode
   const allNumRecs = current?.records?.numbers || {}
-  const discRec    = allNumRecs[mode] || { score: 0, time: 0 }
+  const discRec = allNumRecs[mode] || { score: 0, time: 0 }
 
   // 3) Local state for display
   const [lastScore, setLastScore] = useState(discRec.score)
-  const [lastTime, setLastTime]   = useState(discRec.time)
+  const [lastTime, setLastTime] = useState(discRec.time)
 
   // 4) Handle mode change
-  const onModeChange = (value) => {
+  const onModeChange = value => {
     setMode(value)
     if (value === 'iam') setTemps(300)
     else if (value === 'memory-league') setTemps(60)
@@ -71,9 +91,7 @@ export default function NumbersScreen() {
           style={styles.paramBox}
           onPress={() => setModalVisible(true)}
         >
-          <Text style={styles.paramText}>
-            {previewDigits.join('')}
-          </Text>
+          <Text style={styles.paramText}>{previewDigits.join('')}</Text>
           <Ionicons name="settings-outline" size={24} color="#fff" />
         </TouchableOpacity>
 
@@ -86,7 +104,9 @@ export default function NumbersScreen() {
         >
           <View style={styles.modalBackdrop}>
             <View style={styles.modalContent}>
-              <Text style={{ color: '#fff', marginBottom: 8 }}>Choisir le nombre de chiffres</Text>
+              <Text style={{ color: '#fff', marginBottom: 8 }}>
+                Choisir le nombre de chiffres
+              </Text>
               <Picker
                 selectedValue={digitCount}
                 onValueChange={setDigitCount}
@@ -98,7 +118,10 @@ export default function NumbersScreen() {
                   <Picker.Item key={n} label={`${n}`} value={n} />
                 ))}
               </Picker>
-              <TouchableOpacity style={styles.learnMore} onPress={() => setModalVisible(false)} >
+              <TouchableOpacity
+                style={styles.learnMore}
+                onPress={() => setModalVisible(false)}
+              >
                 <Text style={styles.learnMoreText}>OK</Text>
               </TouchableOpacity>
             </View>
@@ -156,29 +179,40 @@ export default function NumbersScreen() {
           )}
         </View>
 
+        {/* Auto-advance Option */}
+        {mode === 'custom' && (
+          <View style={styles.autoAdvanceRow}>
+            <Text style={styles.autoAdvanceLabel}>Auto-advance mode</Text>
+            <Switch
+              value={autoAdvance}
+              onValueChange={onToggleAuto}
+              trackColor={{ true: '#fff', false: '#fff' }}
+              thumbColor="#fff"
+              ios_backgroundColor="#fff"
+            />
+          </View>
+        )}
+
         {/* Record Box - hidden in custom mode */}
         <View style={styles.recordBox}>
-  <Ionicons
-    name="trophy-outline"
-    size={20}
-    color={mode === 'custom' ? 'transparent' : '#fff'}
-  />
-  <Text
-    style={[
-      styles.recordText,
-      mode === 'custom' && { color: 'transparent' }
-    ]}
-  >
-    Last best : {lastScore} en {lastTime}s
-  </Text>
-</View>
+          <Ionicons
+            name="trophy-outline"
+            size={20}
+            color={mode === 'custom' ? 'transparent' : '#fff'}
+          />
+          <Text
+            style={[styles.recordText, mode === 'custom' && { color: 'transparent' }]}
+          >
+            Last best : {lastScore} en {lastTime}s
+          </Text>
+        </View>
 
         {/* Play Button */}
         <TouchableOpacity
           style={styles.playButton}
           onPress={() => {
             Vibration.vibrate(100)
-            navigation.navigate('Decompte', { objectif: parseInt(objectif, 10), temps, mode, digitCount })
+            navigation.navigate('Decompte', { objectif: parseInt(objectif, 10), temps, mode, digitCount, autoAdvance })
           }}
         >
           <Text style={styles.playText}>PLAY</Text>
@@ -205,31 +239,14 @@ const styles = StyleSheet.create({
   input: { paddingHorizontal: 16, color: '#fff', fontSize: 16, textAlignVertical: 'center' },
   staticTimeBox: { flex: 1, backgroundColor: '#111', borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
   staticTime: { color: '#fff', fontSize: 16 },
-  recordBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 16,
-    padding: 12,
-    marginBottom: 30,
-    alignSelf: 'center',
-  },
-  recordText: {alignItems: 'center', color: '#fff', fontSize: 16, marginLeft: 8 },
+  autoAdvanceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
+  autoAdvanceLabel: { alignItems: 'center', color: '#fff', fontSize: 16, marginLeft: 8 },
+  recordBox: { flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 12, marginBottom: 30, alignSelf: 'center' },
+  recordText: { alignItems: 'center', color: '#fff', fontSize: 16, marginLeft: 8 },
   playButton: { width: 140, height: 140, borderRadius: 70, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginBottom: 30 },
   playText: { fontSize: 24, fontWeight: '700', color: '#000' },
   learnMore: { alignSelf: 'center', paddingVertical: 12, paddingHorizontal: 24, backgroundColor: '#fff', borderRadius: 20 },
   learnMoreText: { color: '#000', fontSize: 16, fontWeight: '600' },
-  // Styles pour la modal
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  modalContent: {
-    width: 260,
-    backgroundColor: '#111',
-    borderRadius: 16,
-    padding: 16,
-    alignItems: 'center'
-  }
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
+  modalContent: { width: 260, backgroundColor: '#111', borderRadius: 16, padding: 16, alignItems: 'center' }
 })
