@@ -16,6 +16,7 @@ import { Picker } from '@react-native-picker/picker'
 import { Vibration } from 'react-native'
 import { AccountContext } from '../contexts/AccountContext'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import AutoAdvanceSwitch from '../components/AutoAdvanceSwitch'
 
 export default function NumbersScreen() {
   const navigation = useNavigation()
@@ -181,16 +182,7 @@ export default function NumbersScreen() {
 
         {/* Auto-advance Option */}
         {mode === 'custom' && (
-          <View style={styles.autoAdvanceRow}>
-            <Text style={styles.autoAdvanceLabel}>Auto-advance mode</Text>
-            <Switch
-              value={autoAdvance}
-              onValueChange={onToggleAuto}
-              trackColor={{ true: '#fff', false: '#fff' }}
-              thumbColor="#fff"
-              ios_backgroundColor="#fff"
-            />
-          </View>
+          <AutoAdvanceSwitch enabled={autoAdvance} onToggle={onToggleAuto}/>
         )}
 
         {/* Record Box - hidden in custom mode */}
@@ -239,8 +231,6 @@ const styles = StyleSheet.create({
   input: { paddingHorizontal: 16, color: '#fff', fontSize: 16, textAlignVertical: 'center' },
   staticTimeBox: { flex: 1, backgroundColor: '#111', borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
   staticTime: { color: '#fff', fontSize: 16 },
-  autoAdvanceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  autoAdvanceLabel: { alignItems: 'center', color: '#fff', fontSize: 16, marginLeft: 8 },
   recordBox: { flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 12, marginBottom: 30, alignSelf: 'center' },
   recordText: { alignItems: 'center', color: '#fff', fontSize: 16, marginLeft: 8 },
   playButton: { width: 140, height: 140, borderRadius: 70, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginBottom: 30 },

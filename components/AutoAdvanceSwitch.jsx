@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STORAGE_KEY = '@numbers_auto_advance';
 
-export default function AutoAdvanceSwitch({ enabled, onToggle }) {
+export default function AutoAdvanceSwitch({ enabled = false, onToggle }) {
   const [value, setValue] = useState(enabled);
 
   // Charger la valeur persistée au montage
@@ -24,7 +24,14 @@ export default function AutoAdvanceSwitch({ enabled, onToggle }) {
   return (
     <View style={styles.row}>
       <Text style={styles.label}>Auto-advance mode</Text>
-      <Switch value={value} onValueChange={handleChange} />
+      <Switch
+        value={value}
+        onValueChange={handleChange}
+        // Pas de disabled ici, pour permettre le toggle
+        trackColor={{ false: '#ccc', true: '#fff' }}
+        thumbColor={value ? '#fff' : '#ccc'}
+        ios_backgroundColor="#ccc"
+      />
     </View>
   );
 }

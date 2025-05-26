@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
   gridContainer: { width: '75%', height: '60%', alignSelf: 'center', marginVertical: 16, borderWidth: 1, borderColor: '#fff', borderRadius: 25, overflow: 'hidden', paddingVertical: 8 },
   scroll: { paddingHorizontal: 12, paddingTop: 16, alignItems: 'center' },
   row: { flexDirection: 'row', marginBottom: 8, borderBottomWidth: 2, borderBottomColor: 'transparent' },
-  separator: { borderRightWidth: 1, borderRightColor: '#444' },
   cell: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center' },
   cellText: { color: '#fff', fontSize: 18, fontWeight: '600' },
   highlightCell: { backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 4 },
