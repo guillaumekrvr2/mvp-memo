@@ -54,10 +54,10 @@ export default function MemoScreen({ route, navigation }) {
   for (let i = 0; i < total; i += cols) {
     rows.push(numbers.slice(i, i + cols))
   }
-  const rowsCount = rows.length
+  const stepsCount = Math.ceil(total / grouping)
 
   // 5) Hook d'auto-advance
-  useAutoAdvance(autoAdvance, totalTime, rowsCount, setHighlightIndex)
+  useAutoAdvance(autoAdvance, totalTime, stepsCount, setHighlightIndex)
 
   // 6) Texte de la carte highlight
   const highlightDigits = numbers

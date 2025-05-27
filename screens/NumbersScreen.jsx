@@ -85,8 +85,10 @@ export default function NumbersScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-
+     <View style={[
+         styles.content,
+         mode === 'custom' && { justifyContent: 'flex-start' }
+       ]}>
         {/* Param Box – cliquable pour ouvrir la modal */}
         <TouchableOpacity
           style={styles.paramBox}
@@ -221,8 +223,8 @@ export default function NumbersScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
-  content: { flex: 1, paddingHorizontal: 20, justifyContent: 'center' },
-  paramBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#fff', borderRadius: 20, padding: 20, justifyContent: 'center', marginBottom: 20 },
+  content: { flex: 1, paddingHorizontal: 20},
+  paramBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#fff', borderRadius: 20, padding: 20, justifyContent: 'center', marginBottom: 20, marginTop : 40 },
   paramText: { color: '#fff', fontSize: 28, fontWeight: '600', marginRight: 12},
   dropdown: { borderWidth: 1, borderColor: '#fff', borderRadius: 16, overflow: 'hidden', marginBottom: 20 },
   picker: { height: 50, color: '#fff' },
