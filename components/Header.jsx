@@ -48,13 +48,11 @@ export default function Header({ navigation, back }) {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: '#000',
   },
   container: {
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000',
     position: 'relative',
     marginTop: 10,
   },

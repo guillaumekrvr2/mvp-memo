@@ -10,6 +10,7 @@ import CommunityScreen from '../screens/CommunityScreen'
 import ShopScreen from '../screens/ShopScreen'
 import { Ionicons } from '@expo/vector-icons'
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
+import { theme } from '../theme'
 
 const Tab = createBottomTabNavigator()
 
@@ -38,7 +39,7 @@ export default function AppNavigator() {
         tabBarShowLabel: false,
         // → fond noir pour toute la tabBar
         tabBarStyle: {
-          backgroundColor: '#000',
+          backgroundColor : theme.colors.background,
           borderTopWidth: 0,
           elevation: 0,    // supprime l’ombre Android
           shadowOpacity: 0 // supprime l’ombre iOS
@@ -77,7 +78,7 @@ export default function AppNavigator() {
            // si on est sur "Memorisation" ou "Décompte", on masque la tabBar
            tabBarStyle: hideOn.includes(nested)
                ? { display: 'none' }
-               : { backgroundColor: '#000', borderTopWidth: 0 }
+               : undefined
          }
        }}
      />

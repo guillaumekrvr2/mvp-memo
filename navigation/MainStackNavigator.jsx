@@ -20,7 +20,6 @@ export default function MainStackNavigator() {
           headerShown: true,
           headerTitle: 'Mon Profil',
           headerTintColor: '#fff',
-          headerStyle: { backgroundColor: '#000' },
         }}
       />
     </Stack.Navigator>

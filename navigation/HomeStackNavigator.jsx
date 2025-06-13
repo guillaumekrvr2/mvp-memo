@@ -7,6 +7,7 @@ import DecompteScreen  from '../screens/DecompteScreen'
 import MemoScreen     from '../screens/MemoScreen'
 import RecallScreen     from '../screens/RecallScreen'
 import CorrectionScreen from '../screens/CorrectionScreen'
+import { theme } from '../theme';
 
 const Stack = createNativeStackNavigator()
 
@@ -15,7 +16,7 @@ export default function HomeStackNavigator() {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: '#000' },
+        contentStyle: { backgroundColor: theme.colors.background },
     }} >
       <Stack.Screen name="HomeMain" component={HomeScreen} />
       <Stack.Screen name="Numbers" component={NumbersScreen} />

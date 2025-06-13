@@ -1,47 +1,60 @@
 // App.js
-import React from 'react'
-import { StatusBar } from 'react-native'
-import { NavigationContainer, DarkTheme } from '@react-navigation/native'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { AccountProvider } from './contexts/AccountContext'
+import React from 'react';
+import { StatusBar } from 'react-native';
+import { NavigationContainer, DarkTheme as NavDarkTheme } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { ThemeProvider } from 'styled-components/native';
+
+import { AccountProvider } from './contexts/AccountContext';
+import { theme as styledTheme } from './theme';    // <- ton design system
+
 
 // Auth screens
-import LoginScreen from './screens/LoginScreen'
-import SignUpScreen from './screens/SignUpScreen'
+import LoginScreen  from './screens/LoginScreen';
+import SignUpScreen from './screens/SignUpScreen';
 
 // Main tabs
-import MainStackNavigator from './navigation/MainStackNavigator'
+import MainStackNavigator from './navigation/MainStackNavigator';
 
-// Thème sombre personnalisé
-const MyTheme = {
-  ...DarkTheme,
+// 1) Thème React Navigation personnalisé
+const MyNavTheme = {
+  ...NavDarkTheme,
   colors: {
-    ...DarkTheme.colors,
-    background: '#000',
+    ...NavDarkTheme.colors,
+    background: styledTheme.colors.background,  // '#000'
+    text: styledTheme.colors.primary,           // '#fff'
+    // …tu peux override d’autres couleurs si besoin
   },
-}
+};
 
-const RootStack = createNativeStackNavigator()
+const RootStack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
-      <AccountProvider>
-        <NavigationContainer theme={MyTheme}>
-          <RootStack.Navigator
-            initialRouteName="Main"
-            screenOptions={{ headerShown: false }}
-          >
-          {/* Application principale (onglets + profil) */}
-          <RootStack.Screen name="Main" component={MainStackNavigator} />
+      <StatusBar barStyle="light-content" backgroundColor={styledTheme.colors.background} />
 
-            {/* Écrans d'authentification */}
-            <RootStack.Screen name="Login" component={LoginScreen} />
-            <RootStack.Screen name="SignUp" component={SignUpScreen} />
-          </RootStack.Navigator>
+      {/* 2) Injecte ton theme styled-components */}
+      <ThemeProvider theme={styledTheme}>  
+
+        {/* 3) Navigation */}
+        <NavigationContainer theme={MyNavTheme}>
+          <AccountProvider>
+            <RootStack.Navigator
+              initialRouteName="Main"
+              screenOptions={{ headerShown: false }}
+            >
+              {/* Application principale (onglets + profil) */}
+              <RootStack.Screen name="Main" component={MainStackNavigator} />
+
+              {/* Écrans d'authentification */}
+              <RootStack.Screen name="Login"  component={LoginScreen} />
+              <RootStack.Screen name="SignUp" component={SignUpScreen} />
+            </RootStack.Navigator>
+          </AccountProvider>
         </NavigationContainer>
-      </AccountProvider>
+
+      </ThemeProvider>
     </>
-  )
+  );
 }
