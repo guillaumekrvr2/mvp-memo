@@ -1,5 +1,5 @@
 export default {
-    background:    '#6514EA', // fond principal de l’app
+    background:    '#000000', // fond principal de l’app
     surface:       '#111111', // fonds secondaires (cards, sections)
     primary:       '#FFFFFF', // couleur principale (texte, icônes sur fond sombre)
     secondary:     '#A2A2A2', // texte secondaire, légendes

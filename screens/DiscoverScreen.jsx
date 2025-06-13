@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { theme } from '../theme';  
 
 // Import du logo Memorize
 const LogoImg = require('../assets/icons/Memorize_icon.png');
@@ -98,7 +99,7 @@ export default function DiscoverScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: theme.colors.background,
     paddingTop: 40,
   },
   topBar: {

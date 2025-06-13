@@ -70,18 +70,19 @@ export default function AppNavigator() {
       }}
     }
     >
-      <Tab.Screen name="Home" component={HomeStackNavigator} options={({ route }) => {
-         // récupère le nom du screen actif dans HomeStackNavigator
-         const nested = getFocusedRouteNameFromRoute(route) ?? 'HomeMain'
-         const hideOn = ['Memorisation', 'Decompte', 'Recall']
-         return {
-           // si on est sur "Memorisation" ou "Décompte", on masque la tabBar
-           tabBarStyle: hideOn.includes(nested)
-               ? { display: 'none' }
-               : undefined
-         }
-       }}
-     />
+      <Tab.Screen
+  name="Home"
+  component={HomeStackNavigator}
+  options={({ route }) => {
+    const nested = getFocusedRouteNameFromRoute(route) ?? 'HomeMain'
+    const hideOn = ['Memorisation', 'Decompte', 'Recall']
+    if (hideOn.includes(nested)) {
+      return { tabBarStyle: { display: 'none' } }
+    }
+    return {}    // pas de tabBarStyle => on garde celui du screenOptions
+  }}
+/>
+
       <Tab.Screen name="Discover" component={DiscoverScreen} />
       <Tab.Screen name="Community" component={CommunityScreen} />
       <Tab.Screen name="Shop" component={ShopScreen} />

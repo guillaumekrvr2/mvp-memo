@@ -1,6 +1,6 @@
 // components/MenuButton.jsx
 import React from 'react';
-import { MenuButton as Button, ButtonText } from '../styled-components/HomeStyles';
+import { MenuButton as Button, ButtonText } from '../../styled-components/HomeStyles';
 
 export function MenuButton({ label, onPress }) {
   return (

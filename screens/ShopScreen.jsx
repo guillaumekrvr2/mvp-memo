@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native'
+import { theme } from '../theme';
 
 const PaywallHatImg        = require('../assets/icons/Paywall_hat.png')
 const PaywallHourglassImg  = require('../assets/icons/Paywall_hourglass.png')
@@ -65,7 +66,7 @@ export default function ShopScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000'
+    backgroundColor: theme.colors.background,
   },
   content: {
     flex: 1,

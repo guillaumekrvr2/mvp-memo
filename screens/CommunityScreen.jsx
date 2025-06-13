@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { AccountContext } from '../contexts/AccountContext';
 import { Picker } from '@react-native-picker/picker';
+import { theme }  from '../theme'; 
 
 const DISCIPLINES = [
   { key: 'global',  label: 'Global' },
@@ -143,7 +144,7 @@ const renderRow = ({ item }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: theme.colors.background,
     padding: 20,
   },
   tabs: {

@@ -7,7 +7,7 @@ import {
   LearnMoreButton,
   LearnMoreText,
 } from '../styled-components/HomeStyles';
-import { MenuButton } from '../components/MenuButton';
+import { MenuButton } from '../components/MenuButton/MenuButton';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
