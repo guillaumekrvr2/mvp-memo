@@ -1,11 +1,11 @@
-// components/MenuButton.jsx
+// src/components/atoms/MenuButton/MenuButton.jsx
 import React from 'react';
-import { MenuButton as Button, ButtonText } from '../../styled-components/HomeStyles';
+import * as S from './styles';
 
 export function MenuButton({ label, onPress }) {
   return (
-    <Button onPress={onPress}>
-      <ButtonText>{label}</ButtonText>
-    </Button>
+    <S.Container onPress={onPress}>
+      <S.Label>{label}</S.Label>
+    </S.Container>
   );
 }

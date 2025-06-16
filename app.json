@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/icons/Memorize-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.gk37550sta.mvpmemo"

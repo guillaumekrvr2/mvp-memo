@@ -1,13 +1,9 @@
 // screens/HomeScreen.jsx
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import {
-  Container,
-  Grid,
-  LearnMoreButton,
-  LearnMoreText,
-} from '../styled-components/HomeStyles';
+import { Container, Grid } from '../styled-components/HomeStyles';
 import { MenuButton } from '../components/MenuButton/MenuButton';
+import { SecondaryButton } from '../components/SecondaryButton/SecondaryButton';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -31,9 +27,9 @@ export default function HomeScreen() {
           />
         ))}
       </Grid>
-      <LearnMoreButton onPress={() => {/* action */}}>
-        <LearnMoreText>Learn more</LearnMoreText>
-      </LearnMoreButton>
+      <SecondaryButton onPress={() => {/* action */}}>
+        Learn more
+      </SecondaryButton>
     </Container>
   );
 }
