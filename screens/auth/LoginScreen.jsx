@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { AccountContext } from '../contexts/AccountContext';
+import { AccountContext } from '../../contexts/AccountContext';
 
 export default function LoginScreen({ navigation }) {
   const { login } = useContext(AccountContext);

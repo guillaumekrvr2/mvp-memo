@@ -1,6 +1,6 @@
 import React from 'react'
 import { TouchableOpacity, Text } from 'react-native'
-import TimeBadge from '../TimeBadge/TimeBadge'
+import TimeBadge from '../../atoms/TimeBadge/TimeBadge'
 import styles from './styles'
 
 export default function ArticleCard({ article, onPress }) {

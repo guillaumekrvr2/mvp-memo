@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Alert
 } from 'react-native'
-import { AccountContext } from '../contexts/AccountContext'
+import { AccountContext } from '../../contexts/AccountContext'
 
 export default function CorrectionScreen({ route, navigation }) {
   // 1) Récupération des params, incluant maintenant `mode`

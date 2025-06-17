@@ -11,7 +11,7 @@ import {
   Easing
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import useAutoAdvance from '../hooks/useAutoAdvance'
+import useAutoAdvance from '../../hooks/useAutoAdvance'
 
 export default function MemoScreen({ route, navigation }) {
   const { objectif, temps, number, mode, digitCount, autoAdvance } = route.params

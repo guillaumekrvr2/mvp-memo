@@ -9,5 +9,5 @@ export default {
     borderOnLight: '#000000', // border sur fond clair
     textOnDark:    '#FFFFFF', // texte sur fond sombre
     textOnLight:   '#000000', // texte sur fond clair
-    icon : '#FFFFFF',
+    icon :         '#FFFFFF',
   };

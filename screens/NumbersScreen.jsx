@@ -16,7 +16,7 @@ import { Picker } from '@react-native-picker/picker'
 import { Vibration } from 'react-native'
 import { AccountContext } from '../contexts/AccountContext'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import AutoAdvanceSwitch from '../components/AutoAdvanceSwitch'
+import AutoAdvanceSwitch from '../components/atoms/AutoAdvanceSwitch'
 
 export default function NumbersScreen() {
   const navigation = useNavigation()

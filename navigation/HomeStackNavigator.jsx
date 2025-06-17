@@ -4,9 +4,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import HomeScreen from '../screens/HomeScreen'
 import NumbersScreen from '../screens/NumbersScreen'
 import DecompteScreen  from '../screens/DecompteScreen'
-import MemoScreen     from '../screens/MemoScreen'
-import RecallScreen     from '../screens/RecallScreen'
-import CorrectionScreen from '../screens/CorrectionScreen'
+import MemoScreen     from '../screens/memo/MemoScreen'
+import RecallScreen     from '../screens/memo/RecallScreen'
+import CorrectionScreen from '../screens/memo/CorrectionScreen'
 import { theme } from '../theme';
 
 const Stack = createNativeStackNavigator()

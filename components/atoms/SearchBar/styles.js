@@ -1,6 +1,6 @@
 // src/components/molecules/SearchBar.styles.js
 import { StyleSheet } from 'react-native'
-import { theme } from '../../theme'      // ou '../atoms/Icon' selon ton arborescence
+import { theme } from '../../../theme'      // ou '../atoms/Icon' selon ton arborescence
 
 export default StyleSheet.create({
   container: {
@@ -14,6 +14,6 @@ export default StyleSheet.create({
   input: {
     flex: 1,
     marginLeft: theme.spacing.sm,
-    color: theme.colors.textPrimary,
+    color: theme.colors.textOnDark,
   },
 })

@@ -1,6 +1,6 @@
 import React from 'react'
 import { FlatList, View, Text } from 'react-native'
-import ArticleCard from '../ArticleCard/ArticleCard'  // ← vérifie que ton chemin est bon
+import ArticleCard from '../../molecules/ArticleCard/ArticleCard'  // ← vérifie que ton chemin est bon
 import styles from './styles'
 
 export default function ArticleList({ data, onPressItem }) {

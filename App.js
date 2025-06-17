@@ -10,8 +10,8 @@ import { theme as styledTheme } from './theme';    // <- ton design system
 
 
 // Auth screens
-import LoginScreen  from './screens/LoginScreen';
-import SignUpScreen from './screens/SignUpScreen';
+import LoginScreen  from './screens/auth/LoginScreen';
+import SignUpScreen from './screens/auth/SignUpScreen';
 
 // Main tabs
 import MainStackNavigator from './navigation/MainStackNavigator';

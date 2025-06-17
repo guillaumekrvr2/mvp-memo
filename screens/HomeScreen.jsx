@@ -2,8 +2,8 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Container, Grid } from '../styled-components/HomeStyles';
-import { MenuButton } from '../components/MenuButton/MenuButton';
-import { SecondaryButton } from '../components/SecondaryButton/SecondaryButton';
+import { MenuButton } from '../components/atoms/MenuButton/MenuButton';
+import { SecondaryButton } from '../components/atoms/SecondaryButton/SecondaryButton';
 
 export default function HomeScreen() {
   const navigation = useNavigation();

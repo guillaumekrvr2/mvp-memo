@@ -2,7 +2,7 @@
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import AppNavigator from './AppNavigator'
-import ProfileScreen from '../screens/ProfileScreen'
+import ProfileScreen from '../screens/account/ProfileScreen'
 
 const Stack = createNativeStackNavigator()
 
