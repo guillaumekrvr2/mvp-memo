@@ -8,7 +8,6 @@ export function ModePicker({
   selectedValue,
   onValueChange,
   options = [],      // [{ key, label }]
-  containerStyle,    // override container View
   pickerStyle,       // override Picker
 }) {
   return (

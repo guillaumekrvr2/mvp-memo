@@ -7,7 +7,8 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginVertical: theme.spacing.xl,   // à la place de marginTop
+    marginVertical: theme.spacing.xl, 
+    paddingLeft: theme.spacing.sm // à la place de marginTop
   },
   label: {
     color: theme.colors.textOnDark,
