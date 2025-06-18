@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons'
 import useAutoAdvance from '../../hooks/useAutoAdvance'
 
 export default function MemoScreen({ route, navigation }) {
-  const { objectif, temps, number, mode, digitCount, autoAdvance } = route.params
+  const { objectif, temps, mode, digitCount, autoAdvance } = route.params
 
   // 1) Génération des chiffres
   const [numbers, setNumbers] = useState([])

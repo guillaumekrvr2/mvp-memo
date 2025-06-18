@@ -1,5 +1,5 @@
 // screens/NumbersScreen.jsx
-import React, { useState, useContext, useCallback, useEffect } from 'react'
+import React, { useContext, useCallback, useState, useEffect} from 'react'
 import {
   SafeAreaView,
   View,
@@ -7,7 +7,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  Switch,
   Modal
 } from 'react-native'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
@@ -17,23 +16,22 @@ import { Vibration } from 'react-native'
 import { AccountContext } from '../contexts/AccountContext'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import AutoAdvanceSwitch from '../components/atoms/AutoAdvanceSwitch'
+import useDigitPicker from '../hooks/useDigitPicker'
+import HighlightBox from '../components/atoms/HighlightBox/HighlightBox'
 
 export default function NumbersScreen() {
   const navigation = useNavigation()
   const { current } = useContext(AccountContext)
 
-  // 0) Nombre de chiffres et preview
-  const [digitCount, setDigitCount] = useState(6)
-  const [previewDigits, setPreviewDigits] = useState([])
-  const [modalVisible, setModalVisible] = useState(false)
-
-  // Générer un aperçu aléatoire de `digitCount` chiffres
-  useEffect(() => {
-    const arr = Array.from({ length: digitCount }, () =>
-      Math.floor(Math.random() * 10)
-    )
-    setPreviewDigits(arr)
-  }, [digitCount])
+  // 0) Nombre de chiffres  preview  modal
+  const {
+    digitCount,
+    previewDigits,
+    modalVisible,
+    openModal,
+    closeModal,
+    setDigitCount
+  } = useDigitPicker(6)
 
   // 1) Mode and parameters
   const [mode, setMode] = useState('memory-league')
@@ -89,21 +87,19 @@ export default function NumbersScreen() {
          styles.content,
          mode === 'custom' && { justifyContent: 'flex-start' }
        ]}>
-        {/* Param Box – cliquable pour ouvrir la modal */}
-        <TouchableOpacity
-          style={styles.paramBox}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.paramText}>{previewDigits.join('')}</Text>
-          <Ionicons name="settings-outline" size={24} color="#fff" />
-        </TouchableOpacity>
+        {/* HighlightBox atomique */}
+        <HighlightBox
+          label={previewDigits.join('')}
+          icon={<Ionicons name="settings-outline" size={24} color="#fff" />}
+          onPress={openModal}
+        />
 
         {/* Modal de sélection du nombre de chiffres */}
         <Modal
           visible={modalVisible}
           transparent
           animationType="slide"
-          onRequestClose={() => setModalVisible(false)}
+          onRequestClose={closeModal}
         >
           <View style={styles.modalBackdrop}>
             <View style={styles.modalContent}>
@@ -112,7 +108,7 @@ export default function NumbersScreen() {
               </Text>
               <Picker
                 selectedValue={digitCount}
-                onValueChange={setDigitCount}
+                onValueChange={value => setDigitCount(value)}
                 style={[styles.picker, { width: '100%' }]}
                 dropdownIconColor="#fff"
                 itemStyle={{ color: '#fff' }}
@@ -121,10 +117,7 @@ export default function NumbersScreen() {
                   <Picker.Item key={n} label={`${n}`} value={n} />
                 ))}
               </Picker>
-              <TouchableOpacity
-                style={styles.learnMore}
-                onPress={() => setModalVisible(false)}
-              >
+              <TouchableOpacity style={styles.learnMore} onPress={closeModal}>
                 <Text style={styles.learnMoreText}>OK</Text>
               </TouchableOpacity>
             </View>
@@ -206,7 +199,13 @@ export default function NumbersScreen() {
           style={styles.playButton}
           onPress={() => {
             Vibration.vibrate(100)
-            navigation.navigate('Decompte', { objectif: parseInt(objectif, 10), temps, mode, digitCount, autoAdvance })
+            navigation.navigate('Decompte', {
+              objectif: parseInt(objectif, 10),
+              temps,
+              mode,
+              digitCount,      // ← toujours transmis !
+              autoAdvance
+            })
           }}
         >
           <Text style={styles.playText}>PLAY</Text>
@@ -224,8 +223,6 @@ export default function NumbersScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
   content: { flex: 1, paddingHorizontal: 20},
-  paramBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#fff', borderRadius: 20, padding: 20, justifyContent: 'center', marginBottom: 20, marginTop : 40 },
-  paramText: { color: '#fff', fontSize: 28, fontWeight: '600', marginRight: 12},
   dropdown: { borderWidth: 1, borderColor: '#fff', borderRadius: 16, overflow: 'hidden', marginBottom: 20 },
   picker: { height: 50, color: '#fff' },
   row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },

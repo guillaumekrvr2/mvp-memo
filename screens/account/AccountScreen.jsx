@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { View, Text, FlatList, Button, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import { AccountContext } from '../contexts/AccountContext';
+import { AccountContext } from '../../contexts/AccountContext';
 
 export default function AccountsScreen() {
   const { accounts, activeId, addAccount, selectAccount, removeAccount } = useContext(AccountContext);
