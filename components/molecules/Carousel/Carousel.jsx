@@ -1,8 +1,7 @@
 //components/molecules/Carousel/Carousel.jsx
-import React from 'react';
-import { ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { MenuButton } from '../../atoms/MenuButton/MenuButton';
-import * as S from './styles';
+import styles from './styles';
 
 export function Carousel({
   data,            // tableau d’objets { key, label }
@@ -12,22 +11,12 @@ export function Carousel({
   buttonStyle,     // style additionnel sur chaque MenuButton
 }) {
   return (
+  <View style={[styles.wrapperShadow, style]}>
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      style={[
-   style,
-   { 
-     flexGrow: 0,      // empêche le ScrollView de grandir
-     flexShrink: 0,    // empêche le ScrollView de voler l’espace
-     alignSelf: 'flex-start', 
-   }
- ]}
- contentContainerStyle={[
-   S.container,
-   { flexGrow: 0 }     // empêche le contenu d’appuyer sur le parent
- ]}
-    >
+      style={styles.scrollView}
+      contentContainerStyle={styles.container} >
       {data.map(item => (
         <MenuButton
           key={item.key}
@@ -38,5 +27,6 @@ export function Carousel({
         />
       ))}
     </ScrollView>
+     </View>
   );
 }

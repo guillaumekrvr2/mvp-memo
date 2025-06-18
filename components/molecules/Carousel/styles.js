@@ -1,22 +1,26 @@
-//components/molecules/Carousel/styles.js
+// components/molecules/Carousel/styles.js
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  // ton conteneur “tabs”
   container: {
     paddingBottom: 10,
     marginBottom: 8,
     flexDirection: 'row',
   },
-
-  // nouveaux styles pour le ScrollView
   scrollView: {
-    flexGrow: 0,       // n’étire pas le ScrollView
-    flexShrink: 0,     // n’évince pas les autres éléments
+    flexGrow: 0,
+    flexShrink: 0,
     alignSelf: 'flex-start',
   },
-
-  contentContainer: {
-    flexGrow: 0,       // n’appuie pas sur le parent
+  shadowWrapper: {
+    // iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    // Android
+    elevation: 3,
+    backgroundColor: 'transparent', // ou theme.colors.background si tu veux
+    overflow: 'visible',
   },
 });
