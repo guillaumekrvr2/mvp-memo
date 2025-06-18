@@ -1,4 +1,4 @@
-// src/theme/typography.js
+//theme/typography.js
 export default {
     size: {
       xs: 12,

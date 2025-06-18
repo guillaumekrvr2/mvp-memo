@@ -1,14 +1,8 @@
 // screens/ShopScreen.jsx
 import React from 'react'
-import {
-  SafeAreaView,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image
-} from 'react-native'
+import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import { theme } from '../theme';
+import { SecondaryButton } from '../components/atoms/SecondaryButton/SecondaryButton';
 
 const PaywallHatImg        = require('../assets/icons/Paywall_hat.png')
 const PaywallHourglassImg  = require('../assets/icons/Paywall_hourglass.png')
@@ -48,16 +42,7 @@ export default function ShopScreen() {
             </Text>
           </View>
         </View>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            // TODO : lancer l’abonnement / l’essai gratuit
-          }}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.buttonText}>Start 7 days trial</Text>
-        </TouchableOpacity>
+        <SecondaryButton onPress={() => {}}>Start 7 days trial</SecondaryButton>
       </View>
     </SafeAreaView>
   )
@@ -109,15 +94,4 @@ const styles = StyleSheet.create({
   bold: {
     fontWeight: '700'
   },
-  button: {
-    backgroundColor: '#fff',
-    paddingVertical: 12,
-    paddingHorizontal: 40,
-    borderRadius: 30
-  },
-  buttonText: {
-    color: '#000',
-    fontSize: 16,
-    fontWeight: '600'
-  }
 })

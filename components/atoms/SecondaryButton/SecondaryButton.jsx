@@ -1,4 +1,4 @@
-// src/components/atoms/SecondaryButton/SecondaryButton.jsx
+///components/atoms/SecondaryButton/SecondaryButton.jsx
 import React from 'react';
 import * as S from './styles';
 
