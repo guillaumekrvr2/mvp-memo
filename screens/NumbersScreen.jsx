@@ -15,7 +15,7 @@ import { Picker } from '@react-native-picker/picker'
 import { Vibration } from 'react-native'
 import { AccountContext } from '../contexts/AccountContext'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import AutoAdvanceSwitch from '../components/atoms/AutoAdvanceSwitch'
+import AutoAdvanceSwitch from '../components/atoms/AutoAdvanceSwitch/AutoAdvanceSwitch'
 import useDigitPicker from '../hooks/useDigitPicker'
 import HighlightBox from '../components/atoms/HighlightBox/HighlightBox'
 
