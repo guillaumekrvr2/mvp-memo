@@ -1,10 +1,10 @@
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import { theme }  from '../theme'; 
 import { Carousel } from '../components/molecules/Carousel/Carousel';
 import { ModePicker } from '../components/molecules/ModePicker/ModePicker'
-import { LeaderboardItem } from '../components/molecules/LeaderboardItem/LeaderboarItem';
 import { useLeaderboard } from '../hooks/useLeaderboard';
+import { LeaderboardList } from '../components/organisms/LeaderboardList/LeaderboardList';
 
 const DISCIPLINES = [
   { key: 'global',  label: 'Global' },
@@ -51,21 +51,11 @@ export default function CommunityScreen() {
         containerStyle={styles.headerRow}
       />
 
-      <FlatList
-        key={`${selectedMode}-${selectedDiscipline}`}
+      <LeaderboardList
         data={sorted}
-        keyExtractor={i => i.id}
-        numColumns={1}
-        renderItem={({ item }) => (
-         <LeaderboardItem
-           player={item}
-           discipline={selectedDiscipline}
-           mode={selectedMode}
-           disciplines={DISCIPLINES}
-         />
-       )}
-        ListEmptyComponent={<Text style={styles.empty}>Aucun participant</Text>}
-        contentContainerStyle={styles.listPadding}
+        discipline={selectedDiscipline}
+        mode={selectedMode}
+        disciplines={DISCIPLINES}
       />
     </View>
   );
@@ -76,10 +66,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
     padding: 20,
-  },
-  empty: {
-    color: '#666',
-    textAlign: 'center',
-    marginTop: 20,
   },
 });
