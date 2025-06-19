@@ -1,6 +1,12 @@
+// components/DigitPickerModal.jsx
 import React from 'react'
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import { Picker } from '@react-native-picker/picker'
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet
+} from 'react-native'
 import PropTypes from 'prop-types'
 import styles from './styles';
 
@@ -17,23 +23,35 @@ export default function DigitPickerModal({
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
     >
       <View style={styles.backdrop}>
         <View style={styles.container}>
-          <Text style={styles.title}>Choisir le nombre de chiffres</Text>
-          <Picker
-            selectedValue={digitCount}
-            onValueChange={onValueChange}
-            style={styles.picker}
-            dropdownIconColor="#fff"
-            itemStyle={{ color: '#fff' }}
-          >
+          <Text style={styles.title}>Choisir le nombre de chiffres à afficher</Text>
+
+          <View style={styles.grid}>
             {items.map(n => (
-              <Picker.Item key={n} label={`${n}`} value={n} />
+              <TouchableOpacity
+                key={n}
+                style={[
+                  styles.digitButton,
+                  digitCount === n && styles.digitButtonActive
+                ]}
+                onPress={() => onValueChange(n)}
+              >
+                <Text
+                  style={[
+                    styles.digitText,
+                    digitCount === n && styles.digitTextActive
+                  ]}
+                >
+                  {n}
+                </Text>
+              </TouchableOpacity>
             ))}
-          </Picker>
+          </View>
+
           <TouchableOpacity style={styles.okButton} onPress={onClose}>
             <Text style={styles.okText}>OK</Text>
           </TouchableOpacity>

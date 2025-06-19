@@ -1,14 +1,6 @@
 // screens/NumbersScreen.jsx
 import React, { useContext, useCallback, useState, useEffect } from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Vibration,
-} from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,6 +10,9 @@ import HighlightBox from '../components/atoms/HighlightBox/HighlightBox';
 import useDigitPicker from '../hooks/useDigitPicker';
 import { ModePicker } from '../components/molecules/ModePicker/ModePicker';
 import DigitPickerModal from '../components/molecules/DigitPickerModal/DigitPickerModal'
+import PlayButton from '../components/atoms/PlayButton/PlayButton'
+import { SecondaryButton } from '../components/atoms/SecondaryButton/SecondaryButton';
+
 
 export default function NumbersScreen() {
   const navigation = useNavigation();
@@ -98,13 +93,14 @@ export default function NumbersScreen() {
           onPress={openModal}
         />
 
-        {/* Digit modal */}
-        <DigitPickerModal
-          visible={modalVisible}
-          digitCount={digitCount}
-          onValueChange={setDigitCount}
-          onClose={closeModal}
-        />
+       
+     {/* notre nouvelle modal */}
+     <DigitPickerModal
+       visible={modalVisible}
+       digitCount={digitCount}
+       onValueChange={setDigitCount}
+       onClose={closeModal}
+     />
 
 
         {/* ModePicker */}
@@ -169,25 +165,21 @@ export default function NumbersScreen() {
           </Text>
         </View>
 
-        <TouchableOpacity
-          style={styles.playButton}
-          onPress={() => {
-            Vibration.vibrate(100);
-            navigation.navigate('Decompte', {
-              objectif: parseInt(objectif, 10),
-              temps,
-              mode,
-              digitCount,
-              autoAdvance,
-            });
-          }}
-        >
-          <Text style={styles.playText}>PLAY</Text>
-        </TouchableOpacity>
+         <PlayButton
+           onPress={() =>
+             navigation.navigate('Decompte', {
+               objectif: parseInt(objectif, 10),
+               temps,
+               mode,
+               digitCount,
+               autoAdvance,
+             })
+           }
+         />
 
-        <TouchableOpacity style={styles.learnMore}>
-          <Text style={styles.learnMoreText}>Learn more</Text>
-        </TouchableOpacity>
+      <SecondaryButton onPress={() => {/* action */}}>
+        Learn more
+      </SecondaryButton>
       </View>
     </SafeAreaView>
   );
@@ -203,8 +195,6 @@ const styles = StyleSheet.create({
   staticTime: { color: '#fff', fontSize: 16 },
   recordBox: { flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 12, marginBottom: 30, alignSelf: 'center' },
   recordText: { color: '#fff', fontSize: 16, marginLeft: 8 },
-  playButton: { width: 140, height: 140, borderRadius: 70, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginBottom: 30 },
-  playText: { fontSize: 24, fontWeight: '700', color: '#000' },
   learnMore: { alignSelf: 'center', paddingVertical: 12, paddingHorizontal: 24, backgroundColor: '#fff', borderRadius: 20 },
   learnMoreText: { color: '#000', fontSize: 16, fontWeight: '600' },
 });
