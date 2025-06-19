@@ -7,7 +7,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  Modal,
   Vibration,
 } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -18,7 +17,7 @@ import AutoAdvanceSwitch from '../components/atoms/AutoAdvanceSwitch/AutoAdvance
 import HighlightBox from '../components/atoms/HighlightBox/HighlightBox';
 import useDigitPicker from '../hooks/useDigitPicker';
 import { ModePicker } from '../components/molecules/ModePicker/ModePicker';
-import { Picker } from '@react-native-picker/picker';
+import DigitPickerModal from '../components/molecules/DigitPickerModal/DigitPickerModal'
 
 export default function NumbersScreen() {
   const navigation = useNavigation();
@@ -100,32 +99,13 @@ export default function NumbersScreen() {
         />
 
         {/* Digit modal */}
-        <Modal
+        <DigitPickerModal
           visible={modalVisible}
-          transparent
-          animationType="slide"
-          onRequestClose={closeModal}
-        >
-          <View style={styles.modalBackdrop}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalText}>Choisir le nombre de chiffres</Text>
-              <Picker
-                selectedValue={digitCount}
-                onValueChange={setDigitCount}
-                style={[styles.modalPicker, { width: '100%' }]}    
-                dropdownIconColor="#fff"
-                itemStyle={{ color: '#fff' }}
-              >
-                {[1, 2, 3, 4, 5, 6].map(n => (
-                  <Picker.Item key={n} label={`${n}`} value={n} />
-                ))}
-              </Picker>
-              <TouchableOpacity style={styles.learnMore} onPress={closeModal}>
-                <Text style={styles.learnMoreText}>OK</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
+          digitCount={digitCount}
+          onValueChange={setDigitCount}
+          onClose={closeModal}
+        />
+
 
         {/* ModePicker */}
         <ModePicker
@@ -227,8 +207,4 @@ const styles = StyleSheet.create({
   playText: { fontSize: 24, fontWeight: '700', color: '#000' },
   learnMore: { alignSelf: 'center', paddingVertical: 12, paddingHorizontal: 24, backgroundColor: '#fff', borderRadius: 20 },
   learnMoreText: { color: '#000', fontSize: 16, fontWeight: '600' },
-  modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { width: 260, backgroundColor: '#111', borderRadius: 16, padding: 16, alignItems: 'center' },
-  modalText: { color: '#fff', marginBottom: 8 },
-  modalPicker: { height: 50, color: '#fff' },
 });
