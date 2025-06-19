@@ -1,63 +1,89 @@
-// components/molecules/ModePicker/styles.js
 import { StyleSheet } from 'react-native';
 import { theme } from '../../../theme';
 
 export default StyleSheet.create({
-  // Styles partagés
+  // wrapper commun
   wrapper: {
+    width: '100%',
     marginVertical: theme.spacing.xl,
   },
-  label: {
-    color: theme.colors.textOnDark,
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: theme.spacing.sm,
-  },
 
-  // Layout différent par variant
+  // === community ===
   wrapperCommunity: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingLeft: theme.spacing.sm,
   },
-  wrapperNumbers: {
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.sm,
+  label: {
+    color: theme.colors.textOnDark,
+    fontSize: 20,
+    fontWeight: '600',
   },
-
-  // Container du Picker
-  containerCommunity: {
+  viewContainerCommunity: {
+   backgroundColor: '#111',
+   borderRadius: 8,
+   borderWidth: 1,
+   borderColor: '#fff',
+   height: 40,
+   width: 160,
+   justifyContent: 'center',
+   paddingHorizontal: 12,
+   overflow: 'hidden',
+  },
+  inputIOSCommunity: {
     backgroundColor: '#111',
     borderRadius: 8,
     height: 40,
-    width: 160,
-    overflow: 'hidden',
+    paddingHorizontal: 12,
+    color: '#fff',
   },
-  containerNumbers: {
+  inputAndroidCommunity: {
+    backgroundColor: '#111',
+    borderRadius: 8,
+    height: 40,
+    paddingHorizontal: 12,
+    color: '#fff',
+  },
+  iconContainerCommunity: {
+    top: (40 - 20) / 2,
+    right: 12,
+  },
+
+  // === numbers ===
+  viewContainerNumbers: {
+    width: '100%',
+    height: 50,           // ← couvrir toute la hauteur du bouton
+    justifyContent: 'center',  // ← centrer verticalement le texte
+    paddingLeft: 16,
+    paddingRight: 40,     // ← espace côté gauche **ET** côté droit
+  },
+  inputIOSNumbers: {
     backgroundColor: '#111',
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#fff',
     height: 50,
-    width: '100%',
-    overflow: 'hidden',
-  },
-
-  // Style interne du Picker
-  pickerCommunity: {
-    position: 'absolute',
-    top: -20,
-    right: 0,
-    width: 160,
-    height: 80,
+    paddingHorizontal: 16,
     color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
   },
-  pickerNumbers: {
-    position: 'relative',
-    top: 0,
-    width: '100%',
+  inputAndroidNumbers: {
+    backgroundColor: '#111',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#fff',
     height: 50,
+    paddingHorizontal: 16,
     color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  iconContainerNumbers: {
+    top: (50 - 20) / 2,
+    right: 12,
   },
 });

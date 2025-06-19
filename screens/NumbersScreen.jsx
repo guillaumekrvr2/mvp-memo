@@ -39,11 +39,11 @@ export default function NumbersScreen() {
   const [objectif, setObjectif] = useState('');
   const [temps, setTemps] = useState(60);
 
-  const modeOptions = [
-    { key: 'memory-league', label: 'Memory League' },
-    { key: 'iam', label: 'IAM' },
-    { key: 'custom', label: 'Personnalisé' },
-  ];
+ const modeOptions = [
+   { label: 'Memory League', value: 'memory-league' },
+   { label: 'IAM',           value: 'iam' },
+   { label: 'Personnalisé',  value: 'custom' },
+];
 
   // 1b) Auto-advance
   const [autoAdvance, setAutoAdvance] = useState(false);
@@ -132,7 +132,7 @@ export default function NumbersScreen() {
           variant="numbers"
           selectedValue={mode}
           onValueChange={onModeChange}
-          options={modeOptions}
+          options={modeOptions} // [{ label,value }]
         />
 
         {/* Objective & Time */}

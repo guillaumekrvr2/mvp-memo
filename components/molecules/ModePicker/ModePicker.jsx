@@ -1,32 +1,54 @@
-// components/molecules/ModePicker/ModePicker.jsx
-import React from 'react';
 import { View, Text } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import RNPickerSelect from 'react-native-picker-select';
+import { Ionicons } from '@expo/vector-icons';
 import S from './styles';
 
 export function ModePicker({
-  variant = 'community',    // 'community' ou 'numbers'
+  variant = 'community',
   selectedValue,
   onValueChange,
-  options = [],            // [{ key, label }]
+  options = [],
 }) {
   const isCommunity = variant === 'community';
 
   return (
-    <View style={[ S.wrapper, isCommunity ? S.wrapperCommunity : S.wrapperNumbers ]}>
+    <View style={[
+      S.wrapper,
+      isCommunity ? S.wrapperCommunity : S.wrapperNumbers
+    ]}>
       {isCommunity && <Text style={S.label}>Leaderboard</Text>}
-      <View style={isCommunity ? S.containerCommunity : S.containerNumbers}>
-        <Picker
-          selectedValue={selectedValue}
-          style={isCommunity ? S.pickerCommunity : S.pickerNumbers}
-          dropdownIconColor="#fff"
-          onValueChange={onValueChange}
-        >
-          {options.map(opt => (
-            <Picker.Item key={opt.key} label={opt.label} value={opt.key} />
-          ))}
-        </Picker>
-      </View>
+
+      <RNPickerSelect
+        onValueChange={onValueChange}
+        value={selectedValue}
+        items={options}
+        useNativeAndroidPickerStyle={false}
+        fixAndroidTouchableBug={true}
+
+        style={{
+          viewContainer: isCommunity 
+            ? S.viewContainerCommunity 
+            : S.viewContainerNumbers,
+          inputAndroid: isCommunity 
+            ? S.inputAndroidCommunity 
+            : S.inputAndroidNumbers,
+          inputIOS: isCommunity 
+            ? S.inputIOSCommunity 
+            : S.inputIOSNumbers,
+          iconContainer: isCommunity 
+            ? S.iconContainerCommunity 
+            : S.iconContainerNumbers,
+        }}
+
+        // pour agrandir encore le toucher si besoin
+        touchableWrapperProps={{
+          hitSlop: { top: 8, bottom: 8, left: 8, right: 8 }
+        }}
+
+        Icon={() => (
+          <Ionicons name="chevron-down" size={20} color="#fff" />
+        )}
+      />
     </View>
   );
 }

@@ -17,8 +17,8 @@ const DISCIPLINES = [
 ];
 
 const GAME_MODES = [
-  { key: 'memory-league', label: 'Memory League' },
-  { key: 'iam',         label: 'IAM' },
+  { label: 'Memory League', value: 'memory-league' },
+  { label: 'IAM',           value: 'iam' },
 ];
 
 export default function CommunityScreen() {
@@ -48,7 +48,6 @@ export default function CommunityScreen() {
         selectedValue={selectedMode}
         onValueChange={setSelectedMode}
         options={GAME_MODES}
-        containerStyle={styles.headerRow}
       />
 
       <LeaderboardList
