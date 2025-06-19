@@ -21,7 +21,8 @@ export default StyleSheet.create({
     fontWeight: '600',
   },
   viewContainerCommunity: {
-   backgroundColor: '#111',
+   marginLeft: theme.spacing.md,
+   backgroundColor: '#EE82EE',
    borderRadius: 8,
    borderWidth: 1,
    borderColor: '#fff',
@@ -36,6 +37,7 @@ export default StyleSheet.create({
     borderRadius: 8,
     height: 40,
     paddingHorizontal: 12,
+    width: 160,
     color: '#fff',
   },
   inputAndroidCommunity: {
@@ -43,6 +45,7 @@ export default StyleSheet.create({
     borderRadius: 8,
     height: 40,
     paddingHorizontal: 12,
+    width: 160,
     color: '#fff',
   },
   iconContainerCommunity: {
