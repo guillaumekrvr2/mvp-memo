@@ -1,6 +1,7 @@
 // src/components/atoms/PlayButton/PlayButton.jsx
 import React from 'react'
-import { TouchableOpacity, Text, Vibration } from 'react-native'
+import { TouchableOpacity, Text } from 'react-native'
+import * as Haptics from 'expo-haptics'
 import styles from './styles'
 
 /**
@@ -9,8 +10,8 @@ import styles from './styles'
  * - label   : texte affiché (par défaut "PLAY").
  */
 export default function PlayButton({ onPress, label = 'PLAY' }) {
-  const handlePress = () => {
-    Vibration.vibrate(100)
+  const handlePress = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
     onPress()
   }
 
