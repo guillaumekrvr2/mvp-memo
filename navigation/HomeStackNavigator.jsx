@@ -1,9 +1,9 @@
 // navigation/HomeStackNavigator.jsx
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import HomeScreen from '../screens/HomeScreen'
-import NumbersScreen from '../screens/NumbersScreen'
-import DecompteScreen  from '../screens/DecompteScreen'
+import HomeScreen from '../screens/home/HomeScreen'
+import NumbersScreen from '../screens/memo/NumbersScreen'
+import DecompteScreen  from '../screens/common/DecompteScreen'
 import MemoScreen     from '../screens/memo/MemoScreen'
 import RecallScreen     from '../screens/memo/RecallScreen'
 import CorrectionScreen from '../screens/memo/CorrectionScreen'

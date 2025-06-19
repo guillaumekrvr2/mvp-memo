@@ -1,7 +1,7 @@
 // screens/DecompteScreen.jsx
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView, View, Text, StyleSheet } from 'react-native'
-import { theme } from '../theme'
+import { theme } from '../../theme'
 
 export default function DecompteScreen({ route, navigation }) {
   const { objectif, temps, mode , digitCount, autoAdvance} = route.params

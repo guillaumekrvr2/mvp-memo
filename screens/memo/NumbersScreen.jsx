@@ -4,14 +4,14 @@ import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, TextInput } fro
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AccountContext } from '../contexts/AccountContext';
-import AutoAdvanceSwitch from '../components/atoms/AutoAdvanceSwitch/AutoAdvanceSwitch';
-import HighlightBox from '../components/atoms/HighlightBox/HighlightBox';
-import useDigitPicker from '../hooks/useDigitPicker';
-import { ModePicker } from '../components/molecules/ModePicker/ModePicker';
-import DigitPickerModal from '../components/molecules/DigitPickerModal/DigitPickerModal'
-import PlayButton from '../components/atoms/PlayButton/PlayButton'
-import { SecondaryButton } from '../components/atoms/SecondaryButton/SecondaryButton';
+import { AccountContext } from '../../contexts/AccountContext';
+import AutoAdvanceSwitch from '../../components/atoms/AutoAdvanceSwitch/AutoAdvanceSwitch';
+import HighlightBox from '../../components/atoms/HighlightBox/HighlightBox';
+import useDigitPicker from '../../hooks/useDigitPicker';
+import { ModePicker } from '../../components/molecules/ModePicker/ModePicker';
+import DigitPickerModal from '../../components/molecules/DigitPickerModal/DigitPickerModal'
+import PlayButton from '../../components/atoms/PlayButton/PlayButton'
+import { SecondaryButton } from '../../components/atoms/SecondaryButton/SecondaryButton';
 
 
 export default function NumbersScreen() {
@@ -92,16 +92,14 @@ export default function NumbersScreen() {
           icon={<Ionicons name="settings-outline" size={24} color="#fff" />}
           onPress={openModal}
         />
-
        
-     {/* notre nouvelle modal */}
+     {/* notre modal */}
      <DigitPickerModal
        visible={modalVisible}
        digitCount={digitCount}
        onValueChange={setDigitCount}
        onClose={closeModal}
      />
-
 
         {/* ModePicker */}
         <ModePicker

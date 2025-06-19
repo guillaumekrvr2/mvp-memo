@@ -1,14 +1,14 @@
 // screens/ShopScreen.jsx
 import React from 'react'
 import { SafeAreaView, View, StyleSheet } from 'react-native'
-import { theme } from '../theme'
-import { Text } from '../components/atoms/Text/Text'
-import { SecondaryButton } from '../components/atoms/SecondaryButton/SecondaryButton'
-import { FeatureItem } from '../components/molecules/FeatureItem/FeatureItem'
+import { theme } from '../../theme'
+import { Text } from '../../components/atoms/Text/Text'
+import { SecondaryButton } from '../../components/atoms/SecondaryButton/SecondaryButton'
+import { FeatureItem } from '../../components/molecules/FeatureItem/FeatureItem'
 
-const PaywallHatImg        = require('../assets/icons/Paywall_hat.png')
-const PaywallHourglassImg  = require('../assets/icons/Paywall_hourglass.png')
-const PaywallNewsletterImg = require('../assets/icons/Paywall_newsletter.png')
+const PaywallHatImg        = require('../../assets/icons/Paywall_hat.png')
+const PaywallHourglassImg  = require('../../assets/icons/Paywall_hourglass.png')
+const PaywallNewsletterImg = require('../../assets/icons/Paywall_newsletter.png')
 
 // Définition des données des features
 const features = [
