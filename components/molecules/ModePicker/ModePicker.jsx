@@ -1,22 +1,24 @@
-//components/molecules/ModePicker/ModePicker.jsx
+// components/molecules/ModePicker/ModePicker.jsx
+import React from 'react';
 import { View, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import S from './styles';
 
 export function ModePicker({
-  label,
+  variant = 'community',    // 'community' ou 'numbers'
   selectedValue,
   onValueChange,
-  options = [],      // [{ key, label }]
-  pickerStyle,       // override Picker
+  options = [],            // [{ key, label }]
 }) {
+  const isCommunity = variant === 'community';
+
   return (
-    <View style={S.wrapper}>
-      {label && <Text style={S.label}>{label}</Text>}
-      <View style={S.pickerContainer}>
+    <View style={[ S.wrapper, isCommunity ? S.wrapperCommunity : S.wrapperNumbers ]}>
+      {isCommunity && <Text style={S.label}>Leaderboard</Text>}
+      <View style={isCommunity ? S.containerCommunity : S.containerNumbers}>
         <Picker
           selectedValue={selectedValue}
-          style={[S.picker, pickerStyle]}
+          style={isCommunity ? S.pickerCommunity : S.pickerNumbers}
           dropdownIconColor="#fff"
           onValueChange={onValueChange}
         >
