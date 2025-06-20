@@ -1,27 +1,15 @@
-// components/atoms/HighlightBox/HighlightBox.jsx
-import PropTypes from 'prop-types'
-import { TouchableOpacity, Text } from 'react-native'
+//components/atoms/HighlightBox/HighlightBox.jsx
+import { View, Text } from 'react-native'
 import styles from './styles'
 
-export default function HighlightBox({
-  label,
-  icon,
-  onPress,
-  style,
-  textStyle
-}) {
+/**
+ * HighlightBox affiche un encadré avec un texte mis en avant.
+ * @param {string} text - Les chiffres ou le contenu à afficher.
+ */
+export default function HighlightBox({ text }) {
   return (
-    <TouchableOpacity style={[styles.box, style]} onPress={onPress}>
-      <Text style={[styles.text, textStyle]}>{label}</Text>
-      {icon}
-    </TouchableOpacity>
+    <View style={styles.container}>
+      <Text style={styles.text}>{text}</Text>
+    </View>
   )
-}
-
-HighlightBox.propTypes = {
-  label: PropTypes.string.isRequired,
-  icon: PropTypes.node,
-  onPress: PropTypes.func,
-  style: PropTypes.object,
-  textStyle: PropTypes.object
 }

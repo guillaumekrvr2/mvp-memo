@@ -13,6 +13,8 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 import useAutoAdvance from '../../hooks/useAutoAdvance'
 import MemorizationHeader from '../../components/molecules/MemorizationHeader/MemorizationHeader.jsx'
+import HighlightBox from '../../components/atoms/HighlightBox/HighlightBox.jsx'
+import ChevronButton from '../../components/atoms/ChevronButton/ChevronButton'
 
 export default function MemoScreen({ route, navigation }) {
   const { objectif, temps, mode, digitCount, autoAdvance } = route.params
@@ -101,10 +103,8 @@ export default function MemoScreen({ route, navigation }) {
         duration={totalTime}
       />
 
-      {/* HIGHLIGHT CARD */}
-      <View style={styles.highlightCard}>
-        <Text style={styles.highlightCardText}>{highlightDigits}</Text>
-      </View>
+    {/* HIGHLIGHT BOX */}
+    <HighlightBox text={highlightDigits} />
 
       {/* GRILLE */}
       <View style={styles.gridContainer} onLayout={e => setScrollHeight(e.nativeEvent.layout.height)}>
@@ -128,14 +128,16 @@ export default function MemoScreen({ route, navigation }) {
       </View>
 
       {/* CONTRÔLES */}
-      <View style={styles.controls}>
-        <TouchableOpacity onPress={() => setHighlightIndex(i => Math.max(0, i - 1))} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-          <Ionicons name="chevron-back-circle" size={40} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setHighlightIndex(i => Math.min(maxGroupIndex, i + 1))} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-          <Ionicons name="chevron-forward-circle" size={40} color="#fff" />
-        </TouchableOpacity>
-      </View>
+  <View style={styles.controls}>
+    <ChevronButton
+      direction="left"
+      onPress={() => setHighlightIndex(i => Math.max(0, i - 1))}
+    />
+    <ChevronButton
+      direction="right"
+      onPress={() => setHighlightIndex(i => Math.min(maxGroupIndex, i + 1))}
+    />
+  </View>
     </SafeAreaView>
   )
 }

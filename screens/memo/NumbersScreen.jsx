@@ -3,7 +3,7 @@ import { SafeAreaView, View, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import AutoAdvanceSwitch from '../../components/atoms/AutoAdvanceSwitch/AutoAdvanceSwitch';
-import HighlightBox from '../../components/atoms/HighlightBox/HighlightBox';
+import HighlightBox from '../../components/atoms/HighlightBoxSetter/HighlightBoxSetter';
 import useDigitPicker from '../../hooks/useDigitPicker';
 import { ModePicker } from '../../components/molecules/ModePicker/ModePicker';
 import DigitPickerModal from '../../components/molecules/DigitPickerModal/DigitPickerModal'
@@ -18,6 +18,7 @@ import useTimer from '../../hooks/useTimer';
 import useAutoAdvancePreference from '../../hooks/useAutoAdvancePreference';
 import { AUTOADVANCE_KEY } from '../../config/gameConfig';
 import useRecord from '../../hooks/useRecord';
+import HighlightBoxSetter from '../../components/atoms/HighlightBoxSetter/HighlightBoxSetter';
 
 
 export default function NumbersScreen() {
@@ -38,7 +39,7 @@ export default function NumbersScreen() {
         ]}
       >
         {/* HighlightBox */}
-        <HighlightBox
+        <HighlightBoxSetter
           label={previewDigits.join('')}
           icon={<Ionicons name="settings-outline" size={24} color="#fff" />}
           onPress={openModal}
