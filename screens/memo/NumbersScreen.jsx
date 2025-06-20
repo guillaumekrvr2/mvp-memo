@@ -1,6 +1,6 @@
 // screens/NumbersScreen.jsx
 import React, { useContext, useCallback, useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { SafeAreaView, View, StyleSheet } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,6 +12,8 @@ import { ModePicker } from '../../components/molecules/ModePicker/ModePicker';
 import DigitPickerModal from '../../components/molecules/DigitPickerModal/DigitPickerModal'
 import PlayButton from '../../components/atoms/PlayButton/PlayButton'
 import { SecondaryButton } from '../../components/atoms/SecondaryButton/SecondaryButton';
+import RecordDisplay from '../../components/molecules/RecordDisplay/RecordDisplay'; 
+import ObjectiveTimePicker from '../../components/molecules/ObjectiveTimePicker/ObjectiveTimePicker';
 
 
 export default function NumbersScreen() {
@@ -110,58 +112,23 @@ export default function NumbersScreen() {
         />
 
         {/* Objective & Time */}
-        <View style={styles.row}>
-          <View style={styles.inputBox}>
-            <TextInput
-              style={styles.input}
-              placeholder="Objectif"
-              placeholderTextColor="#666"
-              keyboardType="number-pad"
-              value={objectif}
-              onChangeText={setObjectif}
-            />
-          </View>
-          {mode === 'memory-league' ? (
-            <View style={styles.staticTimeBox}>
-              <Text style={styles.staticTime}>1 minute</Text>
-            </View>
-          ) : mode === 'iam' ? (
-            <View style={styles.staticTimeBox}>
-              <Text style={styles.staticTime}>5 minutes</Text>
-            </View>
-          ) : (
-            <View style={styles.inputBox}>
-              <TextInput
-                style={styles.input}
-                placeholder="Temps (s)"
-                placeholderTextColor="#666"
-                keyboardType="number-pad"
-                value={temps > 0 ? String(temps) : ''}
-                onChangeText={text => setTemps(parseInt(text, 10) || 0)}
-              />
-            </View>
-          )}
-        </View>
+        <ObjectiveTimePicker
+          mode={mode}
+          objectif={objectif}
+          onObjectifChange={setObjectif}
+          temps={temps}
+          onTempsChange={text => setTemps(parseInt(text, 10) || 0)}
+        />
 
         {mode === 'custom' && (
           <AutoAdvanceSwitch enabled={autoAdvance} onToggle={onToggleAuto} />
         )}
 
-        <View style={styles.recordBox}>
-          <Ionicons
-            name="trophy-outline"
-            size={20} 
-            color={mode === 'custom' ? 'transparent' : '#fff'}
-          />
-          <Text
-            style={[
-              styles.recordText,
-              mode === 'custom' && { color: 'transparent' },
-            ]}
-          >
-            Last best : {lastScore} en {lastTime}s
-          </Text>
-        </View>
+        <RecordDisplay
+          score={lastScore}
+          time={lastTime}
+          hidden={mode === 'custom'}
+        />
 
          <PlayButton
            onPress={() =>
@@ -187,12 +154,4 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
   content: { flex: 1, paddingHorizontal: 20 },
   row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-  inputBox: { flex: 1, backgroundColor: '#111', borderRadius: 16, marginRight: 10, justifyContent: 'center' },
-  input: { paddingHorizontal: 16, color: '#fff', fontSize: 16, textAlignVertical: 'center' },
-  staticTimeBox: { flex: 1, backgroundColor: '#111', borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  staticTime: { color: '#fff', fontSize: 16 },
-  recordBox: { flexDirection: 'row', alignItems: 'center', borderRadius: 16, padding: 12, marginBottom: 30, alignSelf: 'center' },
-  recordText: { color: '#fff', fontSize: 16, marginLeft: 8 },
-  learnMore: { alignSelf: 'center', paddingVertical: 12, paddingHorizontal: 24, backgroundColor: '#fff', borderRadius: 20 },
-  learnMoreText: { color: '#000', fontSize: 16, fontWeight: '600' },
 });

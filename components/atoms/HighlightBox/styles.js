@@ -10,7 +10,8 @@ export default StyleSheet.create({
     borderRadius: 20,
     padding: 20,
     justifyContent: 'center',
-    marginBottom: 20
+    marginBottom: 10,
+    marginTop: 20,
   },
   text: {
     color: '#fff',
