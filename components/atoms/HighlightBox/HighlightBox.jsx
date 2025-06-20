@@ -1,5 +1,4 @@
-// components/atoms/HighlightBox/index.jsx
-import React from 'react'
+// components/atoms/HighlightBox/HighlightBox.jsx
 import PropTypes from 'prop-types'
 import { TouchableOpacity, Text } from 'react-native'
 import styles from './styles'

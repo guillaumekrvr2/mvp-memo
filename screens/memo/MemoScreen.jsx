@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import useAutoAdvance from '../../hooks/useAutoAdvance'
+import MemorizationHeader from '../../components/molecules/MemorizationHeader/MemorizationHeader.jsx'
 
 export default function MemoScreen({ route, navigation }) {
   const { objectif, temps, mode, digitCount, autoAdvance } = route.params
@@ -94,27 +95,11 @@ export default function MemoScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       {/* HEADER */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back-outline" size={28} color="#fff" />
-        </TouchableOpacity>
-        <View style={styles.progressContainer}>
-          <Animated.View
-            style={[
-              styles.progressBar,
-              {
-                width: animProgress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ['0%', '100%']
-                })
-              }
-            ]}
-          />
-        </View>
-        <TouchableOpacity onPress={() => navigation.replace('Recall', { objectif, temps, numbers, mode })}>
-          <Text style={styles.done}>Done</Text>
-        </TouchableOpacity>
-      </View>
+      <MemorizationHeader
+        onBack={() => navigation.goBack()}
+        onDone={() => navigation.replace('Recall', { objectif, temps, numbers, mode })}
+        duration={totalTime}
+      />
 
       {/* HIGHLIGHT CARD */}
       <View style={styles.highlightCard}>
@@ -157,10 +142,6 @@ export default function MemoScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
-  header: { marginTop: 30, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 8, justifyContent: 'space-between' },
-  progressContainer: { flex: 1, height: 4, backgroundColor: '#333', borderRadius: 2, overflow: 'hidden', marginHorizontal: 12 },
-  progressBar: { height: '100%', backgroundColor: '#fff' },
-  done: { color: '#fff', fontSize: 16, fontWeight: '600' },
   highlightCard: { alignSelf: 'center', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 20, borderWidth: 1, borderColor: '#fff', marginVertical: 16 },
   highlightCardText: { color: '#fff', fontSize: 24, fontWeight: '600' },
   gridContainer: { width: '75%', height: '60%', alignSelf: 'center', marginVertical: 16, borderWidth: 1, borderColor: '#fff', borderRadius: 25, overflow: 'hidden', paddingVertical: 8 },
