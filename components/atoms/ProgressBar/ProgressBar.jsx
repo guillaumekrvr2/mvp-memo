@@ -1,32 +1,22 @@
-//components/atoms/ProgressBar.jsx
-import React, { useRef, useEffect } from 'react'
-import { View, Animated, Easing, StyleSheet } from 'react-native'
+//components/atoms/ProgressBar/ProgressBar.jsx
+import { View, Animated } from 'react-native'
 import styles from './styles'
 
-export default function ProgressBar({ duration }) {
-  const animProgress = useRef(new Animated.Value(0)).current
-
-  useEffect(() => {
-    animProgress.setValue(0)
-    Animated.timing(animProgress, {
-      toValue: 1,
-      duration: duration * 1000,
-      easing: Easing.linear,
-      useNativeDriver: false
-    }).start()
-  }, [duration])
-
+/**
+ * @param {Animated.Value} progress  Valeur animée [0→1] gérée à l’extérieur
+ */
+export default function ProgressBar({ progress }) {
   return (
     <View style={styles.container}>
       <Animated.View
         style={[
           styles.bar,
           {
-            width: animProgress.interpolate({
+            width: progress.interpolate({
               inputRange: [0, 1],
-              outputRange: ['0%', '100%']
-            })
-          }
+              outputRange: ['0%', '100%'],
+            }),
+          },
         ]}
       />
     </View>

@@ -5,82 +5,38 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
-  TouchableOpacity,
   Animated,
   Easing
 } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
 import useAutoAdvance from '../../hooks/useAutoAdvance'
 import MemorizationHeader from '../../components/molecules/MemorizationHeader/MemorizationHeader.jsx'
 import HighlightBox from '../../components/atoms/HighlightBox/HighlightBox.jsx'
 import ChevronButton from '../../components/atoms/ChevronButton/ChevronButton'
+import BorderedContainer from '../../components/atoms/BorderedContainer/BorderedContainer'
+import Grid  from '../../components/atoms/Grid/Grid'
+import useNumbers from '../../hooks/useNumbers'
+import useTimer         from '../../hooks/useTimer'
+import useGrid          from '../../hooks/useGrid'
+import useAutoScroll    from '../../hooks/useAutoScroll'
 
 export default function MemoScreen({ route, navigation }) {
-  const { objectif, temps, mode, digitCount, autoAdvance } = route.params
+  const { objectif, temps, mode, digitCount, autoAdvance } = route.params // routes
+  const numbers = useNumbers(objectif) // Génération des chiffres
+  const totalTime     = parseInt(temps, 10) || 0 // Chrono
+  const [timeLeft]    = useTimer(totalTime)
 
-  // 1) Génération des chiffres
-  const [numbers, setNumbers] = useState([])
-  useEffect(() => {
-    const arr = Array.from({ length: objectif }, () =>
-      Math.floor(Math.random() * 10)
-    )
-    setNumbers(arr)
-  }, [objectif])
-
-  // 2) Chrono
-  const totalTime = parseInt(temps, 10) || 0
-  const [timeLeft, setTimeLeft] = useState(totalTime)
-  useEffect(() => {
-    if (timeLeft <= 0) return
-    const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
-    return () => clearTimeout(timer)
-  }, [timeLeft])
-
-  // Auto-navigation vers RecallScreen quand le temps est écoulé
-  useEffect(() => {
-    const navTimer = setTimeout(() => {
-      navigation.replace('Recall', { objectif, temps, numbers, mode })
-    }, totalTime * 1000)
-    return () => clearTimeout(navTimer)
-  }, [totalTime])
-
-  // 3) Highlight par groupe
-  const grouping = digitCount
   const cols = 6
-  const total = numbers.length
-  const maxGroupIndex = Math.ceil(total / grouping) - 1
-  const [highlightIndex, setHighlightIndex] = useState(0)
+  const grouping = digitCount
+  const { rows, highlightIndex, setHighlightIndex, maxIndex, highlightDigits, totalGroups } =
+  useGrid(numbers, 6, digitCount)
 
-  // 4) Construction des lignes
-  const rows = []
-  for (let i = 0; i < total; i += cols) {
-    rows.push(numbers.slice(i, i + cols))
-  }
-  const stepsCount = Math.ceil(total / grouping)
+  const scrollRef     = useRef(null) //autodéfilement de la grille 
+  const [scrollH, setH] = useState(0)
+  useAutoScroll(scrollRef, scrollH, highlightIndex, 48 + 12)
+  
+  useAutoAdvance(autoAdvance, totalTime, totalGroups, setHighlightIndex) //  Hook d'auto-advance
 
-  // 5) Hook d'auto-advance
-  useAutoAdvance(autoAdvance, totalTime, stepsCount, setHighlightIndex)
-
-  // 6) Texte de la carte highlight
-  const highlightDigits = numbers
-    .slice(highlightIndex * grouping, highlightIndex * grouping + grouping)
-    .join('')
-
-  // 7) Animation continue de la barre
-  const animProgress = useRef(new Animated.Value(0)).current
-  useEffect(() => {
-    animProgress.setValue(0)
-    Animated.timing(animProgress, {
-      toValue: 1,
-      duration: totalTime * 1000,
-      easing: Easing.linear,
-      useNativeDriver: false
-    }).start()
-  }, [totalTime])
-
-  // 8) Scroll auto conditionnel
-  const scrollViewRef = useRef(null)
+  const scrollViewRef = useRef(null) // Scroll auto conditionnel
   const [scrollHeight, setScrollHeight] = useState(0)
   const ROW_HEIGHT = 48 + 12
 
@@ -104,49 +60,53 @@ export default function MemoScreen({ route, navigation }) {
       />
 
     {/* HIGHLIGHT BOX */}
-    <HighlightBox text={highlightDigits} />
+      <HighlightBox text={highlightDigits} />
 
       {/* GRILLE */}
-      <View style={styles.gridContainer} onLayout={e => setScrollHeight(e.nativeEvent.layout.height)}>
-        <ScrollView ref={scrollViewRef} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-          {rows.map((row, idx) => (
-            <View key={idx} style={styles.row}>
-              {row.map((n, colIdx) => {
-                const globalIdx = idx * cols + colIdx
-                const start = highlightIndex * grouping
-                const end = start + grouping
-                const isHighlighted = globalIdx >= start && globalIdx < end
-                return (
-                  <View key={colIdx} style={[styles.cell, colIdx < cols - 1 && styles.separator, isHighlighted && styles.highlightCell]}>  
-                    <Text style={styles.cellText}>{n}</Text>
-                  </View>
-                )
-              })}
-            </View>
-          ))}
-        </ScrollView>
-      </View>
+      <BorderedContainer onLayout={e => setH(e.nativeEvent.layout.height)}>
+        <Grid
+          data={rows}
+          cols={cols}
+          scrollRef={scrollRef}
+          renderCell={(n, rowIdx, colIdx) => {
+            const globalIdx = rowIdx * cols + colIdx
+            const isHighlighted =
+              globalIdx >= highlightIndex * grouping &&
+              globalIdx < highlightIndex * grouping + grouping
+
+            return (
+              <View
+                key={`r${rowIdx}-c${colIdx}`}
+                style={[
+                  styles.cell,
+                  colIdx < cols - 1 && styles.separator,
+                  isHighlighted && styles.highlightCell,
+                ]}
+              >
+                <Text style={styles.cellText}>{n}</Text>
+              </View>
+            )
+          }}
+        />
+      </BorderedContainer>
 
       {/* CONTRÔLES */}
-  <View style={styles.controls}>
-    <ChevronButton
-      direction="left"
-      onPress={() => setHighlightIndex(i => Math.max(0, i - 1))}
-    />
-    <ChevronButton
-      direction="right"
-      onPress={() => setHighlightIndex(i => Math.min(maxGroupIndex, i + 1))}
-    />
-  </View>
+      <View style={styles.controls}>
+        <ChevronButton
+          direction="left"
+          onPress={() => setHighlightIndex(i => Math.max(0, i - 1))}
+        />
+        <ChevronButton
+          direction="right"
+          onPress={() => setHighlightIndex(i => Math.min(maxIndex, i + 1))}
+        />
+      </View>
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
-  highlightCard: { alignSelf: 'center', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 20, borderWidth: 1, borderColor: '#fff', marginVertical: 16 },
-  highlightCardText: { color: '#fff', fontSize: 24, fontWeight: '600' },
-  gridContainer: { width: '75%', height: '60%', alignSelf: 'center', marginVertical: 16, borderWidth: 1, borderColor: '#fff', borderRadius: 25, overflow: 'hidden', paddingVertical: 8 },
   scroll: { paddingHorizontal: 12, paddingTop: 16, alignItems: 'center' },
   row: { flexDirection: 'row', marginBottom: 8, borderBottomWidth: 2, borderBottomColor: 'transparent' },
   cell: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center' },

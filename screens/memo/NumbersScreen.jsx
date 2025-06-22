@@ -3,7 +3,6 @@ import { SafeAreaView, View, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import AutoAdvanceSwitch from '../../components/atoms/AutoAdvanceSwitch/AutoAdvanceSwitch';
-import HighlightBox from '../../components/atoms/HighlightBoxSetter/HighlightBoxSetter';
 import useDigitPicker from '../../hooks/useDigitPicker';
 import { ModePicker } from '../../components/molecules/ModePicker/ModePicker';
 import DigitPickerModal from '../../components/molecules/DigitPickerModal/DigitPickerModal'
@@ -14,9 +13,8 @@ import ObjectiveTimePicker from '../../components/molecules/ObjectiveTimePicker/
 import useMode from '../../hooks/useMode';
 import { modeOptions } from '../../config/gameConfig';
 import useObjective from '../../hooks/useObjective';
-import useTimer from '../../hooks/useTimer';
+import useCountdown from '../../hooks/useCountdown';
 import useAutoAdvancePreference from '../../hooks/useAutoAdvancePreference';
-import { AUTOADVANCE_KEY } from '../../config/gameConfig';
 import useRecord from '../../hooks/useRecord';
 import HighlightBoxSetter from '../../components/atoms/HighlightBoxSetter/HighlightBoxSetter';
 
@@ -26,8 +24,8 @@ export default function NumbersScreen() {
   const { digitCount, previewDigits, modalVisible, openModal, closeModal, setDigitCount } = useDigitPicker(6);
   const { mode, onModeChange, options } = useMode('memory-league', modeOptions);
   const { objectif, setObjectif } = useObjective('');
-  const { temps, setTemps } = useTimer(mode);
-  const { autoAdvance, toggleAutoAdvance } = useAutoAdvancePreference(AUTOADVANCE_KEY);
+  const { temps, setTemps } = useCountdown(mode);
+  const { autoAdvance, toggleAutoAdvance } = useAutoAdvancePreference(mode);
   const { lastScore, lastTime } = useRecord('numbers', mode);
 
   return (

@@ -1,19 +1,17 @@
-//hooks/useTimer.js
-import { useState, useEffect } from 'react';
-import { defaultTimes } from '../config/gameConfig';
+// src/hooks/useTimer.js
+import { useState, useEffect } from 'react'
 
 /**
- * Hook pour gérer le temps en fonction du mode sélectionné.
- * @param {string} mode  Valeur du mode (correspond à une clé de defaultTimes).
- * @returns {{temps: number, setTemps: (value: number) => void}}
+ * Retourne le temps restant qui s’auto-décrémente chaque seconde.
+ * @param {number} initialTime Temps de départ en secondes
+ * @returns {[number, React.Dispatch<number>]} [timeLeft, setTimeLeft]
  */
-export default function useTimer(mode) {
-  const [temps, setTemps] = useState(defaultTimes[mode] ?? 0);
-
-  // Lorsque le mode change, on remet le temps par défaut
+export default function useTimer(initialTime) {
+  const [timeLeft, setTimeLeft] = useState(initialTime)
   useEffect(() => {
-    setTemps(defaultTimes[mode] ?? 0);
-  }, [mode]);
-
-  return { temps, setTemps };
+    if (timeLeft <= 0) return
+    const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [timeLeft])
+  return [timeLeft, setTimeLeft]
 }
