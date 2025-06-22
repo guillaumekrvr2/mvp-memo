@@ -1,13 +1,6 @@
 // screens/MemoScreen.jsx
-import React, { useState, useEffect, useRef } from 'react'
-import {
-  SafeAreaView,
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Easing
-} from 'react-native'
+import React, { useState, useRef } from 'react'
+import { SafeAreaView, View, Text, StyleSheet } from 'react-native'
 import useAutoAdvance from '../../hooks/useAutoAdvance'
 import MemorizationHeader from '../../components/molecules/MemorizationHeader/MemorizationHeader.jsx'
 import HighlightBox from '../../components/atoms/HighlightBox/HighlightBox.jsx'
@@ -23,32 +16,15 @@ export default function MemoScreen({ route, navigation }) {
   const { objectif, temps, mode, digitCount, autoAdvance } = route.params // routes
   const numbers = useNumbers(objectif) // Génération des chiffres
   const totalTime     = parseInt(temps, 10) || 0 // Chrono
-  const [timeLeft]    = useTimer(totalTime)
-
-  const cols = 6
+  const [timeLeft]    = useTimer(totalTime) 
+  const cols = 6 //génération de la grille 
   const grouping = digitCount
   const { rows, highlightIndex, setHighlightIndex, maxIndex, highlightDigits, totalGroups } =
   useGrid(numbers, 6, digitCount)
-
   const scrollRef     = useRef(null) //autodéfilement de la grille 
   const [scrollH, setH] = useState(0)
   useAutoScroll(scrollRef, scrollH, highlightIndex, 48 + 12)
-  
   useAutoAdvance(autoAdvance, totalTime, totalGroups, setHighlightIndex) //  Hook d'auto-advance
-
-  const scrollViewRef = useRef(null) // Scroll auto conditionnel
-  const [scrollHeight, setScrollHeight] = useState(0)
-  const ROW_HEIGHT = 48 + 12
-
-  useEffect(() => {
-    if (!scrollViewRef.current || scrollHeight === 0) return
-    const visibleCount = Math.floor(scrollHeight / ROW_HEIGHT)
-    const threshold = Math.max(0, visibleCount - 3)
-    if (highlightIndex >= threshold) {
-      const offset = (highlightIndex - threshold) * ROW_HEIGHT
-      scrollViewRef.current.scrollTo({ y: offset, animated: true })
-    }
-  }, [highlightIndex, scrollHeight])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -59,7 +35,7 @@ export default function MemoScreen({ route, navigation }) {
         duration={totalTime}
       />
 
-    {/* HIGHLIGHT BOX */}
+      {/* HIGHLIGHT BOX */}
       <HighlightBox text={highlightDigits} />
 
       {/* GRILLE */}
