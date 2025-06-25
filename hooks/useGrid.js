@@ -1,4 +1,4 @@
-// src/hooks/useGrid.js
+//hooks/useGrid.js
 import { useMemo, useState } from 'react'
 /**
  * @param {number[]} items      Tableau de valeurs
