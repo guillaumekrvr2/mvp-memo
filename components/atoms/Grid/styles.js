@@ -11,12 +11,4 @@ export default StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 8,
   },
-  cellInput: {
-    width: 42,
-    height: 42,
-    backgroundColor: '#111',
-    color: '#fff',
-    fontSize: 18,
-    textAlign: 'center',
-  },
 })

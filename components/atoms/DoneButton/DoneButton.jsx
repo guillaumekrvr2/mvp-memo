@@ -1,11 +1,10 @@
-//components/DoneButton/DoneButton.jsx
-import { TouchableOpacity, Text, StyleSheet } from 'react-native'
-import styles from './styles'
+// components/atoms/DoneButton/DoneButton.jsx
+import * as S from './styles';
 
 export default function DoneButton({ onPress }) {
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
-      <Text style={styles.done}>Done</Text>
-    </TouchableOpacity>
-  )
+    <S.Container onPress={onPress} activeOpacity={0.7}>
+      <S.Label>Done</S.Label>
+    </S.Container>
+  );
 }
