@@ -1,6 +1,4 @@
-// hooks/useAutoSaveRecord.js
-import { useEffect } from 'react';
-import { useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import useSaveRecord from './useSaveRecord';
 import { AccountContext } from '../contexts/AccountContext';
 
@@ -13,6 +11,7 @@ import { AccountContext } from '../contexts/AccountContext';
  * @param {number}  time          en secondes
  * @param {string[]} modesToAuto  listes des modes pour lesquels on fait l’auto-save
  */
+
 export default function useAutoSaveRecord(
   discipline,
   mode,
@@ -24,9 +23,11 @@ export default function useAutoSaveRecord(
   const saveRecord = useSaveRecord();
 
   useEffect(() => {
-    if (!modesToAuto.includes(mode)) return;
+    // on ne fait rien si mode non concerné ou si pas de user connecté
+    if (!modesToAuto.includes(mode) || !current) return;
 
-    const prev = current.records?.[discipline]?.[mode];
+    // accès sûr à current.records grâce au test ci-dessus
+    const prev = current.records[discipline]?.[mode];
     const lastScore = prev?.score;
     const lastTime  = prev?.time;
 

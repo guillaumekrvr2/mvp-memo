@@ -23,7 +23,11 @@ export default function NumbersScreen() {
   const navigation = useNavigation();
   const { digitCount, previewDigits, modalVisible, openModal, closeModal, setDigitCount } = useDigitPicker(6);
   const { mode, onModeChange, options } = useMode('memory-league', modeOptions);
-  const { objectif, setObjectif } = useObjective('');
+  const defaultObj = mode === 'memory-league' ? '60' : '';
+  const { objectif, setObjectif } = useObjective(
+  `numbers:objectif:${mode}`,
+  defaultObj
+  );
   const { temps, setTemps } = useCountdown(mode);
   const { autoAdvance, toggleAutoAdvance } = useAutoAdvancePreference(mode);
   const { lastScore, lastTime } = useRecord('numbers', mode);

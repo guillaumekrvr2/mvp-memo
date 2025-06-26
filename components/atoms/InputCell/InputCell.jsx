@@ -1,8 +1,8 @@
-// src/components/atoms/InputCellUI.jsx
+// src/components/atoms/InputCell.jsx
 import React, { forwardRef } from 'react'
 import { TextInput } from 'react-native'
 
-const InputCellUI = forwardRef(function InputCellUI(
+const InputCell = forwardRef(function InputCell(
   { value, style, onChangeText, onKeyPress },
   ref
 ) {
@@ -20,4 +20,4 @@ const InputCellUI = forwardRef(function InputCellUI(
   )
 })
 
-export default React.memo(InputCellUI)
+export default React.memo(InputCell)

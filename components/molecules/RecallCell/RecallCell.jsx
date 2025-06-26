@@ -1,5 +1,5 @@
 //components/molecules/RecallCell/RecallCell.jsx
-import InputCellUI from '../../atoms/InputCell/InputCell'
+import InputCell from '../../atoms/InputCell/InputCell'
 import useCellHandlers from '../../../hooks/useCellHandlers'
 
 export default function RecallCell({
@@ -26,7 +26,7 @@ export default function RecallCell({
   })
 
   return (
-    <InputCellUI
+    <InputCell
       ref={inputRefs.current[idx]}
       value={cellValue}
       style={style}

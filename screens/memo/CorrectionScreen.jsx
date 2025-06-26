@@ -2,7 +2,7 @@ import { SafeAreaView, Text, StyleSheet } from 'react-native';
 import { SecondaryButton } from '../../components/atoms/SecondaryButton/SecondaryButton';
 import BorderedContainer from '../../components/atoms/BorderedContainer/BorderedContainer';
 import CorrectionGrid from '../../components/organisms/CorrectionGrid/CorrectionGrid';
-import useSaveRecord from '../../hooks/useSaveRecords';
+import useSaveRecord from '../../hooks/useSaveRecord';
 import useAutoSaveRecord  from '../../hooks/useAutoSaveRecord';
 
 export default function CorrectionScreen({ route, navigation }) {

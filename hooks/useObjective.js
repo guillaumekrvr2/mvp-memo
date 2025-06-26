@@ -1,18 +1,20 @@
 // hooks/useObjective.js
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import useAsyncStorageState from './useAsyncStorageState';
 
 /**
- * Hook pour gérer un champ "objectif"
- * @param {string} initialValue Valeur initiale de l'objectif
- * @returns {{objectif: string, setObjectif: (value: string) => void}}
+ * @param {string} key            Clé AsyncStorage
+ * @param {string} initialValue   Valeur par défaut si vide
  */
-export default function useObjective(initialValue = '') {
-  const [objectif, setObjectif] = useState(initialValue);
+export default function useObjective(key = 'objectif', initialValue = '') {
+  const [objectif, setObjectif] = useAsyncStorageState(key, initialValue);
 
-  // Si besoin de remettre à jour l'objectif initial lors d'un reset, on peut ajouter un useEffect
-  // useEffect(() => {
-  //   setObjectif(initialValue);
-  // }, [initialValue]);
+  // Si initialValue change (i.e. changement de mode), on réinitialise si vide
+  useEffect(() => {
+    if (objectif === '') {
+      setObjectif(initialValue);
+    }
+  }, [initialValue]);
 
   return { objectif, setObjectif };
 }
