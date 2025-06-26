@@ -1,8 +1,7 @@
-// src/components/atoms/PlayButton/PlayButton.jsx
-import React from 'react'
-import { TouchableOpacity, Text } from 'react-native'
-import * as Haptics from 'expo-haptics'
-import styles from './styles'
+// components/atoms/PlayButton/PlayButton.jsx
+import React from 'react';
+import * as Haptics from 'expo-haptics';
+import * as S from './styles';
 
 /**
  * Atomique : un simple bouton circulaire "PLAY".
@@ -11,17 +10,13 @@ import styles from './styles'
  */
 export default function PlayButton({ onPress, label = 'PLAY' }) {
   const handlePress = async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-    onPress()
-  }
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onPress();
+  };
 
   return (
-    <TouchableOpacity
-      style={styles.playButton}
-      onPress={handlePress}
-      activeOpacity={0.7}
-    >
-      <Text style={styles.playText}>{label}</Text>
-    </TouchableOpacity>
-  )
+    <S.Container onPress={handlePress} activeOpacity={0.7}>
+      <S.Label>{label}</S.Label>
+    </S.Container>
+  );
 }

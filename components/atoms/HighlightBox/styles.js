@@ -1,19 +1,18 @@
-//components/atoms/HighlightBox/HighlightBox.styles.js
-import { StyleSheet } from 'react-native'
+// components/atoms/HighlightBox/styles.js
+import styled from 'styled-components/native';
 
-export default StyleSheet.create({
-  container: {
-    alignSelf: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#fff',
-    marginVertical: 16,
-  },
-  text: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: '600',
-  },
-})
+export const Container = styled.View`
+  align-self: center;
+  padding-horizontal: ${({ theme }) => theme.spacing.lg}px;
+  padding-vertical: ${({ theme }) => theme.spacing.md}px;
+  border-radius: ${({ theme }) => theme.border.radiusLg}px;
+  border-width: ${({ theme }) => theme.border.width}px;
+  border-color: ${({ theme }) => theme.colors.textOnDark};
+  margin-vertical: ${({ theme }) => theme.spacing.lg}px;
+`;
+
+export const HighlightText = styled.Text`
+  color: ${({ theme }) => theme.colors.textOnDark};
+  font-size: ${({ theme }) => theme.typography.size.lg}px;
+  font-weight: ${({ theme }) => theme.typography.weight.semibold};
+`;

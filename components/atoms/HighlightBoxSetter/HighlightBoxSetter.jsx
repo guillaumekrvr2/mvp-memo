@@ -1,7 +1,7 @@
-// components/atoms/HighlightBoSetter/HighlightBoxSetter.jsx
-import PropTypes from 'prop-types'
-import { TouchableOpacity, Text } from 'react-native'
-import styles from './styles'
+// components/atoms/HighlightBoxSetter/HighlightBoxSetter.jsx
+import React from 'react';
+import PropTypes from 'prop-types';
+import * as S from './styles';
 
 export default function HighlightBoxSetter({
   label,
@@ -11,11 +11,11 @@ export default function HighlightBoxSetter({
   textStyle
 }) {
   return (
-    <TouchableOpacity style={[styles.box, style]} onPress={onPress}>
-      <Text style={[styles.text, textStyle]}>{label}</Text>
+    <S.Container style={style} onPress={onPress} activeOpacity={0.7}>
+      <S.Label style={textStyle}>{label}</S.Label>
       {icon}
-    </TouchableOpacity>
-  )
+    </S.Container>
+  );
 }
 
 HighlightBoxSetter.propTypes = {
@@ -24,4 +24,4 @@ HighlightBoxSetter.propTypes = {
   onPress: PropTypes.func,
   style: PropTypes.object,
   textStyle: PropTypes.object
-}
+};

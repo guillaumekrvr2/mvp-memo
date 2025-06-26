@@ -12,7 +12,7 @@ export default function HomeScreen() {
     { label: 'Cards',   screen: 'Cards'   },
     { label: 'Words',   screen: 'Words'   },
     { label: 'Binary',  screen: 'Binary'  },
-    { label: 'Names',   screen: 'Names'   },
+    { label: 'Spoken',   screen: 'Spoken'   },
     { label: 'Images',  screen: 'Images'  },
   ];
 

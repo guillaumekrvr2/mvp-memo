@@ -1,6 +1,6 @@
-//components/atoms/HighlightBox/HighlightBox.jsx
-import { View, Text } from 'react-native'
-import styles from './styles'
+// components/atoms/HighlightBox/HighlightBox.jsx
+import React from 'react';
+import * as S from './styles';
 
 /**
  * HighlightBox affiche un encadré avec un texte mis en avant.
@@ -8,8 +8,8 @@ import styles from './styles'
  */
 export default function HighlightBox({ text }) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>{text}</Text>
-    </View>
-  )
+    <S.Container>
+      <S.HighlightText>{text}</S.HighlightText>
+    </S.Container>
+  );
 }
