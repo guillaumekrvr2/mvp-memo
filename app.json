@@ -5,7 +5,6 @@
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
-    "entryPoint": "App.js",
     "name": "mvp-memo",
     "slug": "mvp-memo",
     "version": "1.0.0",
@@ -19,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icons/Memorize-icon.png",
+        "foregroundImage": "./assets/icons/splash.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.gk37550sta.mvpmemo"
