@@ -1,5 +1,4 @@
 // screens/HomeScreen.jsx
-import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Container, Grid } from '../../styled-components/HomeStyles';
 import { MenuButton } from '../../components/atoms/MenuButton/MenuButton';
