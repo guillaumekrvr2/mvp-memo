@@ -1,6 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { AccountContext } from '../../contexts/AccountContext';
+import { SecondaryButton } from '../../components/atoms/SecondaryButton/SecondaryButton';
+
 
 export default function LoginScreen({ navigation }) {
   const { login } = useContext(AccountContext);
@@ -41,9 +43,10 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setPassword}
       />
 
-      <TouchableOpacity style={styles.learnMore} onPress={onLogin}>
-        <Text style={styles.learnMoreText}>Connexion</Text>
-      </TouchableOpacity>
+      <SecondaryButton onPress={onLogin}>
+        Connexion
+      </SecondaryButton>
+
 
       <View style={styles.switch}>
         <Text style={styles.switchText}>Pas encore de compte ?</Text>
@@ -60,23 +63,6 @@ const styles = StyleSheet.create({
   title:       { fontSize:24, marginBottom:20, textAlign:'center', color: '#fff' },
   input:       { borderWidth:1, borderColor:'#666', padding:10, marginBottom:15, borderRadius:15 },
   error:       { color:'red', textAlign:'center', marginBottom:10 },
-
-  // Ton style learnMore
-  learnMore: {
-    marginTop: 20,
-    paddingHorizontal: 30,
-    paddingVertical: 12,
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    alignSelf: 'center',
-    alignItems: 'center',
-  },
-  learnMoreText: {
-    color: '#000',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-
   switch:      { marginTop: 20, flexDirection: 'row', justifyContent: 'center' },
   switchText:  { color: '#fff', marginRight: 8 },
   link:        { color: '#fff', textDecorationLine: 'underline' },
