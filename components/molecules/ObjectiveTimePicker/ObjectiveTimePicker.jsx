@@ -1,7 +1,7 @@
 // components/molecules/ObjectiveTimePicker/ObjectiveTimePicker.jsx
-import React from 'react';
-import { View, Text, TextInput } from 'react-native';
-import styles from './styles';
+import { View, Text } from 'react-native'
+import styles from './styles'
+import InputField from '../../atoms/InputField/InputField'
 
 export default function ObjectiveTimePicker({
   mode,
@@ -13,16 +13,15 @@ export default function ObjectiveTimePicker({
   const staticTimes = {
     'memory-league': '1 minute',
     iam: '5 minutes',
-  };
-  const staticLabel = staticTimes[mode];
+  }
+  const staticLabel = staticTimes[mode]
 
   return (
     <View style={styles.row}>
       <View style={styles.inputBox}>
-        <TextInput
+        <InputField
           style={styles.input}
           placeholder="Objectif"
-          placeholderTextColor="#666"
           keyboardType="number-pad"
           value={objectif}
           onChangeText={onObjectifChange}
@@ -35,10 +34,9 @@ export default function ObjectiveTimePicker({
         </View>
       ) : (
         <View style={styles.inputBox}>
-          <TextInput
+          <InputField
             style={styles.input}
             placeholder="Temps (s)"
-            placeholderTextColor="#666"
             keyboardType="number-pad"
             value={temps > 0 ? String(temps) : ''}
             onChangeText={onTempsChange}
@@ -46,5 +44,5 @@ export default function ObjectiveTimePicker({
         </View>
       )}
     </View>
-  );
+  )
 }
