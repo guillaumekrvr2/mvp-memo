@@ -7,5 +7,6 @@ export default StyleSheet.create({
     padding: 10,
     color: '#fff',
     fontSize: 16,
+    backgroundColor: '#111',
   },
 });

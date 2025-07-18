@@ -1,7 +1,10 @@
 // screens/SignUpScreen.jsx
 import React, { useState, useContext } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { AccountContext } from '../../contexts/AccountContext';
+import InputField from '../../components/atoms/InputField/InputField';
+import { SecondaryButton } from '../../components/atoms/SecondaryButton/SecondaryButton';
+
 
 export default function SignUpScreen({ navigation }) {
   const { signUp } = useContext(AccountContext);
@@ -25,41 +28,37 @@ export default function SignUpScreen({ navigation }) {
       <Text style={styles.title}>Créer un compte</Text>
       {error && <Text style={styles.error}>{error}</Text>}
 
-      <TextInput
+      <InputField
         placeholder="Prénom"
-        placeholderTextColor="#888"
-        style={[styles.input, { color: '#fff' }]}
         value={firstName}
         onChangeText={setFirstName}
-      />
-      <TextInput
-        placeholder="Nom"
-        placeholderTextColor="#888"
         style={[styles.input, { color: '#fff' }]}
+      />
+      <InputField
+        placeholder="Nom"
         value={lastName}
         onChangeText={setLastName}
+        style={[styles.input, { color: '#fff' }]}
       />
-      <TextInput
+      <InputField
         placeholder="Email"
-        placeholderTextColor="#888"
         keyboardType="email-address"
         autoCapitalize="none"
-        style={[styles.input, { color: '#fff' }]}
         value={email}
         onChangeText={setEmail}
-      />
-      <TextInput
-        placeholder="Mot de passe"
-        placeholderTextColor="#888"
-        secureTextEntry
         style={[styles.input, { color: '#fff' }]}
+      />
+      <InputField
+        placeholder="Mot de passe"
+        secureTextEntry
         value={password}
         onChangeText={setPassword}
+        style={[styles.input, { color: '#fff' }]}
       />
 
-      <TouchableOpacity style={styles.learnMore} onPress={onSignUp}>
-        <Text style={styles.learnMoreText}>S'inscrire</Text>
-      </TouchableOpacity>
+      <SecondaryButton onPress={onSignUp}>
+        S'inscrire
+      </SecondaryButton>
 
       <View style={styles.switch}>
         <Text style={styles.switchText}>Déjà un compte ?</Text>
@@ -74,31 +73,8 @@ export default function SignUpScreen({ navigation }) {
 const styles = StyleSheet.create({
   container:   { flex:1, padding:20, justifyContent:'center' },
   title:       { fontSize:24, marginBottom:20, textAlign:'center', color: '#fff' },
-  input:       {
-    borderWidth:1,
-    borderColor:'#666',
-    padding:10,
-    marginBottom:15,
-    borderRadius:15,
-  },
+  input:       { padding:10, marginBottom:15, borderRadius:15 },
   error:       { color:'red', textAlign:'center', marginBottom:10 },
-
-  // Styles “learnMore” pour les boutons
-  learnMore: {
-    marginTop: 20,
-    paddingHorizontal: 30,
-    paddingVertical: 12,
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    alignSelf: 'center',
-    alignItems: 'center',
-  },
-  learnMoreText: {
-    color: '#000',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-
   switch:      { marginTop: 20, flexDirection: 'row', justifyContent: 'center' },
   switchText:  { color: '#fff', marginRight: 8 },
   link:        { color: '#fff', textDecorationLine: 'underline' },

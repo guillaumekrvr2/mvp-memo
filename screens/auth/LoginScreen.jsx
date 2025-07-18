@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { AccountContext } from '../../contexts/AccountContext';
 import { SecondaryButton } from '../../components/atoms/SecondaryButton/SecondaryButton';
+import InputField from '../../components/atoms/InputField/InputField';
 
 
 export default function LoginScreen({ navigation }) {
@@ -24,21 +25,17 @@ export default function LoginScreen({ navigation }) {
       <Text style={styles.title}>Se connecter</Text>
       {error && <Text style={styles.error}>{error}</Text>}
 
-      <TextInput
+      <InputField style={styles.input}
         placeholder="Email"
-        placeholderTextColor="#888"
         keyboardType="email-address"
         autoCapitalize="none"
-        style={[styles.input, { color: '#fff' }]}
         value={email}
         onChangeText={setEmail}
       />
 
-      <TextInput
+      <InputField style={styles.input}
         placeholder="Mot de passe"
-        placeholderTextColor="#888"
         secureTextEntry
-        style={[styles.input, { color: '#fff' }]}
         value={password}
         onChangeText={setPassword}
       />
@@ -61,7 +58,7 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container:   { flex:1, padding:20, justifyContent:'center' },
   title:       { fontSize:24, marginBottom:20, textAlign:'center', color: '#fff' },
-  input:       { borderWidth:1, borderColor:'#666', padding:10, marginBottom:15, borderRadius:15 },
+  input:       { padding:10, marginBottom:15, borderRadius:15 },
   error:       { color:'red', textAlign:'center', marginBottom:10 },
   switch:      { marginTop: 20, flexDirection: 'row', justifyContent: 'center' },
   switchText:  { color: '#fff', marginRight: 8 },

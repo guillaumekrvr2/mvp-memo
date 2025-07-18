@@ -9,7 +9,6 @@ export default StyleSheet.create({
   },
   inputBox: {
     flex: 1,
-    backgroundColor: '#111',
     borderRadius: 16,
     marginRight: 10,
     justifyContent: 'center',
