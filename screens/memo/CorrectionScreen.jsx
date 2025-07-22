@@ -6,7 +6,7 @@ import useSaveRecord from '../../hooks/useSaveRecord';
 import useAutoSaveRecord  from '../../hooks/useAutoSaveRecord';
 
 export default function CorrectionScreen({ route, navigation }) {
-  const { inputs, numbers, temps, mode } = route.params;
+  const { inputs = [], numbers = [], temps = 0, mode, } = route.params || {};
   const total = inputs.length;
   const score = inputs.reduce((acc, v, i) =>
     acc + (v === String(numbers[i]) ? 1 : 0), 0);

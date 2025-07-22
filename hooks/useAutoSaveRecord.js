@@ -27,7 +27,7 @@ export default function useAutoSaveRecord(
     if (!modesToAuto.includes(mode) || !current) return;
 
     // accès sûr à current.records grâce au test ci-dessus
-    const prev = current.records[discipline]?.[mode];
+    const prev = current.records?.[discipline]?.[mode];
     const lastScore = prev?.score;
     const lastTime  = prev?.time;
 

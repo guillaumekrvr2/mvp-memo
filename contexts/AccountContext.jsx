@@ -32,7 +32,9 @@ export function AccountProvider({ children }) {
     })();
 
     // abonnement aux events login/logout
-    const { subscription } = supabase.auth.onAuthStateChange(
+    const {
+  data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       async (_event, session) => {
         if (session?.user) {
           const { data: users } = await supabase
@@ -45,7 +47,7 @@ export function AccountProvider({ children }) {
           setCurrent(null);
         }
       }
-    );
+    });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -68,7 +70,6 @@ export function AccountProvider({ children }) {
         second_name:  lastName,
         display_name: `${firstName} ${lastName}`,
         email,
-        records:      {}    // on copie l’ancien comportement
       }])
       .select()
       .single();
@@ -111,40 +112,21 @@ export function AccountProvider({ children }) {
   };
 
   // --- mise à jour d’un record
-  const updateRecord = async (discipline, value) => {
-    if (!current) return;
+const updateRecord = async (modeVariantsId, score) => {
+  if (!current) return;
 
-    // même logique qu’avant pour générer newRecords
-    let newRecords;
-    if (value.mode) {
-      const existing = current.records[discipline] || {};
-      newRecords = {
-        ...current.records,
-        [discipline]: {
-          ...existing,
-          [value.mode]: { score: value.score, time: value.time }
-        }
-      };
-    } else {
-      newRecords = {
-        ...current.records,
-        [discipline]: value
-      };
-    }
+  // exemple : on insert ou on upsert pour écraser l’ancienne
+  const { data, error } = await supabase
+    .from('best_scores')
+    .upsert([
+      { user_id: current.id, mode_variants_id: mode, score }
+    ], { onConflict: ['user_id', 'mode_variants_id'] })
+    .select();
 
-    // on met à jour la colonne JSONB records
-    const { data: updated, error } = await supabase
-      .from('users')
-      .update({ records: newRecords })
-      .eq('id', current.id)
-      .select()
-      .single();
-    if (error) throw error;
+  if (error) throw error;
+  return data;
+};
 
-    // on synchronise le state
-    setCurrent(updated);
-    setAccounts(prev => prev.map(u => u.id === updated.id ? updated : u));
-  };
 
   return (
     <AccountContext.Provider value={{
