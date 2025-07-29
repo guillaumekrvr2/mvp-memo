@@ -13,7 +13,7 @@ import useGrid          from '../../hooks/useGrid'
 import useAutoScroll    from '../../hooks/useAutoScroll'
 
 export default function MemoScreen({ route, navigation }) {
-  const { objectif, temps, mode, digitCount, autoAdvance } = route.params // routes
+  const { objectif, temps, variant, digitCount, autoAdvance } = route.params // routes
   const numbers = useNumbers(objectif) // Génération des chiffres
   const totalTime     = parseInt(temps, 10) || 0 // Chrono
   const [timeLeft]    = useTimer(totalTime) 
@@ -31,7 +31,7 @@ export default function MemoScreen({ route, navigation }) {
       {/* HEADER */}
       <MemorizationHeader
         onBack={() => navigation.goBack()}
-        onDone={() => navigation.replace('Recall', { objectif, temps, numbers, mode })}
+        onDone={() => navigation.replace('Recall', { objectif, temps, numbers, variant })}
         duration={totalTime}
       />
 

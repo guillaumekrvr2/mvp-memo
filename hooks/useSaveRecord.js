@@ -1,30 +1,37 @@
 // hooks/useSaveRecord.js
-import { useContext, useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { Alert } from 'react-native';
+import { supabase } from '../data/supabaseClient';
 import { AccountContext } from '../contexts/AccountContext';
 
-/**
- * Hook pour exposer une fonction saveRecord(discipline, { mode, score, time })
- */
 export default function useSaveRecord() {
-  const { updateRecord } = useContext(AccountContext);
+  const { current } = useContext(AccountContext);
 
-  const saveRecord = useCallback(
+  return useCallback(
     async (discipline, { mode, score, time }) => {
-      console.log(`[useSaveRecord] saving ${discipline}`, { mode, score, time });
-      try {
-        await updateRecord(discipline, { mode, score, time });
+      if (!current) throw new Error('No user logged in');
+
+      const payload = {
+        user_id:          current.id,
+        mode_variants_id: mode,
+        score,                   // si vous ajoutez cette colonne en DB
+      };
+
+      const { data, error } = await supabase
+        .from('best_scores')
+        .upsert([payload], { onConflict: ['user_id','mode_variants_id'] });
+
+      if (error) {
+        console.error(`[useSaveRecord] erreur saving ${discipline}`, error);
+        Alert.alert('Impossible de sauvegarder le record');
+      } else {
+        console.log('[useSaveRecord] saved!', data);
         Alert.alert(
           'Record sauvegardé',
           `Discipline: ${discipline}\nMode: ${mode}\nScore: ${score}\nTemps: ${time}s`
         );
-      } catch (e) {
-        console.error(`[useSaveRecord] erreur saving ${discipline}`, e);
-        Alert.alert('Erreur', "Impossible de sauvegarder le record.");
       }
     },
-    [updateRecord]
+    [current]
   );
-
-  return saveRecord;
 }

@@ -6,7 +6,7 @@ import useSaveRecord from '../../hooks/useSaveRecord';
 import useAutoSaveRecord  from '../../hooks/useAutoSaveRecord';
 
 export default function CorrectionScreen({ route, navigation }) {
-  const { inputs = [], numbers = [], temps = 0, mode, } = route.params || {};
+  const { inputs = [], numbers = [], temps = 0, variant, } = route.params || {};
   const total = inputs.length;
   const score = inputs.reduce((acc, v, i) =>
     acc + (v === String(numbers[i]) ? 1 : 0), 0);
@@ -15,7 +15,7 @@ export default function CorrectionScreen({ route, navigation }) {
   const saveRecord = useSaveRecord();
 
   // Hook auto-save
-  useAutoSaveRecord('numbers', mode, score, temps);
+  useAutoSaveRecord('numbers', variant, score, temps);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -27,10 +27,16 @@ export default function CorrectionScreen({ route, navigation }) {
 
       <SecondaryButton
               style={styles.retryButton}
-              onPress={() =>
-                saveRecord('numbers', { mode, score, time: temps })
-                  .then(() => navigation.navigate('Numbers'))
-              }
+              onPress={async () => {
+               console.log('🔄 Retry pressed', { variant, score, temps });
+               try {
+                 await saveRecord('numbers', { variant, score, time: temps });
+                 console.log('✅ saveRecord succeeded');
+                 navigation.navigate('Numbers');
+               } catch (e) {
+                 console.error('❌ saveRecord threw', e);
+               }
+             }}
             >
               Retry
       </SecondaryButton>

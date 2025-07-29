@@ -1,32 +1,30 @@
-// src/hooks/useControlledInput.js
 import { useState, useEffect, useCallback } from 'react'
 
 /**
- * Hook to manage controlled inputs with local state,
- * preserving input focus and preventing rerender flicker.
- *
- * @param {string} value - Controlled value from parent
- * @param {(text: string) => void} onChange - Callback to notify parent
- * @returns {[string, (text: string) => void]} internal value and change handler
+ * Hook pour inputs contrôlés :
+ * - transforme toujours `value` en string
+ * - accepte un onChange facultatif (noop si absent)
  */
-export default function useControlledInput(value, onChange) {
-  const [internal, setInternal] = useState(value)
+export default function useControlledInput(
+  value,
+  onChange = () => {}
+) {
+  // 1. Initialise toujours un string ('' si undefined / null)
+  const [internal, setInternal] = useState(String(value ?? ''))
 
-  // Sync internal state when parent value changes externally
+  // 2. Si la prop `value` change (number, null, whatever), on re-cast et met à jour
   useEffect(() => {
-    if (value !== internal) {
-      setInternal(value)
+    const str = String(value ?? '')
+    if (str !== internal) {
+      setInternal(str)
     }
   }, [value, internal])
 
-  // Stable handler to update local state and notify parent
-  const handleChange = useCallback(
-    (text) => {
-      setInternal(text)
-      onChange(text)
-    },
-    [onChange]
-  )
+  // 3. Quand l’utilisateur tape, on met à jour localement ET on appelle la callback
+  const handleChange = useCallback(text => {
+    setInternal(text)
+    onChange(text)
+  }, [onChange])
 
   return [internal, handleChange]
 }

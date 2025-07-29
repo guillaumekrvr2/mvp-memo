@@ -9,7 +9,7 @@ import Grid from '../../components/atoms/Grid/Grid'
 import RecallCell from '../../components/molecules/RecallCell/RecallCell'
 
 export default function RecallScreen({ route, navigation }) {
-  const { objectif, numbers, temps, mode } = route.params
+  const { objectif, numbers, temps, variant } = route.params
   const cols = 6
   const totalTime = 4 * 60
   const {
@@ -32,7 +32,7 @@ export default function RecallScreen({ route, navigation }) {
             inputs: values,
             numbers,
             temps,
-            mode,
+            variant,
           })
         }
       />

@@ -1,20 +1,12 @@
-// hooks/useObjective.js
-import { useEffect } from 'react';
-import useAsyncStorageState from './useAsyncStorageState';
+// src/hooks/useObjective.js
+import useHybridUserPreference from './useHybridUserPreference'
+import { defaultTimes } from '../config/gameConfig'
 
-/**
- * @param {string} key            Clé AsyncStorage
- * @param {string} initialValue   Valeur par défaut si vide
- */
-export default function useObjective(key = 'objectif', initialValue = '') {
-  const [objectif, setObjectif] = useAsyncStorageState(key, initialValue);
+export default function useObjective(mode) {
+  const key = `numbers:objectif:${mode}`
+  const init = (mode==='memory-league' || mode==='iam') ? '60' : ''
+  const { value: objectif, setValue: setObjectif } =
+    useHybridUserPreference(key, init)
 
-  // Si initialValue change (i.e. changement de mode), on réinitialise si vide
-  useEffect(() => {
-    if (objectif === '') {
-      setObjectif(initialValue);
-    }
-  }, [initialValue]);
-
-  return { objectif, setObjectif };
+  return { objectif, setObjectif }
 }

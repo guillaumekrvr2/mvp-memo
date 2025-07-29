@@ -38,7 +38,7 @@ export default function ObjectiveTimePicker({
             style={styles.input}
             placeholder="Temps (s)"
             keyboardType="number-pad"
-            value={temps > 0 ? String(temps) : ''}
+            value={temps}
             onChangeText={onTempsChange}
           />
         </View>

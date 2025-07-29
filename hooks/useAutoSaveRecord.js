@@ -1,43 +1,31 @@
-import { useEffect, useContext } from 'react';
-import useSaveRecord from './useSaveRecord';
+// hooks/useSaveRecord.js
+import { useContext } from 'react';
+import { supabase }    from '../data/supabaseClient';
 import { AccountContext } from '../contexts/AccountContext';
 
-/**
- * Auto-save un record dès qu’il est “meilleur” qu’un précédent.
- *
- * @param {string}  discipline    e.g. 'numbers', 'words', etc.
- * @param {string}  mode          e.g. 'memory-league', 'iam', ...
- * @param {number}  score
- * @param {number}  time          en secondes
- * @param {string[]} modesToAuto  listes des modes pour lesquels on fait l’auto-save
- */
-
-export default function useAutoSaveRecord(
-  discipline,
-  mode,
-  score,
-  time,
-  modesToAuto = ['memory-league', 'iam']
-) {
+export default function useSaveRecord() {
   const { current } = useContext(AccountContext);
-  const saveRecord = useSaveRecord();
 
-  useEffect(() => {
-    // on ne fait rien si mode non concerné ou si pas de user connecté
-    if (!modesToAuto.includes(mode) || !current) return;
+  return async (discipline, { mode, score /*, time */ }) => {
+    if (!current) throw new Error('No user logged in');
 
-    // accès sûr à current.records grâce au test ci-dessus
-    const prev = current.records?.[discipline]?.[mode];
-    const lastScore = prev?.score;
-    const lastTime  = prev?.time;
+    // ATTENTION : votre table best_scores a ces colonnes → id, user_id, mode_variants_id, score
+    const payload = {
+      user_id:           current.id,
+      mode_variants_id:  mode,    // ← utilisez le bon nom de colonne
+      score,                   // ← pas de « time » dans best_scores, sauf si vous l’ajoutez au schéma
+    };
 
-    const isNewRecord =
-      !prev ||
-      (time === lastTime && score > lastScore) ||
-      (score === lastScore && time < lastTime);
+    const { data, error } = await supabase
+      .from('best_scores')
+      .upsert([payload], {
+        onConflict: ['user_id', 'mode_variants_id']
+      });
 
-    if (isNewRecord) {
-      saveRecord(discipline, { mode, score, time });
+    if (error) {
+      console.error(`[useSaveRecord] erreur saving ${discipline}`, error);
+      throw error;
     }
-  }, [discipline, mode, score, time, current, saveRecord, modesToAuto]);
+    return data;
+  };
 }
