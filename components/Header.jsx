@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    marginTop: 10,
+    marginTop: 20,
   },
   leftContainer: {
     position: 'absolute',
