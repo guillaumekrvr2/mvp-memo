@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import React, { useState } from 'react';
+import { useState} from 'react'
 import { theme }  from '../../theme'; 
 import { Carousel } from '../../components/molecules/Carousel/Carousel';
 import { ModePicker } from '../../components/molecules/ModePicker/ModePicker'

@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Client Supabase
 import { createClient } from '@supabase/supabase-js';
-import { supabaseUrl, supabaseAnonKey } from '../config/supabaseConfig';
+import { supabaseUrl, supabaseAnonKey } from '../../config/supabaseConfig';
 
 // Intercepteur global pour logger toutes les requêtes/réponses Supabase
 const customFetch = async (url, options) => {

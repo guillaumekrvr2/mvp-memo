@@ -1,6 +1,6 @@
 // hooks/useModeVariants.js
 import { useState, useEffect } from 'react';
-import { supabase } from '../data/supabaseClient';
+import { supabase } from '../data/supabase/supabaseClient';
 import useMode from './useMode';
 
 export function useModeVariants(disciplineSlug, modeSlug) {     // Récupère le slug du mode courant

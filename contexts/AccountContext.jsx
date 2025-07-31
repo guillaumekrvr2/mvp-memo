@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { supabase } from '../data/supabaseClient';
+import { supabase } from '../data/supabase/supabaseClient';
 import { mapUserRowToAccount } from '../adapters/supabase/userMapper';
 
 export const AccountContext = createContext();

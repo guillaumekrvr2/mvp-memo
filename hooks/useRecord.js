@@ -1,7 +1,7 @@
 // hooks/useRecord.js
 import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { supabase } from '../data/supabaseClient';
+import { supabase } from '../data/supabase/supabaseClient';
 import { useContext } from 'react';
 import { AccountContext } from '../contexts/AccountContext';
 

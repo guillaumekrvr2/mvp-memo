@@ -1,4 +1,4 @@
-// src/adapters/supabase/userMapper.js
+//adapters/supabase/userMapper.js
 
 /**
  * Convertit une ligne Supabase `users` en objet `Account` pour le domaine.

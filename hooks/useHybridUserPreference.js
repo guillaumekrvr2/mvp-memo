@@ -1,6 +1,6 @@
 // src/hooks/useHybridUserPreference.js
 import { useState, useEffect, useCallback, useContext } from 'react'
-import { supabase } from '../data/supabaseClient'
+import { supabase } from '../data/supabase/supabaseClient'
 import { AccountContext } from '../contexts/AccountContext'
 import useAsyncStorageState from './useAsyncStorageState'
 

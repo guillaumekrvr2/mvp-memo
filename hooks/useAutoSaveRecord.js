@@ -1,6 +1,6 @@
 // hooks/useSaveRecord.js
 import { useContext } from 'react';
-import { supabase }    from '../data/supabaseClient';
+import { supabase }    from '../data/supabase/supabaseClient';
 import { AccountContext } from '../contexts/AccountContext';
 
 export default function useSaveRecord() {

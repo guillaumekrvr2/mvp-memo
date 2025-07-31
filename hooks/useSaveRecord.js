@@ -1,7 +1,7 @@
 // hooks/useSaveRecord.js
 import { useCallback, useContext } from 'react';
 import { Alert } from 'react-native';
-import { supabase } from '../data/supabaseClient';
+import { supabase } from '../data/supabase/supabaseClient';
 import { AccountContext } from '../contexts/AccountContext';
 
 export default function useSaveRecord() {
