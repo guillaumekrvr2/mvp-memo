@@ -1,13 +1,12 @@
 // screens/SignUpScreen.jsx
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { AccountContext } from '../../contexts/AccountContext';
+// on n'utilise plus signUp du context ici
+import { supabase } from '../../data/supabase/supabaseClient';
 import InputField from '../../components/atoms/InputField/InputField';
 import { SecondaryButton } from '../../components/atoms/SecondaryButton/SecondaryButton';
 
-
 export default function SignUpScreen({ navigation }) {
-  const { signUp } = useContext(AccountContext);
   const [firstName, setFirstName] = useState('');
   const [lastName,  setLastName]  = useState('');
   const [email,     setEmail]     = useState('');
@@ -16,7 +15,21 @@ export default function SignUpScreen({ navigation }) {
 
   const onSignUp = async () => {
     try {
-      await signUp({ firstName, lastName, email, password });
+      // v2 : un seul objet en argument, metadata dans options.data
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,   // sera disponible dans raw_user_meta_data
+            second_name: lastName
+          }
+          // redirectTo: 'yourapp://login' // si tu utilises un deep link
+        }
+      });
+
+      if (signUpError) throw signUpError;
+      // Tu peux éventuellement vérifier data.user.confirmed_at avant de naviguer
       navigation.replace('Main');
     } catch (e) {
       setError(e.message);
@@ -71,10 +84,10 @@ export default function SignUpScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container:   { flex:1, padding:20, justifyContent:'center' },
-  title:       { fontSize:24, marginBottom:20, textAlign:'center', color: '#fff' },
-  input:       { padding:10, marginBottom:15, borderRadius:15 },
-  error:       { color:'red', textAlign:'center', marginBottom:10 },
+  container:   { flex: 1, padding: 20, justifyContent: 'center' },
+  title:       { fontSize: 24, marginBottom: 20, textAlign: 'center', color: '#fff' },
+  input:       { padding: 10, marginBottom: 15, borderRadius: 15 },
+  error:       { color: 'red', textAlign: 'center', marginBottom: 10 },
   switch:      { marginTop: 20, flexDirection: 'row', justifyContent: 'center' },
   switchText:  { color: '#fff', marginRight: 8 },
   link:        { color: '#fff', textDecorationLine: 'underline' },
