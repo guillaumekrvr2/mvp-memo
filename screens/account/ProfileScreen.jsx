@@ -4,7 +4,6 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AccountContext } from '../../contexts/AccountContext';
-import { supabase } from '../../data/supabaseClient';   // ← import de votre client Supabase
 
 const DISCIPLINES = ['numbers', 'cards', 'words', 'binary', 'names', 'images'];
 
