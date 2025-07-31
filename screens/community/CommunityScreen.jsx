@@ -1,4 +1,4 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { useState} from 'react'
 import { theme }  from '../../theme'; 
 import { Carousel } from '../../components/molecules/Carousel/Carousel';
@@ -26,12 +26,12 @@ export default function CommunityScreen() {
   const [selectedMode, setSelectedMode] = useState('memory-league');
 
   // Utilise le hook pour obtenir la liste triée
-  const sorted = useLeaderboard(
-    selectedDiscipline,
-    selectedMode,
-    DISCIPLINES
-  );
-
+   const { sorted, loading, error } = useLeaderboard(
+     selectedDiscipline,
+     selectedMode,
+     DISCIPLINES
+   );
+  console.log(sorted)
   return (
     <View style={styles.container}>
       {/* Sélecteur de discipline */}
@@ -49,13 +49,16 @@ export default function CommunityScreen() {
         onValueChange={setSelectedMode}
         options={GAME_MODES}
       />
-
+     {loading && <Text>Chargement…</Text>}
+     {error   && <Text>Erreur : {error.message}</Text>}
+     {!loading && !error && (
       <LeaderboardList
         data={sorted}
         discipline={selectedDiscipline}
         mode={selectedMode}
         disciplines={DISCIPLINES}
       />
+      )}
     </View>
   );
 }
