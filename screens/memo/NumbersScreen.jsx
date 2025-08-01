@@ -18,7 +18,7 @@ import { modeOptions } from '../../config/gameConfig';
 import useObjective from '../../hooks/useObjective';
 import useCountdown from '../../hooks/useCountdown';
 import useAutoAdvancePreference from '../../hooks/useAutoAdvancePreference';
-import useRecord from '../../hooks/useRecord';
+import useFetchBestScore from '../../hooks/useFetchBestScore';
 import { useModeVariants } from '../../hooks/useModeVariants';
 
 export default function NumbersScreen() {
@@ -48,7 +48,7 @@ export default function NumbersScreen() {
   const { autoAdvance, toggleAutoAdvance } = useAutoAdvancePreference(mode);
 
   // Dernier score lu depuis best_scores
-  const { lastScore, lastTime } = useRecord('numbers', mode);
+  const { lastScore, lastTime } = useFetchBestScore('numbers', mode);
 
   // Variants (durées) pour le mode/disciplines standards
   const {
