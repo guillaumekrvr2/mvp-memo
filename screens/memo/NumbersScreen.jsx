@@ -21,6 +21,7 @@ import useAutoAdvancePreference from '../../hooks/useAutoAdvancePreference';
 import useFetchBestScore from '../../hooks/useFetchBestScore';
 import { useModeVariants } from '../../hooks/useModeVariants';
 
+
 export default function NumbersScreen() {
   const navigation = useNavigation();
 
@@ -48,7 +49,9 @@ export default function NumbersScreen() {
   const { autoAdvance, toggleAutoAdvance } = useAutoAdvancePreference(mode);
 
   // Dernier score lu depuis best_scores
-  const { lastScore, lastTime } = useFetchBestScore('numbers', mode);
+  // Dernier meilleur score pour le variant sélectionné
+  const variantId = selectedVariant?.id;
+  const lastScore = useFetchBestScore(variantId);
 
   // Variants (durées) pour le mode/disciplines standards
   const {
@@ -105,20 +108,20 @@ export default function NumbersScreen() {
               <ObjectiveTimePicker
                 mode={mode}
                 objectif={objectif}
-                onObjectifChange={text => setObjectif(text)}                 // ← il manquait !
+                onObjectifChange={text => setObjectif(text)}                 
                 temps={playTime}
-                onTempsChange={text => setTemps(parseInt(text, 10) || 0)}    // ← idem
+                onTempsChange={text => setTemps(parseInt(text, 10) || 0)}    
                 disabled
               />
           </>
         )}
 
         {/* Affichage du meilleur score */}
-        <RecordDisplay
-          score={lastScore}
-          time={lastTime}
-          hidden={mode === 'custom'}
-        />
+       <RecordDisplay
+ //        score={lastScore}
+//         time={lastTime}
+         hidden={mode === 'custom' || variantId == null}
+       />
 
         {/* Bouton Démarrer */}
         <PlayButton

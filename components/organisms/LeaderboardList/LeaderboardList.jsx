@@ -1,3 +1,4 @@
+// src/components/organisms/LeaderboardList/LeaderboardList.jsx
 import React from 'react';
 import { FlatList, Text } from 'react-native';
 import styles from './styles';
@@ -12,6 +13,7 @@ import { LeaderboardItem } from '../../molecules/LeaderboardItem/LeaderboardItem
  *  - discipline : clé de la discipline sélectionnée
  *  - mode : clé du mode de jeu sélectionné
  *  - disciplines : Array des disciplines (pour calcul global)
+ *  - variantId : ID du variant pour cas IAM
  *  - emptyText : texte à afficher si la liste est vide (défaut « Aucun participant »)
  */
 export function LeaderboardList({
@@ -19,6 +21,7 @@ export function LeaderboardList({
   discipline,
   mode,
   disciplines,
+  variantId,
   emptyText = 'Aucun participant',
 }) {
   return (
@@ -32,6 +35,7 @@ export function LeaderboardList({
           discipline={discipline}
           mode={mode}
           disciplines={disciplines}
+          variantId={variantId}
         />
       )}
       ListEmptyComponent={() => (

@@ -1,8 +1,8 @@
+// src/contexts/AccountContext.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import { supabase } from '../data/supabase/supabaseClient';
 import { mapUserRowToAccount } from '../adapters/supabase/userMapper';
 import SupabaseRecordRepository from '../data/repositories/SupabaseRecordRepository';
-import { mapVariantToDisciplineAndMode } from '../utils/variantMapping';
 
 export const AccountContext = createContext();
 
@@ -10,13 +10,30 @@ export function AccountProvider({ children }) {
   const [current, setCurrent] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Charge et formate tous les best scores sous forme plate { [variantId]: { score } }
+  const loadUserRecords = async (user) => {
+    const repo = new SupabaseRecordRepository();
+    const rows = await repo.getAllBestScoresForUser(user.id);
+    const records = {};
+    rows.forEach(({ mode_variants_id, score }) => {
+      records[mode_variants_id] = { score };
+    });
+    return records;
+  };
+
+
+
   useEffect(() => {
-    // Initial check for an active session
     const init = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
         if (session?.user) {
-          setCurrent(mapUserRowToAccount(session.user));
+          const account = mapUserRowToAccount(session.user);
+          const records = await loadUserRecords(account);
+          setCurrent({ ...account, records });
         }
       } catch (error) {
         console.error('[AccountProvider] init error:', error);
@@ -26,54 +43,75 @@ export function AccountProvider({ children }) {
     };
     init();
 
-    // Listen for login / logout events
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        if (session?.user) {
-          setCurrent(mapUserRowToAccount(session.user));
-        } else {
-          setCurrent(null);
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        const account = mapUserRowToAccount(session.user);
+        const records = await loadUserRecords(account);
+        setCurrent({ ...account, records });
+      } else {
+        setCurrent(null);
       }
-    );
+    });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Sign up via Auth only, no public.users calls
   const signUp = async ({ email, password }) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
+
     const account = mapUserRowToAccount(data.user);
-    setCurrent(account);
+    const records = await loadUserRecords(account);
+    setCurrent({ ...account, records });
     return account;
   };
 
-  // Login via Auth only
   const login = async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     if (error) throw error;
+
     const account = mapUserRowToAccount(data.user);
-    setCurrent(account);
+
+    const records = await loadUserRecords(account);
+
+    setCurrent({ ...account, records });
     return account;
   };
 
-  // Logout
   const logout = async () => {
     await supabase.auth.signOut();
     setCurrent(null);
   };
 
-  // Optionnel : mise à jour de scores (table best_scores)
-  const updateRecord = async (modeVariantsId, score) => {
+  const updateRecord = async (modeVariantId, score) => {
     if (!current) return;
+
     const { data, error } = await supabase
       .from('best_scores')
-      .upsert([
-        { user_id: current.id, mode_variants_id: modeVariantsId, score }
-      ], { onConflict: ['user_id', 'mode_variants_id'] })
+      .upsert(
+        [{ user_id: current.id, mode_variants_id: modeVariantId, score }],
+        { onConflict: ['user_id', 'mode_variants_id'] }
+      )
       .select();
-    if (error) throw error;
+
+    if (error) {
+      throw error;
+    }
+
+    // Mise à jour locale immédiate
+    setCurrent((prev) => ({
+      ...prev,
+      records: {
+        ...prev.records,
+        [modeVariantId]: { score },
+      },
+    }));
+
     return data;
   };
 

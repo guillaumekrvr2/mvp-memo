@@ -12,8 +12,9 @@ export default function useFetchBestScore(modeVariantId) {
     if (!current) return;
 
     const repo = new SupabaseRecordRepository();
-    repo.getBestScore(current.id, modeVariantId)
+    repo.getBestScore(current.id, modeVariantId) //dans le repo supabase, on récupère l'id de l'utilisateur, le modeVariant, puis on affiche le record associé
       .then(record => {
+       console.log('useFetchBestScore:', modeVariantId, record)
         setBestScore(record ? record.score : 0);
       })
       .catch(() => {
@@ -21,5 +22,5 @@ export default function useFetchBestScore(modeVariantId) {
       });
   }, [current, modeVariantId]);
 
-  return bestScore;
+  return bestScore; //on renvoie le meilleur score de l'utilisateur
 }

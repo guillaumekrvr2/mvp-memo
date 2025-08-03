@@ -3,8 +3,9 @@ import { useState} from 'react'
 import { theme }  from '../../theme'; 
 import { Carousel } from '../../components/molecules/Carousel/Carousel';
 import { ModePicker } from '../../components/molecules/ModePicker/ModePicker'
-import { useLeaderboard } from '../../hooks/useLeaderboard';
+import useLeaderboard from '../../hooks/useLeaderboard';
 import { LeaderboardList } from '../../components/organisms/LeaderboardList/LeaderboardList';
+import useFetchBestScore from '../../hooks/useFetchBestScore';
 
 const DISCIPLINES = [
   { key: 'global',  label: 'Global' },
@@ -24,6 +25,9 @@ const GAME_MODES = [
 export default function CommunityScreen() {
   const [selectedDiscipline, setSelectedDiscipline] = useState('numbers');
   const [selectedMode, setSelectedMode] = useState('memory-league');
+
+  const variantId = selectedMode === 'iam' ? 7 : undefined;
+  const myScore   = useFetchBestScore(variantId);
 
   // Utilise le hook pour obtenir la liste triée
    const { sorted, loading, error } = useLeaderboard(
@@ -51,14 +55,15 @@ export default function CommunityScreen() {
       />
      {loading && <Text>Chargement…</Text>}
      {error   && <Text>Erreur : {error.message}</Text>}
-     {!loading && !error && (
+      {!loading && !error && (
       <LeaderboardList
         data={sorted}
+        variantId={variantId}
         discipline={selectedDiscipline}
         mode={selectedMode}
         disciplines={DISCIPLINES}
       />
-      )}
+     )}
     </View>
   );
 }
