@@ -3,6 +3,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import { supabase } from '../data/supabase/supabaseClient';
 import { mapUserRowToAccount } from '../adapters/supabase/userMapper';
 import SupabaseRecordRepository from '../data/repositories/SupabaseRecordRepository';
+import { GetBestScores } from '../usecases/GetBestScores';
 
 export const AccountContext = createContext();
 
@@ -10,18 +11,18 @@ export function AccountProvider({ children }) {
   const [current, setCurrent] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Charge et formate tous les best scores sous forme plate { [variantId]: { score } }
-  const loadUserRecords = async (user) => {
+  // Charge et formate tous les best scores sous forme plate { [variantId]: score }
+  const loadUserRecords = async (userId) => {
     const repo = new SupabaseRecordRepository();
-    const rows = await repo.getAllBestScoresForUser(user.id);
-    const records = {};
-    rows.forEach(({ mode_variants_id, score }) => {
-      records[mode_variants_id] = { score };
-    });
-    return records;
+    const getBestScores = new GetBestScores(repo);
+    // exécute le use case, renvoie [{ discipline, score }, ...]
+    const scoresArray = await getBestScores.execute({ userId });
+    // transforme en objet { modeVariantId: score }
+    return scoresArray.reduce((acc, { discipline, score }) => {
+      acc[discipline] = score;
+      return acc;
+    }, {});
   };
-
-
 
   useEffect(() => {
     const init = async () => {
@@ -32,7 +33,8 @@ export function AccountProvider({ children }) {
 
         if (session?.user) {
           const account = mapUserRowToAccount(session.user);
-          const records = await loadUserRecords(account);
+          const records = await loadUserRecords(account.id);
+          console.log(`[AccountContext] init records set for userId=${account.id}:`, records);
           setCurrent({ ...account, records });
         }
       } catch (error) {
@@ -48,7 +50,8 @@ export function AccountProvider({ children }) {
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
         const account = mapUserRowToAccount(session.user);
-        const records = await loadUserRecords(account);
+        const records = await loadUserRecords(account.id);
+        console.log(`[AccountContext] onAuth records set for userId=${account.id}:`, records);
         setCurrent({ ...account, records });
       } else {
         setCurrent(null);
@@ -63,7 +66,8 @@ export function AccountProvider({ children }) {
     if (error) throw error;
 
     const account = mapUserRowToAccount(data.user);
-    const records = await loadUserRecords(account);
+    const records = await loadUserRecords(account.id);
+    console.log(`[AccountContext] signUp records set for userId=${account.id}:`, records);
     setCurrent({ ...account, records });
     return account;
   };
@@ -76,8 +80,8 @@ export function AccountProvider({ children }) {
     if (error) throw error;
 
     const account = mapUserRowToAccount(data.user);
-
-    const records = await loadUserRecords(account);
+    const records = await loadUserRecords(account.id);
+    console.log(`[AccountContext] login records set for userId=${account.id}:`, records);
 
     setCurrent({ ...account, records });
     return account;
@@ -108,7 +112,7 @@ export function AccountProvider({ children }) {
       ...prev,
       records: {
         ...prev.records,
-        [modeVariantId]: { score },
+        [modeVariantId]: score,
       },
     }));
 

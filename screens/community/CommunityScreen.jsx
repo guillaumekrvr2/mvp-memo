@@ -27,7 +27,6 @@ export default function CommunityScreen() {
   const [selectedMode, setSelectedMode] = useState('memory-league');
 
   const variantId = selectedMode === 'iam' ? 7 : 10;
-  const myScore   = useFetchBestScore(variantId);
 
   // Utilise le hook pour obtenir la liste triée
    const { sorted, loading, error } = useLeaderboard(

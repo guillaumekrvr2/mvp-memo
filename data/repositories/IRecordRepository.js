@@ -25,4 +25,13 @@ export default class IRecordRepository {
   async upsertBestScore(userId, modeVariantId, score) {
     throw new Error('Méthode not implemented');
   }
+
+ /**
+   * Récupère tous les meilleurs scores pour un utilisateur.
+   * @param {string} userId
+   * @returns {Promise<Array<{ user_id: string, mode_variants_id: string, score: number }>>}
+   */
+  async getAllBestScoresForUser(userId) {
+    throw new Error('Méthode not implemented');
+  }
 }

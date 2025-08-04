@@ -1,4 +1,3 @@
-// src/hooks/useLeaderboard.js
 import { useState, useEffect, useContext } from 'react';
 import { SupabaseUserRepository } from '../data/supabase/supabaseUserRepository';
 import { GetUsers } from '../usecases/GetUsers';
@@ -31,30 +30,32 @@ export default function useLeaderboard(discipline, mode, disciplines) {
         const getUsers = new GetUsers(userRepo);
         const accounts = await getUsers.execute({ mode, discipline });
 
-        // Cas spécifique IAM : variant ID par défaut = 7
-        if (mode === 'iam') {
-          const VARIANT_ID = 7;
+        // Cas des modes basés sur variant : IAM (7) et Memory League (10)
+        if (mode === 'iam' || mode === 'memory-league') {
+          const variantId = mode === 'iam' ? 7 : 10;
           const recordRepo = new SupabaseRecordRepository();
 
           // Pour chaque utilisateur, récupère son best score pour ce variant
           const withRecords = await Promise.all(
             accounts.map(async (user) => {
-              const rec = await recordRepo.getBestScore(user.id, VARIANT_ID);
+              const rec = await recordRepo.getBestScore(user.id, variantId);
               return {
                 ...user,
-                records: rec ? { [VARIANT_ID]: { score: rec.score } } : {},
+                records: rec ? { [variantId]: { score: rec.score } } : {},
               };
             })
           );
 
-          // Trie tous les utilisateurs par score desc (0 pour ceux sans record)
+          // Trie tous les utilisateurs par score décroissant (0 pour ceux sans record)
           const sortedList = withRecords.sort(
-            (a, b) => (b.records[VARIANT_ID]?.score || 0) - (a.records[VARIANT_ID]?.score || 0)
+            (a, b) =>
+              (b.records[variantId]?.score || 0) -
+              (a.records[variantId]?.score || 0)
           );
 
           if (isMounted) setSorted(sortedList);
         } else {
-          // Cas par défaut : on mélange uniquement le record du joueur courant
+          // Cas par défaut : on ne mélange que le record du joueur courant
           const withRecords = accounts.map((user) => ({
             ...user,
             records: user.id === current?.id ? current.records : {},

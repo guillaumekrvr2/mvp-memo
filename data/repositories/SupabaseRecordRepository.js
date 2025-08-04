@@ -55,6 +55,8 @@
       .select('*')
       .eq('user_id', userId);
 
+     console.log(`[SupabaseRecordRepository] getAllBestScoresForUser for userId=${userId}:`, data);
+
     if (error) {
       console.error('[SupabaseRecordRepository] getAllBestScoresForUser error:', error);
       throw error;

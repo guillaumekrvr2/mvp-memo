@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ThemeProvider } from 'styled-components/native';
 
 import { AccountProvider } from './contexts/AccountContext';
+import { ModeVariantProvider } from './contexts/ModeVariantContext';
 import { theme as styledTheme } from './theme';    // <- ton design system
 
 
@@ -40,6 +41,7 @@ export default function App() {
         {/* 3) Navigation */}
         <NavigationContainer theme={MyNavTheme}>
           <AccountProvider>
+            <ModeVariantProvider>
             <RootStack.Navigator
               initialRouteName="Main"
               screenOptions={{ headerShown: false }}
@@ -51,6 +53,7 @@ export default function App() {
               <RootStack.Screen name="Login"  component={LoginScreen} />
               <RootStack.Screen name="SignUp" component={SignUpScreen} />
             </RootStack.Navigator>
+            </ModeVariantProvider>
           </AccountProvider>
         </NavigationContainer>
 

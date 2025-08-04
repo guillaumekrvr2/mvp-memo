@@ -10,7 +10,7 @@ import styles from './styles';
  *  - discipline : clé de la discipline sélectionnée
  *  - mode : clé du mode de jeu sélectionné
  *  - disciplines : tableau des disciplines pour calcul global
- *  - variantId : ID du variant (pour mode IAM)
+ *  - variantId : ID du variant (pour modes basés sur variant : IAM, Memory League)
  */
 export function LeaderboardItem({
   player,
@@ -22,7 +22,7 @@ export function LeaderboardItem({
   let text;
 
   // Cas IAM avec variantId
-  if (mode === 'iam' && variantId != null) {
+  if ((mode === 'iam' || mode === 'memory-league') && variantId != null) {
     const rec = player.records?.[variantId];
     const score = rec?.score ?? 0;
     text = `${score} pts`;
