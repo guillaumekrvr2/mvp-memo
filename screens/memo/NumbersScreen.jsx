@@ -22,6 +22,7 @@ import useFetchBestScore from '../../hooks/useFetchBestScore';
 import { useModeVariants } from '../../hooks/useModeVariants';
 
 
+
 export default function NumbersScreen() {
   const navigation = useNavigation();
 
@@ -48,11 +49,6 @@ export default function NumbersScreen() {
   // Auto-advance uniquement pour custom
   const { autoAdvance, toggleAutoAdvance } = useAutoAdvancePreference(mode);
 
-  // Dernier score lu depuis best_scores
-  // Dernier meilleur score pour le variant sélectionné
-  const variantId = selectedVariant?.id;
-  const lastScore = useFetchBestScore(variantId);
-
   // Variants (durées) pour le mode/disciplines standards
   const {
     variants,
@@ -60,6 +56,11 @@ export default function NumbersScreen() {
     selectedVariant,
     setSelectedVariant,
   } = useModeVariants('numbers', mode);   // ← on passe mode ici
+
+   // Dernier score lu depuis best_scores
+  // Dernier meilleur score pour le variant sélectionné
+  const variantId = selectedVariant?.id;
+  const lastScore = useFetchBestScore(variantId);
 
   // Calcul du temps de jeu : soit saisi en custom, soit variant choisi
   const playTime = mode === 'custom'

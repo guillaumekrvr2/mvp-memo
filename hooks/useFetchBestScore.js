@@ -9,18 +9,23 @@ export default function useFetchBestScore(modeVariantId) {
   const [bestScore, setBestScore] = useState(null);
 
   useEffect(() => {
-    if (!current) return;
+    // On ne lance le fetch que si on a un utilisateur et un modeVariantId valide
+    if (!current || typeof modeVariantId !== 'number') {
+      setBestScore(0);
+      return;
+    }
 
     const repo = new SupabaseRecordRepository();
-    repo.getBestScore(current.id, modeVariantId) //dans le repo supabase, on récupère l'id de l'utilisateur, le modeVariant, puis on affiche le record associé
+    repo
+      .getBestScore(current.id, modeVariantId)
       .then(record => {
-       console.log('useFetchBestScore:', modeVariantId, record)
         setBestScore(record ? record.score : 0);
       })
-      .catch(() => {
+      .catch(error => {
+        console.error(error);
         setBestScore(0);
       });
   }, [current, modeVariantId]);
 
-  return bestScore; //on renvoie le meilleur score de l'utilisateur
+  return bestScore;
 }

@@ -26,7 +26,7 @@ export default function CommunityScreen() {
   const [selectedDiscipline, setSelectedDiscipline] = useState('numbers');
   const [selectedMode, setSelectedMode] = useState('memory-league');
 
-  const variantId = selectedMode === 'iam' ? 7 : undefined;
+  const variantId = selectedMode === 'iam' ? 7 : 10;
   const myScore   = useFetchBestScore(variantId);
 
   // Utilise le hook pour obtenir la liste triée
@@ -35,7 +35,6 @@ export default function CommunityScreen() {
      selectedMode,
      DISCIPLINES
    );
-  console.log(sorted)
   return (
     <View style={styles.container}>
       {/* Sélecteur de discipline */}

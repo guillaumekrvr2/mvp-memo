@@ -1,4 +1,4 @@
-// src/data/repositories/SupabaseRecordRepository.js
+//data/repositories/SupabaseRecordRepository.js
  import IRecordRepository from './IRecordRepository';
  import { supabase }            from '../supabase/supabaseClient';
 

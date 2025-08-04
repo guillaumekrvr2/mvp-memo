@@ -18,7 +18,6 @@ export class SupabaseUserRepository extends UserRepository {
     const { data: rows, error } = await supabase
       .from('users')
       .select('*');
-     console.log(rows)
     if (error) {
       throw error;
     }

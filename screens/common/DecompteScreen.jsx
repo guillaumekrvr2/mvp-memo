@@ -7,8 +7,6 @@ export default function DecompteScreen({ route, navigation }) {
   const { objectif, temps, variant, digitCount, autoAdvance} = route.params
   const [counter, setCounter] = useState(3)
 
-  console.log(route.params)
-
   useEffect(() => {
     if (counter <= 0) {
       // Une fois à zéro, on navigue vers l’écran de mémorisation

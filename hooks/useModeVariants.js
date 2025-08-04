@@ -1,21 +1,42 @@
-// hooks/useModeVariants.js
+// src/hooks/useModeVariants.js
 import { useState, useEffect } from 'react';
 import { supabase } from '../data/supabase/supabaseClient';
 import useMode from './useMode';
 
-export function useModeVariants(disciplineSlug, modeSlug) {     // Récupère le slug du mode courant
-  const [variants, setVariants] = useState([]);
+// Config locale des variants par défaut
+const DEFAULT_VARIANTS = {
+  'memory-league': {
+    id: 10,
+    label: '1-minute',
+    duration_seconds: 60,
+    sort_order: 0,
+  },
+  'iam': {
+    id: 8,
+    label: '10-minutes',
+    duration_seconds: 600,
+    sort_order: 0,
+  },
+};
+
+export function useModeVariants(disciplineSlug, modeSlug) {
+  // Variante par défaut si configurée
+  const defaultVariant = DEFAULT_VARIANTS[modeSlug] || null;
+
+  const [variants, setVariants] = useState(
+    defaultVariant ? [defaultVariant] : []
+  );
   const [loading, setLoading] = useState(true);
+  const [selectedVariant, setSelectedVariant] = useState(
+    defaultVariant
+  );
 
-  // **NOUVEAU** : état et setter pour le variant sélectionné
-  const [selectedVariant, setSelectedVariant] = useState(null);
-
-  // 1) Requête pour charger les variants de ce mode+discipline
   useEffect(() => {
     let isActive = true;
-    (async () => {
-      setLoading(true);
 
+    setLoading(true);
+
+    (async () => {
       // lookup discipline_id
       const { data: [disc], error: e1 } = await supabase
         .from('disciplines')
@@ -32,7 +53,7 @@ export function useModeVariants(disciplineSlug, modeSlug) {     // Récupère le
       const { data: [mod], error: e2 } = await supabase
         .from('modes')
         .select('id')
-        .eq('slug', modeSlug)    // maintenant on utilise le mode passé en paramètre
+        .eq('slug', modeSlug)
         .limit(1);
       if (e2 || !mod) {
         console.error('Mode inconnu', e2);
@@ -52,19 +73,16 @@ export function useModeVariants(disciplineSlug, modeSlug) {     // Récupère le
         console.error('Erreur fetch variants', e3);
       } else if (isActive) {
         setVariants(data);
+        if (data.length > 0) {
+          setSelectedVariant(data[0]);
+        }
       }
+
       if (isActive) setLoading(false);
     })();
 
     return () => { isActive = false; };
   }, [disciplineSlug, modeSlug]);
-
-  // 2) Initialiser automatiquement le sélectionné au premier variant
-  useEffect(() => {
-    if (!loading && variants.length > 0) {
-      setSelectedVariant(variants[0]);
-    }
-  }, [loading, variants]);
 
   return {
     variants,
