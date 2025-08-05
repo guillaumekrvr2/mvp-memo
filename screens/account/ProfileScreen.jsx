@@ -1,40 +1,38 @@
 // screens/ProfileScreen.jsx
-import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { AccountContext } from '../../contexts/AccountContext';
-import { ModeVariantContext } from '../../contexts/ModeVariantContext';
-import { Picker } from '@react-native-picker/picker';
+import React, { useContext, useEffect } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { AccountContext } from '../../contexts/AccountContext'
+import { ModeVariantContext } from '../../contexts/ModeVariantContext'
 
-const DISCIPLINES = ['numbers', 'cards', 'words', 'binary', 'names', 'images'];
+const DISCIPLINES = ['numbers', 'cards', 'words', 'binary', 'names', 'images']
 
 export default function ProfileScreen({ navigation }) {
-  const { current, logout } = useContext(AccountContext);
-  const { map: modeVariantsMap } = useContext(ModeVariantContext);
-  const [selectedNumberVariant, setSelectedNumberVariant] = useState(null);
-  const [showNumberVariants, setShowNumberVariants] = useState(false);
+  const { current, logout } = useContext(AccountContext)
+  const { byDiscipline } = useContext(ModeVariantContext)
 
   // Redirige si non connecté
   useEffect(() => {
-    if (!current) navigation.replace('Login');
-  }, [current]);
+    if (!current) navigation.replace('Login')
+  }, [current])
 
-  if (!current) return null;
+  if (!current) return null
 
-  const { firstName, lastName, email, records = {} } = current;
-
-  // Prépare les variants numbers avec label
-  const numberVariants = Object.entries(records).map(([variantId, score]) => ({
-    id: variantId,
-    label: modeVariantsMap[variantId] || variantId,
-    score,
-  }));
-
-  // Sélection initiale
+  // === DEBUG : afficher les IDs et scores des variants "numbers" ===
   useEffect(() => {
-    if (numberVariants.length && selectedNumberVariant == null) {
-      setSelectedNumberVariant(numberVariants[0].id);
-    }
-  }, [numberVariants]);
+    const nums = byDiscipline['numbers'] || byDiscipline[7] || []
+    const ids = nums.map(v => v.id)
+    const recs = ids.map(id => ({ id, score: current.records?.[id] ?? 0 }))
+  }, [byDiscipline, current])
+
+  const { firstName, lastName, email, records = {} } = current
+
+  // Prépare la liste simple des variants "numbers"
+  const rawNums = byDiscipline['numbers'] || byDiscipline[7] || []
+  const numberVariants = rawNums.map(({ id, label }) => ({
+    id,
+    label,
+    score: records[id] != null ? records[id] : 0,
+  }))
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -56,65 +54,71 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.buttonText}>Modifier Mot de passe</Text>
       </TouchableOpacity>
 
+
       {/* Records */}
       <Text style={styles.sectionTitle}>Mes Records</Text>
-      {DISCIPLINES.map((discipline) => (
-        <View key={discipline} style={styles.recordRow}>
-          {discipline === 'numbers' ? (
-            <TouchableOpacity style={styles.toggleRow} onPress={() => setShowNumberVariants(!showNumberVariants)}>
-              <Text style={styles.recordLabel}>Numbers</Text>
-              <Text style={styles.chevron}>{showNumberVariants ? '▴' : '▾'}</Text>
-            </TouchableOpacity>
-          ) : (
-            <View style={styles.staticRow}>
-              <Text style={styles.recordLabel}>{discipline}</Text>
-              <Text style={styles.recordValue}>{records[discipline] != null ? `${records[discipline]} pts` : '0 pts'}</Text>
-            </View>
-          )}
+      
+      {/* Numbers: liste statique */}
+      <View style={styles.recordRow}>
+        <Text style={styles.recordLabel}>Numbers:</Text>
+        {numberVariants.map(({ id, label, score }) => (
+          <View key={id} style={styles.staticRow}>
+            <Text style={styles.variantLabel}>{label}</Text>
+            <Text style={styles.recordValue}>{score} pts</Text>
+          </View>
+        ))}
+        {numberVariants.length === 0 && (
+          <Text style={styles.recordValue}>Aucun variant trouvé.</Text>
+        )}
+      </View>
 
-          {discipline === 'numbers' && showNumberVariants && (
-            <View style={styles.pickerContainer}>
-              {numberVariants.length ? (
-                <Picker
-                  selectedValue={selectedNumberVariant}
-                  onValueChange={(value) => setSelectedNumberVariant(value)}
-                  style={styles.picker}
-                  itemStyle={styles.pickerItem}
-                >
-                  {numberVariants.map(({ id, label, score }) => (
-                    <Picker.Item key={id} label={`${label} — ${score} pts`} value={id} />
-                  ))}
-                </Picker>
-              ) : (
-                <Text style={styles.recordValue}>0 pts</Text>
-              )}
-            </View>
-          )}
+      {/* Les autres disciplines restent statiques */}
+      {DISCIPLINES.filter(d => d !== 'numbers').map(discipline => (
+        <View key={discipline} style={styles.recordRow}>
+          <Text style={styles.recordLabel}>{discipline}</Text>
+          <Text style={styles.recordValue}>
+            {records[discipline] != null
+              ? `${records[discipline]} pts`
+              : '0 pts'}
+          </Text>
         </View>
       ))}
 
+      {/* Bouton déconnexion */}
       <TouchableOpacity style={[styles.button, styles.logout]} onPress={logout}>
         <Text style={styles.buttonText}>Se déconnecter</Text>
       </TouchableOpacity>
     </ScrollView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: { padding: 20, backgroundColor: '#000' },
   label: { color: '#aaa', fontSize: 14, marginTop: 15 },
   value: { color: '#fff', fontSize: 18, fontWeight: '600' },
-  sectionTitle: { color: '#fff', fontSize: 20, fontWeight: '600', marginTop: 30, marginBottom: 10 },
+  sectionTitle: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '600',
+    marginTop: 30,
+    marginBottom: 10,
+  },
   recordRow: { marginBottom: 12 },
-  staticRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  toggleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  recordLabel: { color: '#fff', fontSize: 16, textTransform: 'capitalize' },
+  staticRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  recordLabel: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  variantLabel: { color: '#fff', fontSize: 16, flex: 1 },
   recordValue: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  chevron: { color: '#fff', fontSize: 16 },
-  pickerContainer: { borderWidth: 1, borderColor: '#fff', borderRadius: 8, overflow: 'hidden', marginTop: 8, minHeight: 140 },
-  picker: { height: 140, color: '#fff' },
-  pickerItem: { height: 40 },
-  button: { marginTop: 15, paddingVertical: 12, backgroundColor: '#fff', borderRadius: 20, alignItems: 'center' },
+  button: {
+    marginTop: 15,
+    paddingVertical: 12,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    alignItems: 'center',
+  },
   buttonText: { color: '#000', fontWeight: '600', fontSize: 16 },
   logout: { backgroundColor: '#f66' },
-});
+})

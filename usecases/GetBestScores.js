@@ -23,8 +23,6 @@ export class GetBestScores {
     // 1. Récupération des lignes brutes depuis le repository
     const rows = await this.recordRepository.getAllBestScoresForUser(userId);
 
-    console.log(`[GetBestScores] rows for userId=${userId}:`, rows);
-
 
     // 2. Transformation en format { discipline, score }
     return rows.map(row => ({

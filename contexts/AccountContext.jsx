@@ -34,7 +34,6 @@ export function AccountProvider({ children }) {
         if (session?.user) {
           const account = mapUserRowToAccount(session.user);
           const records = await loadUserRecords(account.id);
-          console.log(`[AccountContext] init records set for userId=${account.id}:`, records);
           setCurrent({ ...account, records });
         }
       } catch (error) {
@@ -51,7 +50,6 @@ export function AccountProvider({ children }) {
       if (session?.user) {
         const account = mapUserRowToAccount(session.user);
         const records = await loadUserRecords(account.id);
-        console.log(`[AccountContext] onAuth records set for userId=${account.id}:`, records);
         setCurrent({ ...account, records });
       } else {
         setCurrent(null);
@@ -67,7 +65,6 @@ export function AccountProvider({ children }) {
 
     const account = mapUserRowToAccount(data.user);
     const records = await loadUserRecords(account.id);
-    console.log(`[AccountContext] signUp records set for userId=${account.id}:`, records);
     setCurrent({ ...account, records });
     return account;
   };
@@ -81,7 +78,6 @@ export function AccountProvider({ children }) {
 
     const account = mapUserRowToAccount(data.user);
     const records = await loadUserRecords(account.id);
-    console.log(`[AccountContext] login records set for userId=${account.id}:`, records);
 
     setCurrent({ ...account, records });
     return account;

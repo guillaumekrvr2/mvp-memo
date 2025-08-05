@@ -119,8 +119,8 @@ export default function NumbersScreen() {
 
         {/* Affichage du meilleur score */}
        <RecordDisplay
- //        score={lastScore}
-//         time={lastTime}
+         score={lastScore}
+         time={playTime}
          hidden={mode === 'custom' || variantId == null}
        />
 

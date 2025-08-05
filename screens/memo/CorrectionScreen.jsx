@@ -18,7 +18,6 @@ export default function CorrectionScreen({ route, navigation }) {
 
   // Auto-save du best score à l'affichage de l'écran
   useEffect(() => {
-    console.log('[CorrectionScreen] variant =', variant, '– score =', score);
     saveBestScore(variant, score)
       .then(({ updated }) => {
         if (updated) {

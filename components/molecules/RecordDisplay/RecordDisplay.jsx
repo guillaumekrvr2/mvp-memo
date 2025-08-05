@@ -13,7 +13,7 @@ export default function RecordDisplay({ score, time, hidden = false }) {
         color={hidden ? 'transparent' : '#fff'}
       />
       <Text style={[styles.text, hidden && styles.hiddenText]}>
-        Last best : {score} en {time}s
+        Last best : {score} en {time} s
       </Text>
     </View>
   )

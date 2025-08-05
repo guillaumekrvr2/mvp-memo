@@ -5,7 +5,6 @@ import { Carousel } from '../../components/molecules/Carousel/Carousel';
 import { ModePicker } from '../../components/molecules/ModePicker/ModePicker'
 import useLeaderboard from '../../hooks/useLeaderboard';
 import { LeaderboardList } from '../../components/organisms/LeaderboardList/LeaderboardList';
-import useFetchBestScore from '../../hooks/useFetchBestScore';
 
 const DISCIPLINES = [
   { key: 'global',  label: 'Global' },
