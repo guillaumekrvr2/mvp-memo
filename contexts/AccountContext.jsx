@@ -1,9 +1,16 @@
 // src/contexts/AccountContext.jsx
-import React, { createContext, useState, useEffect } from 'react';
+
+import React, { 
+  createContext, 
+  useState, 
+  useEffect, 
+  useCallback, 
+  useMemo 
+} from 'react';
 import { supabase } from '../data/supabase/supabaseClient';
-import { mapUserRowToAccount } from '../adapters/supabase/userMapper';
 import SupabaseRecordRepository from '../data/repositories/SupabaseRecordRepository';
 import { GetBestScores } from '../usecases/GetBestScores';
+import { SupabaseUserRepository } from '../data/repositories/SupabaseUserRepository';
 
 export const AccountContext = createContext();
 
@@ -11,86 +18,104 @@ export function AccountProvider({ children }) {
   const [current, setCurrent] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Charge et formate tous les best scores sous forme plate { [variantId]: score }
-  const loadUserRecords = async (userId) => {
+  // Instancie le repository. `useMemo` est une optimisation pour éviter de le
+  // recréer à chaque rendu du composant.
+  const userRepo = useMemo(() => new SupabaseUserRepository(), []);
+
+  // Charge et formate les meilleurs scores de l'utilisateur.
+  // `useCallback` évite de recréer la fonction à chaque rendu.
+  const loadUserRecords = useCallback(async (userId) => {
+    if (!userId) return {};
     const repo = new SupabaseRecordRepository();
     const getBestScores = new GetBestScores(repo);
-    // exécute le use case, renvoie [{ discipline, score }, ...]
     const scoresArray = await getBestScores.execute({ userId });
-    // transforme en objet { modeVariantId: score }
     return scoresArray.reduce((acc, { discipline, score }) => {
       acc[discipline] = score;
       return acc;
     }, {});
-  };
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        if (session?.user) {
-          const account = mapUserRowToAccount(session.user);
-          const records = await loadUserRecords(account.id);
-          setCurrent({ ...account, records });
-        }
-      } catch (error) {
-        console.error('[AccountProvider] init error:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    init();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user) {
-        const account = mapUserRowToAccount(session.user);
-        const records = await loadUserRecords(account.id);
-        setCurrent({ ...account, records });
-      } else {
-        setCurrent(null);
-      }
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    // 1. D'abord, on vérifie la session au chargement initial de l'app.
+    // C'est très rapide car ça lit le stockage local.
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session) {
+        // Si une session existe, on charge le profil complet de l'utilisateur.
+        try {
+          const account = await userRepo.findById();
+          const records = await loadUserRecords(account.id);
+          setCurrent({ ...account, records });
+        } catch (error) {
+          // Si le token est invalide ou expiré, une erreur sera levée.
+          // On s'assure que l'utilisateur est bien déconnecté.
+          console.warn('[AccountProvider:InitialSession]', 'Failed to fetch user profile, clearing session.', error);
+          setCurrent(null);
+        }
+      }
+      setLoading(false);
+    });
+
+    // 2. Ensuite, on met en place un écouteur pour les changements futurs.
+    // C'est le "chef d'orchestre" de l'authentification.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN') {
+          // Un utilisateur vient de se connecter.
+          // On charge son profil complet.
+          try {
+            const account = await userRepo.findById();
+            const records = await loadUserRecords(account.id);
+            setCurrent({ ...account, records });
+          } catch (error) {
+            console.warn('[AccountProvider:SIGNED_IN]', 'Failed to fetch user profile on sign in.', error);
+            setCurrent(null);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          // L'utilisateur s'est déconnecté.
+          setCurrent(null);
+        }
+      }
+    );
+
+    // Nettoyage de l'écouteur quand le composant est démonté.
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [userRepo, loadUserRecords]); // Dépendances du useEffect
+
+  // --- Fonctions d'Action (simplifiées) ---
+
+  // L'état 'current' sera mis à jour automatiquement par onAuthStateChange.
   const signUp = async ({ email, password }) => {
+    console.log('[AccountProvider:signUp] called with', email);
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
-
-    const account = mapUserRowToAccount(data.user);
-    const records = await loadUserRecords(account.id);
-    setCurrent({ ...account, records });
-    return account;
+    // Pas besoin de setCurrent ici, onAuthStateChange s'en charge.
+    return data.user;
   };
 
+  // L'état 'current' sera mis à jour automatiquement par onAuthStateChange.
   const login = async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    console.log('[AccountProvider:login] called with', email);
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
-
-    const account = mapUserRowToAccount(data.user);
-    const records = await loadUserRecords(account.id);
-
-    setCurrent({ ...account, records });
-    return account;
+    // Pas besoin de setCurrent ici, onAuthStateChange s'en charge.
+    return data.user;
   };
 
+  // L'état 'current' sera mis à jour automatiquement par onAuthStateChange.
   const logout = async () => {
-    await supabase.auth.signOut();
-    setCurrent(null);
+    console.log('[AccountProvider:logout] called');
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    // Pas besoin de setCurrent ici, onAuthStateChange s'en charge.
   };
+
+  // --- Fonctions de Données ---
 
   const updateRecord = async (modeVariantId, score) => {
     if (!current) return;
-
+    console.log('[AccountProvider:updateRecord] ', modeVariantId, score);
     const { data, error } = await supabase
       .from('best_scores')
       .upsert(
@@ -98,23 +123,17 @@ export function AccountProvider({ children }) {
         { onConflict: ['user_id', 'mode_variants_id'] }
       )
       .select();
+    if (error) throw error;
 
-    if (error) {
-      throw error;
-    }
-
-    // Mise à jour locale immédiate
-    setCurrent((prev) => ({
+    // Mise à jour de l'état local pour un retour visuel immédiat
+    setCurrent(prev => ({
       ...prev,
-      records: {
-        ...prev.records,
-        [modeVariantId]: score,
-      },
+      records: { ...prev.records, [modeVariantId]: score },
     }));
-
     return data;
   };
 
+  // Exposition des valeurs via le Provider
   return (
     <AccountContext.Provider
       value={{ loading, current, signUp, login, logout, updateRecord }}

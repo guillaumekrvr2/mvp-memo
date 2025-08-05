@@ -1,8 +1,9 @@
 // screens/ProfileScreen.jsx
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
 import { AccountContext } from '../../contexts/AccountContext'
 import { ModeVariantContext } from '../../contexts/ModeVariantContext'
+import { GetCurrentUser } from '../../usecases/GetCurrentUser'
 
 const DISCIPLINES = ['numbers', 'cards', 'words', 'binary', 'names', 'images']
 
@@ -24,7 +25,10 @@ export default function ProfileScreen({ navigation }) {
     const recs = ids.map(id => ({ id, score: current.records?.[id] ?? 0 }))
   }, [byDiscipline, current])
 
-  const { firstName, lastName, email, records = {} } = current
+ // on a déjà `current` depuis le Context
+ const user = current
+
+  const { records = {} } = current
 
   // Prépare la liste simple des variants "numbers"
   const rawNums = byDiscipline['numbers'] || byDiscipline[7] || []
@@ -37,14 +41,9 @@ export default function ProfileScreen({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Infos compte */}
-      <Text style={styles.label}>Prénom :</Text>
-      <Text style={styles.value}>{firstName}</Text>
-
-      <Text style={styles.label}>Nom :</Text>
-      <Text style={styles.value}>{lastName}</Text>
-
-      <Text style={styles.label}>Email :</Text>
-      <Text style={styles.value}>{email}</Text>
+      <Text>Prénom : {user.firstName}</Text>
+      <Text>Nom : {user.lastName}</Text>
+      <Text>Email : {user.email}</Text>
 
       {/* Boutons maj */}
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UpdateEmail')}>
