@@ -11,7 +11,7 @@ export function mapUserRowToAccount(raw) {
   const account = {
     id:        raw.id,
     firstName: raw.first_name,
-    lastName:  raw.last_name,   // ou raw.second_name si c'est bien le champ dans ta BDD
+    lastName:  raw.second_name,   // ou raw.second_name si c'est bien le champ dans ta BDD
     email:     raw.email,
     records:   {},              // sera rempli plus tard
   };

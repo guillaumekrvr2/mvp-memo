@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
 import { AccountContext } from '../../contexts/AccountContext'
 import { ModeVariantContext } from '../../contexts/ModeVariantContext'
-import { GetCurrentUser } from '../../usecases/GetCurrentUser'
 
 const DISCIPLINES = ['numbers', 'cards', 'words', 'binary', 'names', 'images']
 
@@ -25,9 +24,8 @@ export default function ProfileScreen({ navigation }) {
     const recs = ids.map(id => ({ id, score: current.records?.[id] ?? 0 }))
   }, [byDiscipline, current])
 
- // on a déjà `current` depuis le Context
- const user = current
-
+  // On utilise directement `current` depuis le Context
+  const user = current
   const { records = {} } = current
 
   // Prépare la liste simple des variants "numbers"
@@ -41,9 +39,21 @@ export default function ProfileScreen({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Infos compte */}
-      <Text>Prénom : {user.firstName}</Text>
-      <Text>Nom : {user.lastName}</Text>
-      <Text>Email : {user.email}</Text>
+      <View style={styles.userInfoSection}>
+        <Text style={styles.sectionTitle}>Informations du compte</Text>
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>Prénom :</Text>
+          <Text style={styles.value}>{user.firstName || 'Non renseigné'}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>Nom :</Text>
+          <Text style={styles.value}>{user.lastName || 'Non renseigné'}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>Email :</Text>
+          <Text style={styles.value}>{user.email}</Text>
+        </View>
+      </View>
 
       {/* Boutons maj */}
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UpdateEmail')}>
@@ -52,7 +62,6 @@ export default function ProfileScreen({ navigation }) {
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UpdatePassword')}>
         <Text style={styles.buttonText}>Modifier Mot de passe</Text>
       </TouchableOpacity>
-
 
       {/* Records */}
       <Text style={styles.sectionTitle}>Mes Records</Text>
@@ -92,9 +101,34 @@ export default function ProfileScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#000' },
-  label: { color: '#aaa', fontSize: 14, marginTop: 15 },
-  value: { color: '#fff', fontSize: 18, fontWeight: '600' },
+  container: { 
+    padding: 20, 
+    backgroundColor: '#000' 
+  },
+  userInfoSection: {
+    marginBottom: 20,
+    padding: 15,
+    backgroundColor: '#111',
+    borderRadius: 10,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  label: { 
+    color: '#aaa', 
+    fontSize: 14, 
+    flex: 1 
+  },
+  value: { 
+    color: '#fff', 
+    fontSize: 16, 
+    fontWeight: '600',
+    flex: 2,
+    textAlign: 'right'
+  },
   sectionTitle: {
     color: '#fff',
     fontSize: 20,
@@ -102,15 +136,29 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 10,
   },
-  recordRow: { marginBottom: 12 },
+  recordRow: { 
+    marginBottom: 12 
+  },
   staticRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  recordLabel: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  variantLabel: { color: '#fff', fontSize: 16, flex: 1 },
-  recordValue: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  recordLabel: { 
+    color: '#fff', 
+    fontSize: 16, 
+    fontWeight: '600' 
+  },
+  variantLabel: { 
+    color: '#fff', 
+    fontSize: 16, 
+    flex: 1 
+  },
+  recordValue: { 
+    color: '#fff', 
+    fontSize: 16, 
+    fontWeight: '600' 
+  },
   button: {
     marginTop: 15,
     paddingVertical: 12,
@@ -118,6 +166,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
   },
-  buttonText: { color: '#000', fontWeight: '600', fontSize: 16 },
-  logout: { backgroundColor: '#f66' },
+  buttonText: { 
+    color: '#000', 
+    fontWeight: '600', 
+    fontSize: 16 
+  },
+  logout: { 
+    backgroundColor: '#f66' 
+  },
 })
