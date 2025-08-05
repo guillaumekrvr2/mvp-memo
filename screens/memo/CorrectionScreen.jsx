@@ -1,5 +1,5 @@
 // src/screens/CorrectionScreen.jsx
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { SafeAreaView, Text, StyleSheet, Alert } from 'react-native';
 import { SecondaryButton } from '../../components/atoms/SecondaryButton/SecondaryButton';
 import BorderedContainer from '../../components/atoms/BorderedContainer/BorderedContainer';
@@ -7,6 +7,9 @@ import CorrectionGrid from '../../components/organisms/CorrectionGrid/Correction
 import useSaveBestScore from '../../hooks/useSaveBestScore';
 
 export default function CorrectionScreen({ route, navigation }) {
+  useEffect(() => {
+    console.log('🔍 Correction params:', route.params);
+  }, []);
   const { inputs = [], numbers = [], temps = 0, variant } = route.params || {};
   const total = inputs.length;
   const score = inputs.reduce(

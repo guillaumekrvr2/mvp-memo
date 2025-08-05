@@ -7,7 +7,6 @@ import BorderedContainer from '../../components/atoms/BorderedContainer/Bordered
 import useInputGrid from '../../hooks/useInputGrid'    
 import Grid from '../../components/atoms/Grid/Grid'
 import RecallCell from '../../components/molecules/RecallCell/RecallCell'
-import { useEffect } from 'react'
 
 export default function RecallScreen({ route, navigation }) {
   const { objectif, numbers, temps, variant, mode } = route.params

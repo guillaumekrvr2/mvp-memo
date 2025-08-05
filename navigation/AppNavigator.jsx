@@ -62,7 +62,7 @@ export default function AppNavigator() {
         tabBarIcon: ({ color, size }) => {
           let iconName
           if (route.name === 'Home') iconName = 'home-outline'
-          if (route.name === 'Discover') iconName = 'compass-outline'
+          if (route.name === 'Discover') iconName = 'school-outline'
           if (route.name === 'Community') iconName = 'people-outline'
           if (route.name === 'Shop') iconName = 'cart-outline'
           return <Ionicons name={iconName} size={size} color={color} />
