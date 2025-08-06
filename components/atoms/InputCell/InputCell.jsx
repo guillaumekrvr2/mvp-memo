@@ -1,8 +1,8 @@
-// src/components/atoms/InputCell.jsx
-import React, { forwardRef } from 'react'
+// components/atoms/InputCell/InputCell.jsx
+import React, { forwardRef, memo } from 'react'
 import { TextInput } from 'react-native'
 
-const InputCell = forwardRef(function InputCell(
+const InputCell = memo(forwardRef(function InputCell(
   { value, style, onChangeText, onKeyPress },
   ref
 ) {
@@ -14,10 +14,16 @@ const InputCell = forwardRef(function InputCell(
       keyboardType="number-pad"
       maxLength={1}
       blurOnSubmit={false}
+      selectTextOnFocus={true}  // Sélectionne le texte au focus pour remplacement rapide
       onChangeText={onChangeText}
       onKeyPress={onKeyPress}
+      // Optimisations supplémentaires
+      returnKeyType="next"
+      textContentType="oneTimeCode"  // Aide pour l'accessibilité
+      autoCorrect={false}
+      spellCheck={false}
     />
   )
-})
+}))
 
-export default React.memo(InputCell)
+export default InputCell

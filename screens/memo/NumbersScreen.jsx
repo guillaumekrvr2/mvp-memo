@@ -132,7 +132,6 @@ export default function NumbersScreen() {
               selectedVariant={selectedVariant}
               onVariantSelect={handleIamVariantSelect}
               onVariantPickerOpen={openIamVariantModal}
-              disabled={mode === 'memory-league'}
             />
           </>
         )}
