@@ -4,17 +4,12 @@ import { theme } from '../../../theme'
 
 export default StyleSheet.create({
   list: {
-    paddingHorizontal: theme.spacing.md,
-    paddingTop: theme.spacing.sm,
+    marginTop: 60,
   },
   emptyContainer: {
     alignItems: 'center',
-    marginTop: theme.spacing.xl,
-    color: theme.colors.background,
-    paddingTop: theme.spacing.sm,
   },
   emptyText: {
-    color: theme.colors.textPlaceholder,
     fontSize: 16,
   },
 })

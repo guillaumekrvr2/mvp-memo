@@ -1,23 +1,11 @@
 // screens/ProfileScreen.jsx
-import React, { useContext, useEffect, useReducer, useCallback } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
-import { useFocusEffect } from '@react-navigation/native'
+import React, { useContext, useEffect, useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native'
 import { AccountContext } from '../../contexts/AccountContext'
 import { ModeVariantContext } from '../../contexts/ModeVariantContext'
-import useFetchBestScore from '../../hooks/useFetchBestScore'
 
+const { width } = Dimensions.get('window')
 const DISCIPLINES = ['numbers', 'cards', 'words', 'binary', 'names', 'images']
-
-// Composant pour afficher un variant Numbers avec son score dynamique
-function NumberVariantRow({ id, label }) {
-  const score = useFetchBestScore(id);
-  return (
-    <View style={styles.staticRow}>
-      <Text style={styles.variantLabel}>{label}</Text>
-      <Text style={styles.recordValue}>{score} pts</Text>
-    </View>
-  );
-}
 
 export default function ProfileScreen({ navigation }) {
   const { current, logout } = useContext(AccountContext)
@@ -30,92 +18,334 @@ export default function ProfileScreen({ navigation }) {
 
   if (!current) return null
 
-  const { firstName, lastName, email, records = {} } = current
+  // === DEBUG : afficher les IDs et scores des variants "numbers" ===
+  useEffect(() => {
+    const nums = byDiscipline['numbers'] || byDiscipline[7] || []
+    const ids = nums.map(v => v.id)
+    const recs = ids.map(id => ({ id, score: current.records?.[id] ?? 0 }))
+  }, [byDiscipline, current])
+
+  // On utilise directement `current` depuis le Context
+  const user = current
+  const { records = {} } = current
 
   // Prépare la liste simple des variants "numbers"
   const rawNums = byDiscipline['numbers'] || byDiscipline[7] || []
+  const numberVariants = rawNums.map(({ id, label }) => ({
+    id,
+    label,
+    score: records[id] != null ? records[id] : 0,
+  }))
+
+  // Calculer le score total
+  const totalScore = Object.values(records).reduce((sum, score) => sum + (score || 0), 0)
+
+  // Initiales pour l'avatar
+  const initials = `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase() || user.email?.[0]?.toUpperCase() || '?'
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Infos compte */}
-      <Text style={styles.label}>Prénom :</Text>
-      <Text style={styles.value}>{firstName}</Text>
-
-      <Text style={styles.label}>Nom :</Text>
-      <Text style={styles.value}>{lastName}</Text>
-
-      <Text style={styles.label}>Email :</Text>
-      <Text style={styles.value}>{email}</Text>
-
-      {/* Boutons maj */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UpdateEmail')}>
-        <Text style={styles.buttonText}>Modifier Email</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UpdatePassword')}>
-        <Text style={styles.buttonText}>Modifier Mot de passe</Text>
-      </TouchableOpacity>
-
-      {/* Records */}
-      <Text style={styles.sectionTitle}>Mes Records</Text>
-      
-      {/* Numbers: utilise useFetchBestScore pour chaque variant */}
-      <View style={styles.recordRow}>
-        <Text style={styles.recordLabel}>Numbers:</Text>
-        {rawNums.map(({ id, label }) => (
-          <NumberVariantRow key={id} id={id} label={label} />
-        ))}
-        {rawNums.length === 0 && (
-          <Text style={styles.recordValue}>Aucun variant trouvé.</Text>
-        )}
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {/* Header avec avatar et infos principales */}
+      <View style={styles.header}>
+        <View style={styles.avatarContainer}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{initials}</Text>
+          </View>
+          <View style={styles.headerInfo}>
+            <Text style={styles.userName}>
+              {user.firstName && user.lastName 
+                ? `${user.firstName} ${user.lastName}`
+                : user.firstName || user.lastName || 'Utilisateur'
+              }
+            </Text>
+            <Text style={styles.userEmail}>{user.email}</Text>
+            <View style={styles.scoreContainer}>
+              <Text style={styles.totalScoreLabel}>Score total</Text>
+              <Text style={styles.totalScore}>{totalScore} pts</Text>
+            </View>
+          </View>
+        </View>
       </View>
 
-      {/* Les autres disciplines restent statiques */}
-      {DISCIPLINES.filter(d => d !== 'numbers').map(discipline => (
-        <View key={discipline} style={styles.recordRow}>
-          <Text style={styles.recordLabel}>{discipline}</Text>
-          <Text style={styles.recordValue}>
-            {records[discipline] != null
-              ? `${records[discipline]} pts`
-              : '0 pts'}
-          </Text>
+      {/* Actions rapides */}
+      <View style={styles.actionsContainer}>
+        <TouchableOpacity 
+          style={styles.actionButton} 
+          onPress={() => navigation.navigate('UpdateEmail')}
+        >
+          <View style={styles.actionIcon}>
+            <Text style={styles.actionIconText}>✉️</Text>
+          </View>
+          <Text style={styles.actionText}>Modifier Email</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.actionButton} 
+          onPress={() => navigation.navigate('UpdatePassword')}
+        >
+          <View style={styles.actionIcon}>
+            <Text style={styles.actionIconText}>🔒</Text>
+          </View>
+          <Text style={styles.actionText}>Mot de passe</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Section Records */}
+      <View style={styles.recordsSection}>
+        <Text style={styles.sectionTitle}>🏆 Mes Records</Text>
+        
+        {/* Numbers: liste détaillée */}
+        <View style={styles.disciplineCard}>
+          <View style={styles.disciplineHeader}>
+            <Text style={styles.disciplineTitle}>🔢 Numbers</Text>
+            <Text style={styles.variantCount}>{numberVariants.length} variants</Text>
+          </View>
+          {numberVariants.length > 0 ? (
+            numberVariants.map(({ id, label, score }) => (
+              <View key={id} style={styles.variantRow}>
+                <Text style={styles.variantLabel}>{label}</Text>
+                <View style={styles.scoreChip}>
+                  <Text style={styles.scoreText}>{score}</Text>
+                </View>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.emptyText}>Aucun variant disponible</Text>
+          )}
         </View>
-      ))}
+
+        {/* Autres disciplines */}
+        {DISCIPLINES.filter(d => d !== 'numbers').map(discipline => {
+          const disciplineEmojis = {
+            cards: '🃏',
+            words: '📝',
+            binary: '💻',
+            names: '👥',
+            images: '🖼️'
+          }
+          
+          return (
+            <View key={discipline} style={styles.disciplineCard}>
+              <View style={styles.disciplineRow}>
+                <View style={styles.disciplineInfo}>
+                  <Text style={styles.disciplineTitle}>
+                    {disciplineEmojis[discipline]} {discipline.charAt(0).toUpperCase() + discipline.slice(1)}
+                  </Text>
+                </View>
+                <View style={styles.scoreChip}>
+                  <Text style={styles.scoreText}>
+                    {records[discipline] || 0}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          )
+        })}
+      </View>
 
       {/* Bouton déconnexion */}
-      <TouchableOpacity style={[styles.button, styles.logout]} onPress={logout}>
-        <Text style={styles.buttonText}>Se déconnecter</Text>
+      <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+        <Text style={styles.logoutText}>Se déconnecter</Text>
       </TouchableOpacity>
+
+      {/* Espaceur pour le bas */}
+      <View style={styles.bottomSpacer} />
     </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#000' },
-  label: { color: '#aaa', fontSize: 14, marginTop: 15 },
-  value: { color: '#fff', fontSize: 18, fontWeight: '600' },
+  container: { 
+    flex: 1,
+    backgroundColor: '#0a0a0a' 
+  },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 30,
+    background: 'linear-gradient(135deg, #1a1a2e, #16213e)',
+    backgroundColor: '#1a1a2e',
+  },
+  avatarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#667eea',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#667eea',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  avatarText: {
+    color: '#fff',
+    fontSize: 28,
+    fontWeight: '700',
+  },
+  headerInfo: {
+    marginLeft: 20,
+    flex: 1,
+  },
+  userName: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  userEmail: {
+    color: '#a0a9c0',
+    fontSize: 16,
+    marginBottom: 12,
+  },
+  scoreContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  totalScoreLabel: {
+    color: '#a0a9c0',
+    fontSize: 14,
+    marginRight: 8,
+  },
+  totalScore: {
+    color: '#4ecdc4',
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  actionsContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    gap: 15,
+  },
+  actionButton: {
+    flex: 1,
+    backgroundColor: '#1e1e2e',
+    borderRadius: 16,
+    padding: 20,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#2a2a3e',
+  },
+  actionIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#667eea20',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  actionIconText: {
+    fontSize: 18,
+  },
+  actionText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  recordsSection: {
+    paddingHorizontal: 20,
+  },
   sectionTitle: {
     color: '#fff',
-    fontSize: 20,
-    fontWeight: '600',
-    marginTop: 30,
-    marginBottom: 10,
+    fontSize: 22,
+    fontWeight: '700',
+    marginBottom: 20,
   },
-  recordRow: { marginBottom: 12 },
-  staticRow: {
+  disciplineCard: {
+    backgroundColor: '#1e1e2e',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#2a2a3e',
+  },
+  disciplineHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  disciplineTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  variantCount: {
+    color: '#a0a9c0',
+    fontSize: 12,
+    backgroundColor: '#2a2a3e',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  disciplineRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  recordLabel: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  variantLabel: { color: '#fff', fontSize: 16, flex: 1 },
-  recordValue: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  button: {
-    marginTop: 15,
-    paddingVertical: 12,
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    alignItems: 'center',
+  disciplineInfo: {
+    flex: 1,
   },
-  buttonText: { color: '#000', fontWeight: '600', fontSize: 16 },
-  logout: { backgroundColor: '#f66' },
+  variantRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#2a2a3e',
+  },
+  variantLabel: {
+    color: '#a0a9c0',
+    fontSize: 16,
+    flex: 1,
+  },
+  scoreChip: {
+    backgroundColor: '#4ecdc420',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#4ecdc440',
+  },
+  scoreText: {
+    color: '#4ecdc4',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  emptyText: {
+    color: '#666',
+    fontSize: 14,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    paddingVertical: 10,
+  },
+  logoutButton: {
+    marginHorizontal: 20,
+    marginTop: 30,
+    backgroundColor: '#ff4757',
+    borderRadius: 16,
+    paddingVertical: 16,
+    alignItems: 'center',
+    shadowColor: '#ff4757',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  logoutText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  bottomSpacer: {
+    height: 40,
+  },
 })

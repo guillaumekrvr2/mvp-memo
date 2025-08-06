@@ -48,6 +48,10 @@ export default function Header({ navigation, back }) {
 
 const styles = StyleSheet.create({
   safeArea: {
+    backgroundColor: 'rgba(10, 10, 10, 0.85)',  // 🎯 Glassmorphisme
+    backdropFilter: 'blur(10px)',               // Effet blur (iOS principalement)
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.08)', // Bordure subtile
   },
   container: {
     height: 60,
@@ -64,11 +68,22 @@ const styles = StyleSheet.create({
   },
   backButton: {
     marginRight: 8,
+    width: 36,                                   // 🎯 Zone de touch plus définie
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // 🎯 Fond subtil pour visibilité
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   logo: {
     width: 32,
     height: 32,
     resizeMode: 'contain',
+    // 🎯 Ombre pour faire ressortir le logo
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   title: {
     position: 'absolute',
@@ -78,9 +93,19 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     letterSpacing: 7.5,
+    // 🎯 Ombre texte pour lisibilité
+    textShadowColor: 'rgba(0, 0, 0, 0.7)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   profileButton: {
     position: 'absolute',
     right: 20,
+    width: 36,                                   // 🎯 Zone de touch définie
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // 🎯 Fond subtil
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

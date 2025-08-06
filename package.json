@@ -1,6 +1,6 @@
 {
   "name": "mvp-memo",
-   "type": "module",
+  "type": "module",
   "main": "node_modules/expo/AppEntry.js",
   "version": "1.0.0",
   "scripts": {
