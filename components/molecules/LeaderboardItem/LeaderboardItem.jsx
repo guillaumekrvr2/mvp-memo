@@ -1,6 +1,7 @@
 // src/components/molecules/LeaderboardItem/LeaderboardItem.jsx
 import React from 'react';
 import { View, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import styles from './styles';
 
 /**
@@ -11,6 +12,8 @@ import styles from './styles';
  *  - mode : clé du mode de jeu sélectionné
  *  - disciplines : tableau des disciplines pour calcul global
  *  - variantId : ID du variant (pour modes basés sur variant : IAM, Memory League)
+ *  - currentUserId : ID de l'utilisateur connecté pour le highlight
+ *  - rank : position dans le classement (1, 2, 3...)
  */
 export function LeaderboardItem({
   player,
@@ -18,7 +21,12 @@ export function LeaderboardItem({
   mode,
   disciplines,
   variantId,
+  currentUserId,
+  rank,
 }) {
+  // Vérifier si c'est l'utilisateur connecté
+  const isCurrentUser = currentUserId && player.id === currentUserId;
+
   let text;
 
   // Cas IAM avec variantId
@@ -49,11 +57,26 @@ export function LeaderboardItem({
   }
 
   return (
-    <View style={styles.row}>
-      <Text style={styles.name}>
-        {player.firstName} {player.lastName}
+    <View style={[styles.row, isCurrentUser && styles.highlightedRow]}>
+      <View style={styles.leftContent}>
+        <Text style={[styles.rank, isCurrentUser && styles.highlightedText]}>
+          #{rank}
+        </Text>
+        <Text style={[styles.name, isCurrentUser && styles.highlightedText]}>
+          {player.firstName} {player.lastName}
+        </Text>
+        {isCurrentUser && (
+          <Ionicons 
+            name="person" 
+            size={16} 
+            color="#4CAF50" 
+            style={styles.userIcon}
+          />
+        )}
+      </View>
+      <Text style={[styles.score, isCurrentUser && styles.highlightedText]}>
+        {text}
       </Text>
-      <Text style={styles.score}>{text}</Text>
     </View>
   );
 }

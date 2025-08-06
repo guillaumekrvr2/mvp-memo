@@ -14,6 +14,7 @@ import { LeaderboardItem } from '../../molecules/LeaderboardItem/LeaderboardItem
  *  - mode : clé du mode de jeu sélectionné
  *  - disciplines : Array des disciplines (pour calcul global)
  *  - variantId : ID du variant pour cas IAM
+ *  - currentUserId : ID de l'utilisateur connecté pour le highlight
  *  - emptyText : texte à afficher si la liste est vide (défaut « Aucun participant »)
  */
 export function LeaderboardList({
@@ -22,6 +23,7 @@ export function LeaderboardList({
   mode,
   disciplines,
   variantId,
+  currentUserId,
   emptyText = 'Aucun participant',
 }) {
   return (
@@ -29,13 +31,15 @@ export function LeaderboardList({
       key={`${mode}-${discipline}`}
       data={data}
       keyExtractor={item => item.id}
-      renderItem={({ item }) => (
+      renderItem={({ item, index }) => (
         <LeaderboardItem
           player={item}
           discipline={discipline}
           mode={mode}
           disciplines={disciplines}
           variantId={variantId}
+          currentUserId={currentUserId}
+          rank={index + 1} // Position dans le classement (1-indexé)
         />
       )}
       ListEmptyComponent={() => (

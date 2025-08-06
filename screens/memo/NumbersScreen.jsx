@@ -1,5 +1,6 @@
 // screens/NumbersScreen.jsx
 import { SafeAreaView, View, StyleSheet } from 'react-native';
+import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -12,6 +13,7 @@ import { SecondaryButton } from '../../components/atoms/SecondaryButton/Secondar
 import RecordDisplay from '../../components/molecules/RecordDisplay/RecordDisplay';
 import ObjectiveTimePicker from '../../components/molecules/ObjectiveTimePicker/ObjectiveTimePicker';
 import HighlightBoxSetter from '../../components/atoms/HighlightBoxSetter/HighlightBoxSetter';
+import IAMVariantPickerModal from '../../components/molecules/IAMVariantPickerModal/IAMVariantPickerModal';
 
 import useMode from '../../hooks/useMode';
 import { modeOptions } from '../../config/gameConfig';
@@ -21,10 +23,9 @@ import useAutoAdvancePreference from '../../hooks/useAutoAdvancePreference';
 import useFetchBestScore from '../../hooks/useFetchBestScore';
 import { useModeVariants } from '../../hooks/useModeVariants';
 
-
-
 export default function NumbersScreen() {
   const navigation = useNavigation();
+  const [iamVariantModalVisible, setIamVariantModalVisible] = useState(false);
 
   // Digit picker pour le nombre de chiffres
   const {
@@ -39,7 +40,7 @@ export default function NumbersScreen() {
   // Mode de jeu (memory-league, iam, custom…)
   const { mode, onModeChange, options } = useMode('memory-league', modeOptions);
 
-  // Objectif (nombre d’items) persistant par mode
+  // Objectif (nombre d'items) persistant par mode
   const defaultObj = mode === 'memory-league' ? '60' : '';
   const { objectif, setObjectif } = useObjective(`numbers:objectif:${mode}`, defaultObj);
 
@@ -55,9 +56,8 @@ export default function NumbersScreen() {
     loading: variantsLoading,
     selectedVariant,
     setSelectedVariant,
-  } = useModeVariants('numbers', mode);   // ← on passe mode ici
+  } = useModeVariants('numbers', mode);
 
-   // Dernier score lu depuis best_scores
   // Dernier meilleur score pour le variant sélectionné
   const variantId = selectedVariant?.id;
   const lastScore = useFetchBestScore(variantId);
@@ -66,6 +66,21 @@ export default function NumbersScreen() {
   const playTime = mode === 'custom'
     ? temps
     : selectedVariant?.duration_seconds ?? 0;
+
+  // Gestion du modal IAM variants
+  const openIamVariantModal = () => {
+    if (mode === 'iam') {
+      setIamVariantModalVisible(true);
+    }
+  };
+
+  const closeIamVariantModal = () => {
+    setIamVariantModalVisible(false);
+  };
+
+  const handleIamVariantSelect = (variant) => {
+    setSelectedVariant(variant);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -105,24 +120,38 @@ export default function NumbersScreen() {
           </>
         ) : (
           <>
-            {/* Affichage du temps imposé (désactivé) */}
-              <ObjectiveTimePicker
-                mode={mode}
-                objectif={objectif}
-                onObjectifChange={text => setObjectif(text)}                 
-                temps={playTime}
-                onTempsChange={text => setTemps(parseInt(text, 10) || 0)}    
-                disabled
-              />
+            {/* Memory League ou IAM : objectif + temps imposé ou dropdown */}
+            <ObjectiveTimePicker
+              mode={mode}
+              objectif={objectif}
+              onObjectifChange={text => setObjectif(text)}
+              temps={playTime}
+              onTempsChange={text => setTemps(parseInt(text, 10) || 0)}
+              // Props pour IAM variants
+              variants={variants}
+              selectedVariant={selectedVariant}
+              onVariantSelect={handleIamVariantSelect}
+              onVariantPickerOpen={openIamVariantModal}
+              disabled={mode === 'memory-league'}
+            />
           </>
         )}
 
+        {/* Modal pour sélectionner les variants IAM */}
+        <IAMVariantPickerModal
+          visible={iamVariantModalVisible}
+          variants={variants}
+          selectedVariant={selectedVariant}
+          onSelect={handleIamVariantSelect}
+          onClose={closeIamVariantModal}
+        />
+
         {/* Affichage du meilleur score */}
-       <RecordDisplay
-         score={lastScore}
-         time={playTime}
-         hidden={mode === 'custom' || variantId == null}
-       />
+        <RecordDisplay
+          score={lastScore}
+          time={playTime}
+          hidden={mode === 'custom' || variantId == null}
+        />
 
         {/* Bouton Démarrer */}
         <PlayButton
@@ -148,5 +177,5 @@ export default function NumbersScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
-  content:   { flex: 1, paddingHorizontal: 20 },
+  content: { flex: 1, paddingHorizontal: 20 },
 });

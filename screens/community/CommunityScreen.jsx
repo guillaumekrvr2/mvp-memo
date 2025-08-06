@@ -1,10 +1,11 @@
 import { View, StyleSheet, Text } from 'react-native';
-import { useState} from 'react'
+import { useState, useContext } from 'react';
 import { theme }  from '../../theme'; 
 import { Carousel } from '../../components/molecules/Carousel/Carousel';
 import { ModePicker } from '../../components/molecules/ModePicker/ModePicker'
 import useLeaderboard from '../../hooks/useLeaderboard';
 import { LeaderboardList } from '../../components/organisms/LeaderboardList/LeaderboardList';
+import { AccountContext } from '../../contexts/AccountContext';
 
 const DISCIPLINES = [
   { key: 'global',  label: 'Global' },
@@ -24,6 +25,9 @@ const GAME_MODES = [
 export default function CommunityScreen() {
   const [selectedDiscipline, setSelectedDiscipline] = useState('numbers');
   const [selectedMode, setSelectedMode] = useState('memory-league');
+  
+  // Récupération de l'utilisateur connecté pour le highlight
+  const { current } = useContext(AccountContext);
 
   const variantId = selectedMode === 'iam' ? 7 : 10;
 
@@ -33,6 +37,7 @@ export default function CommunityScreen() {
      selectedMode,
      DISCIPLINES
    );
+
   return (
     <View style={styles.container}>
       {/* Sélecteur de discipline */}
@@ -59,6 +64,7 @@ export default function CommunityScreen() {
         discipline={selectedDiscipline}
         mode={selectedMode}
         disciplines={DISCIPLINES}
+        currentUserId={current?.id} // Ajout de l'ID utilisateur connecté
       />
      )}
     </View>
