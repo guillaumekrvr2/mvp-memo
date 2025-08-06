@@ -7,9 +7,6 @@ import CorrectionGrid from '../../components/organisms/CorrectionGrid/Correction
 import useSaveBestScore from '../../hooks/useSaveBestScore';
 
 export default function CorrectionScreen({ route, navigation }) {
-  useEffect(() => {
-    console.log('🔍 Correction params:', route.params);
-  }, []);
   const { inputs = [], numbers = [], temps = 0, variant } = route.params || {};
   const total = inputs.length;
   const score = inputs.reduce(

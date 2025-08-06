@@ -1,10 +1,23 @@
 // screens/ProfileScreen.jsx
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useReducer, useCallback } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { useFocusEffect } from '@react-navigation/native'
 import { AccountContext } from '../../contexts/AccountContext'
 import { ModeVariantContext } from '../../contexts/ModeVariantContext'
+import useFetchBestScore from '../../hooks/useFetchBestScore'
 
 const DISCIPLINES = ['numbers', 'cards', 'words', 'binary', 'names', 'images']
+
+// Composant pour afficher un variant Numbers avec son score dynamique
+function NumberVariantRow({ id, label }) {
+  const score = useFetchBestScore(id);
+  return (
+    <View style={styles.staticRow}>
+      <Text style={styles.variantLabel}>{label}</Text>
+      <Text style={styles.recordValue}>{score} pts</Text>
+    </View>
+  );
+}
 
 export default function ProfileScreen({ navigation }) {
   const { current, logout } = useContext(AccountContext)
@@ -17,43 +30,22 @@ export default function ProfileScreen({ navigation }) {
 
   if (!current) return null
 
-  // === DEBUG : afficher les IDs et scores des variants "numbers" ===
-  useEffect(() => {
-    const nums = byDiscipline['numbers'] || byDiscipline[7] || []
-    const ids = nums.map(v => v.id)
-    const recs = ids.map(id => ({ id, score: current.records?.[id] ?? 0 }))
-  }, [byDiscipline, current])
-
-  // On utilise directement `current` depuis le Context
-  const user = current
-  const { records = {} } = current
+  const { firstName, lastName, email, records = {} } = current
 
   // Prépare la liste simple des variants "numbers"
   const rawNums = byDiscipline['numbers'] || byDiscipline[7] || []
-  const numberVariants = rawNums.map(({ id, label }) => ({
-    id,
-    label,
-    score: records[id] != null ? records[id] : 0,
-  }))
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Infos compte */}
-      <View style={styles.userInfoSection}>
-        <Text style={styles.sectionTitle}>Informations du compte</Text>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Prénom :</Text>
-          <Text style={styles.value}>{user.firstName || 'Non renseigné'}</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Nom :</Text>
-          <Text style={styles.value}>{user.lastName || 'Non renseigné'}</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Email :</Text>
-          <Text style={styles.value}>{user.email}</Text>
-        </View>
-      </View>
+      <Text style={styles.label}>Prénom :</Text>
+      <Text style={styles.value}>{firstName}</Text>
+
+      <Text style={styles.label}>Nom :</Text>
+      <Text style={styles.value}>{lastName}</Text>
+
+      <Text style={styles.label}>Email :</Text>
+      <Text style={styles.value}>{email}</Text>
 
       {/* Boutons maj */}
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UpdateEmail')}>
@@ -66,16 +58,13 @@ export default function ProfileScreen({ navigation }) {
       {/* Records */}
       <Text style={styles.sectionTitle}>Mes Records</Text>
       
-      {/* Numbers: liste statique */}
+      {/* Numbers: utilise useFetchBestScore pour chaque variant */}
       <View style={styles.recordRow}>
         <Text style={styles.recordLabel}>Numbers:</Text>
-        {numberVariants.map(({ id, label, score }) => (
-          <View key={id} style={styles.staticRow}>
-            <Text style={styles.variantLabel}>{label}</Text>
-            <Text style={styles.recordValue}>{score} pts</Text>
-          </View>
+        {rawNums.map(({ id, label }) => (
+          <NumberVariantRow key={id} id={id} label={label} />
         ))}
-        {numberVariants.length === 0 && (
+        {rawNums.length === 0 && (
           <Text style={styles.recordValue}>Aucun variant trouvé.</Text>
         )}
       </View>
@@ -101,34 +90,9 @@ export default function ProfileScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    padding: 20, 
-    backgroundColor: '#000' 
-  },
-  userInfoSection: {
-    marginBottom: 20,
-    padding: 15,
-    backgroundColor: '#111',
-    borderRadius: 10,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  label: { 
-    color: '#aaa', 
-    fontSize: 14, 
-    flex: 1 
-  },
-  value: { 
-    color: '#fff', 
-    fontSize: 16, 
-    fontWeight: '600',
-    flex: 2,
-    textAlign: 'right'
-  },
+  container: { padding: 20, backgroundColor: '#000' },
+  label: { color: '#aaa', fontSize: 14, marginTop: 15 },
+  value: { color: '#fff', fontSize: 18, fontWeight: '600' },
   sectionTitle: {
     color: '#fff',
     fontSize: 20,
@@ -136,29 +100,15 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 10,
   },
-  recordRow: { 
-    marginBottom: 12 
-  },
+  recordRow: { marginBottom: 12 },
   staticRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  recordLabel: { 
-    color: '#fff', 
-    fontSize: 16, 
-    fontWeight: '600' 
-  },
-  variantLabel: { 
-    color: '#fff', 
-    fontSize: 16, 
-    flex: 1 
-  },
-  recordValue: { 
-    color: '#fff', 
-    fontSize: 16, 
-    fontWeight: '600' 
-  },
+  recordLabel: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  variantLabel: { color: '#fff', fontSize: 16, flex: 1 },
+  recordValue: { color: '#fff', fontSize: 16, fontWeight: '600' },
   button: {
     marginTop: 15,
     paddingVertical: 12,
@@ -166,12 +116,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
   },
-  buttonText: { 
-    color: '#000', 
-    fontWeight: '600', 
-    fontSize: 16 
-  },
-  logout: { 
-    backgroundColor: '#f66' 
-  },
+  buttonText: { color: '#000', fontWeight: '600', fontSize: 16 },
+  logout: { backgroundColor: '#f66' },
 })
