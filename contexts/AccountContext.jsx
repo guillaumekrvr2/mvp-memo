@@ -87,7 +87,6 @@ export function AccountProvider({ children }) {
 
   // L'état 'current' sera mis à jour automatiquement par onAuthStateChange.
   const signUp = async ({ email, password }) => {
-    console.log('[AccountProvider:signUp] called with', email);
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
     // Pas besoin de setCurrent ici, onAuthStateChange s'en charge.
@@ -96,7 +95,7 @@ export function AccountProvider({ children }) {
 
   // L'état 'current' sera mis à jour automatiquement par onAuthStateChange.
   const login = async (email, password) => {
-    console.log('[AccountProvider:login] called with', email);
+
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
     // Pas besoin de setCurrent ici, onAuthStateChange s'en charge.
@@ -105,7 +104,6 @@ export function AccountProvider({ children }) {
 
   // L'état 'current' sera mis à jour automatiquement par onAuthStateChange.
   const logout = async () => {
-    console.log('[AccountProvider:logout] called');
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     // Pas besoin de setCurrent ici, onAuthStateChange s'en charge.
@@ -115,7 +113,6 @@ export function AccountProvider({ children }) {
 
   const updateRecord = async (modeVariantId, score) => {
     if (!current) return;
-    console.log('[AccountProvider:updateRecord] ', modeVariantId, score);
     const { data, error } = await supabase
       .from('best_scores')
       .upsert(

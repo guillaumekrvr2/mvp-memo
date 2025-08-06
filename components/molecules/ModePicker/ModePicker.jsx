@@ -1,3 +1,4 @@
+// components/molecules/ModePicker/ModePicker.jsx
 import { View, Text } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { Ionicons } from '@expo/vector-icons';
@@ -5,6 +6,7 @@ import S from './styles';
 
 export function ModePicker({
   variant = 'community',
+  label,
   selectedValue,
   onValueChange,
   options = [],
@@ -16,7 +18,8 @@ export function ModePicker({
       S.wrapper,
       isCommunity ? S.wrapperCommunity : S.wrapperNumbers
     ]}>
-      {isCommunity && <Text style={S.label}>Leaderboard</Text>}
+      {/* Affichage conditionnel du label */}
+      {isCommunity && label && <Text style={S.label}>{label}</Text>}
 
       <RNPickerSelect
         onValueChange={onValueChange}

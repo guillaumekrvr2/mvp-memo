@@ -29,12 +29,20 @@ export function LeaderboardItem({
 
   let text;
 
-  // Cas IAM avec variantId
-  if ((mode === 'iam' || mode === 'memory-league') && variantId != null) {
+  // Cas spécifique : discipline numbers avec variantId
+  if (discipline === 'numbers' && variantId != null) {
     const rec = player.records?.[variantId];
     const score = rec?.score ?? 0;
     text = `${score} pts`;
-  } else if (discipline === 'global') {
+  }
+  // Cas IAM/Memory League avec variantId (autres disciplines)
+  else if ((mode === 'iam' || mode === 'memory-league') && variantId != null) {
+    const rec = player.records?.[variantId];
+    const score = rec?.score ?? 0;
+    text = `${score} pts`;
+  } 
+  // Cas discipline globale
+  else if (discipline === 'global') {
     const total = disciplines
       .filter(d => d.key !== 'global')
       .reduce((sum, d) => {
@@ -42,7 +50,9 @@ export function LeaderboardItem({
         return sum + (rec?.score || 0);
       }, 0);
     text = `${total} pts`;
-  } else {
+  } 
+  // Cas par défaut : structure records[discipline][mode]
+  else {
     const recContainer = player.records?.[discipline];
     let rec;
     if (recContainer && typeof recContainer === 'object') {
