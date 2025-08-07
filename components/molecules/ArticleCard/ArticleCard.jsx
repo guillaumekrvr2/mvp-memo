@@ -1,4 +1,4 @@
-// src/components/organisms/ArticleCard.jsx
+// components/molecules/ArticleCard/ArticleCard.jsx
 import React from 'react'
 import { TouchableOpacity, Text, View } from 'react-native'
 import TimeBadge from '../../atoms/TimeBadge/TimeBadge'

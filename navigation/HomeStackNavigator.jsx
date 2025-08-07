@@ -8,6 +8,7 @@ import MemoScreen     from '../screens/memo/MemoScreen'
 import RecallScreen     from '../screens/memo/RecallScreen'
 import CorrectionScreen from '../screens/memo/CorrectionScreen'
 import { theme } from '../theme';
+import ArticleScreen from '../screens/ArticleScreen';
 
 const Stack = createNativeStackNavigator()
 
@@ -24,7 +25,13 @@ export default function HomeStackNavigator() {
       <Stack.Screen name="Memorisation" component={MemoScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="Recall" component={RecallScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="Correction" component={CorrectionScreen} />
-      {/* Plus tard : ajouterez ici Words, Cards, Binary, etc. */}
+      <Stack.Screen 
+      name="Article" 
+      component={ArticleScreen}
+      options={{
+        headerShown: false // L'ArticleScreen gère son propre header
+      }}
+    />
     </Stack.Navigator>
   )
 }

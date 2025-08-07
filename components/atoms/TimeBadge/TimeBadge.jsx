@@ -8,11 +8,6 @@ import styles from './styles'
 export default function TimeBadge({ minutes }) {
   return (
     <View style={styles.container}>
-      <Ionicons
-        name="time-outline"
-        size={16}
-        color={theme.colors.icon}           // ou un color littéral, p.ex. "#A2A2A2"
-      />
       <Text style={styles.text}>{minutes} min</Text>
     </View>
   )

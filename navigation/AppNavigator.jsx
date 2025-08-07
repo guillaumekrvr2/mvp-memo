@@ -10,7 +10,6 @@ import CommunityScreen from '../screens/community/CommunityScreen'
 import ShopScreen from '../screens/shop/ShopScreen'
 import { Ionicons } from '@expo/vector-icons'
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
-import { theme } from '../theme'
 
 const Tab = createBottomTabNavigator()
 

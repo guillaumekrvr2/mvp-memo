@@ -1,12 +1,11 @@
-// screens/DiscoverScreen.jsx
+// screens/discover/DiscoverScreen.jsx
 import React from 'react'
 import { View, StyleSheet, FlatList } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
-import Header from '../../components/Header'
 import { useDiscover } from '../../hooks/useDiscover'
 import SearchBar from '../../components/atoms/SearchBar/SearchBar'
-import ArticleCard from '../../components/molecules/ArticleCard/ArticleCard'
+import ArticleCard from '../../components/molecules/ArticleCard/ArticleCard' // 🎯 Chemin corrigé
 
 export default function DiscoverScreen() {
   const navigation = useNavigation()
@@ -17,7 +16,6 @@ export default function DiscoverScreen() {
 
   return (
     <View style={styles.container}>
-
       <FlatList
         data={filtered}
         keyExtractor={item => item.id}
@@ -57,7 +55,7 @@ export default function DiscoverScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000', paddingHorizontal: 20, },
+  container: { flex: 1, backgroundColor: '#000', paddingHorizontal: 20 },
   searchSection: {
     marginBottom: 16,
   },

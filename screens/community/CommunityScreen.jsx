@@ -148,6 +148,5 @@ const styles = StyleSheet.create({
     marginTop: 100,
   },
   tabs: {
-    marginBottom: 20,
   },
 });

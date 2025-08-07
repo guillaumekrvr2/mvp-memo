@@ -1,4 +1,4 @@
-// src/components/molecules/LeaderboardItem/LeaderboardItem.jsx
+// components/molecules/LeaderboardItem/LeaderboardItem.jsx
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -26,6 +26,18 @@ export function LeaderboardItem({
 }) {
   // Vérifier si c'est l'utilisateur connecté
   const isCurrentUser = currentUserId && player.id === currentUserId;
+  
+  // Déterminer l'emoji du rang
+  const getRankEmoji = (position) => {
+    switch (position) {
+      case 1: return '🥇';
+      case 2: return '🥈';
+      case 3: return '🥉';
+      default: return null;
+    }
+  };
+
+  const rankEmoji = getRankEmoji(rank);
 
   let text;
 
@@ -67,26 +79,41 @@ export function LeaderboardItem({
   }
 
   return (
-    <View style={[styles.row, isCurrentUser && styles.highlightedRow]}>
-      <View style={styles.leftContent}>
-        <Text style={[styles.rank, isCurrentUser && styles.highlightedText]}>
-          #{rank}
-        </Text>
-        <Text style={[styles.name, isCurrentUser && styles.highlightedText]}>
-          {player.firstName} {player.lastName}
-        </Text>
-        {isCurrentUser && (
-          <Ionicons 
-            name="person" 
-            size={16} 
-            color="#4CAF50" 
-            style={styles.userIcon}
-          />
-        )}
+    <View style={[styles.container, isCurrentUser && styles.currentUserContainer]}>
+      <View style={styles.leftSection}>
+        {/* Rang avec emoji pour les 3 premiers */}
+        <View style={styles.rankContainer}>
+          {rankEmoji ? (
+            <Text style={styles.rankEmoji}>{rankEmoji}</Text>
+          ) : (
+            <Text style={[styles.rank, isCurrentUser && styles.currentUserText]}>
+              #{rank}
+            </Text>
+          )}
+        </View>
+
+        {/* Avatar moderne */}
+        <View style={[styles.avatarContainer, isCurrentUser && styles.currentUserAvatar]}>
+          <Text style={styles.avatarText}>
+            {player.firstName ? player.firstName.charAt(0).toUpperCase() : '?'}
+          </Text>
+        </View>
+
+        {/* Informations joueur */}
+        <View style={styles.playerInfo}>
+          <Text style={[styles.playerName, isCurrentUser && styles.currentUserText]}>
+            {player.firstName} {player.lastName}
+          </Text>
+
+        </View>
       </View>
-      <Text style={[styles.score, isCurrentUser && styles.highlightedText]}>
-        {text}
-      </Text>
+
+      {/* Score avec badge moderne */}
+      <View style={[styles.scoreContainer, isCurrentUser && styles.currentUserScoreContainer]}>
+        <Text style={[styles.scoreText, isCurrentUser && styles.currentUserText]}>
+          {text}
+        </Text>
+      </View>
     </View>
   );
 }
