@@ -5,7 +5,7 @@ export default StyleSheet.create({
   list: {
     paddingTop: 16,
     paddingHorizontal: 24,
-    marginTop: 72,
+    marginTop: 18,
     paddingBottom: 120,
   },
   emptyContainer: {

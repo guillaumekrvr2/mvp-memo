@@ -1,50 +1,64 @@
+// screens/DiscoverScreen.jsx
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, FlatList } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
+import Header from '../../components/Header'
 import { useDiscover } from '../../hooks/useDiscover'
 import SearchBar from '../../components/atoms/SearchBar/SearchBar'
-import ArticleList from '../../components/organisms/ArticleList/ArticleList'
+import ArticleCard from '../../components/molecules/ArticleCard/ArticleCard'
 
 export default function DiscoverScreen() {
+  const navigation = useNavigation()
+  const insets = useSafeAreaInsets()
+  const headerHeight = insets.top + 60
+
   const { query, setQuery, filtered } = useDiscover()
-  const nav = useNavigation()
 
   return (
     <View style={styles.container}>
-      {/* SearchBar juste sous le header, avec fond transparent */}
-     <View style={styles.searchSection}>
-        <SearchBar
-  value={query}
-  onChange={setQuery}
-  placeholder="Rechercher un article..."
-  style={{ 
-    backgroundColor: 'transparent',
-    paddingHorizontal: 24,
-    paddingVertical: 12
-  }}
-  searchBarStyle={{
-    backgroundColor: 'rgba(255, 255, 255, 0.1)' // ✅ Fond de la barre elle-même
-  }}
-/>
-      </View>
-      {/* Liste des articles */}
-      <View style={styles.contentSection}>
-        <ArticleList
-          data={filtered}
-          onPressItem={item => nav.navigate('Article', { articleId: item.id })}
-        />
-      </View>
+
+      <FlatList
+        data={filtered}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <ArticleCard
+            article={item}
+            onPress={() => navigation.navigate('Article', { articleId: item.id })}
+          />
+        )}
+
+        // Barre de recherche « au-dessus »
+        ListHeaderComponent={() => (
+          <View style={[styles.searchSection, { paddingTop: headerHeight }]}>
+            <SearchBar
+              value={query}
+              onChange={setQuery}
+              placeholder="Rechercher un article…"
+              style={{
+                backgroundColor: 'transparent',
+                paddingHorizontal: 24,
+                paddingVertical: 12,
+              }}
+              searchBarStyle={{
+                backgroundColor: 'rgba(255,255,255,0.1)',
+              }}
+            />
+          </View>
+        )}
+
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 60 + 20,
+        }}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000', // ou ton theme.colors.background
-  },
-  contentSection: {
-    flex: 1,
-    backgroundColor: 'transparent',
+  container: { flex: 1, backgroundColor: '#000', paddingHorizontal: 20, },
+  searchSection: {
+    marginBottom: 16,
   },
 })

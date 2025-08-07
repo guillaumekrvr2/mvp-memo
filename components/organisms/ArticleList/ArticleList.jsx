@@ -27,7 +27,7 @@ export default function ArticleList({ data, onPressItem }) {
       )}
       contentContainerStyle={[
         styles.list,
-        { paddingBottom: insets.bottom + 20 } // ← Espace pour la tab bar + marge
+        { paddingBottom: insets.bottom + 40 } // ← Espace pour la tab bar + marge
       ]}
       showsVerticalScrollIndicator={false}
     />
