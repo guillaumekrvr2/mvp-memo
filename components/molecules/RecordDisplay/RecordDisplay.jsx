@@ -19,7 +19,7 @@ export default function RecordDisplay({ score, time, hidden = false }) {
         />
       </View>
       <View style={styles.textContainer}>
-        <Text style={styles.label}>Meilleur score</Text>
+        <Text style={styles.label}>Mon meilleur score</Text>
         <Text style={styles.score}>
           {score} en {time}s
         </Text>

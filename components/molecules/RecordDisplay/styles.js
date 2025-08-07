@@ -8,11 +8,11 @@ export default StyleSheet.create({
     backgroundColor: '#2a2a3e', // Même fond que les autres composants modernes
     borderRadius: 12, // Border radius moderne cohérent
     borderWidth: 1,
-    borderColor: '#3a3a4e', // Bordure subtile
+    borderColor: '#FACC48', // Bordure subtile
     padding: 16,
     marginVertical: 16,
     alignSelf: 'center',
-    minWidth: 200,
+    minWidth: 225,
     // Ombre moderne subtile
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
