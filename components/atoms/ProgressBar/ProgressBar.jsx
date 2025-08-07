@@ -1,9 +1,9 @@
 // components/atoms/ProgressBar/ProgressBar.jsx
-import React from 'react';
-import * as S from './styles';
+import React from 'react'
+import * as S from './styles'
 
 /**
- * @param {Animated.Value} progress  Valeur animée [0→1] gérée à l’extérieur
+ * @param {Animated.Value} progress  Valeur animée [0→1] gérée à l'extérieur
  */
 export default function ProgressBar({ progress }) {
   return (
@@ -17,5 +17,5 @@ export default function ProgressBar({ progress }) {
         }}
       />
     </S.Container>
-  );
+  )
 }

@@ -7,14 +7,14 @@ export const Container = styled.TouchableOpacity`
   border-radius: 80px;
   background-color: #2a2a3e; /* Fond moderne sombre */
   border-width: 2px;
-  border-color: #4ecdc4; /* Bordure cyan accent */
+  border-color: #667eea; /* Bordure cyan accent */
   justify-content: center;
   align-items: center;
   align-self: center;
   margin-bottom: ${({ theme }) => theme.spacing.xl}px;
   
   /* Ombre moderne avec l'accent cyan */
-  shadow-color: #4ecdc4;
+  shadow-color: #667eea;
   shadow-offset: 0px 8px;
   shadow-opacity: 0.3;
   shadow-radius: 16px;
@@ -35,7 +35,7 @@ export const InnerGlow = styled.View`
   align-items: center;
   
   /* Effet de glow intérieur */
-  shadow-color: #4ecdc4;
+  shadow-color: #667eea;
   shadow-offset: 0px 0px;
   shadow-opacity: 0.1;
   shadow-radius: 8px;
@@ -45,12 +45,12 @@ export const InnerGlow = styled.View`
 export const Label = styled.Text`
   font-size: 20px;
   font-weight: 700;
-  color: #4ecdc4; /* Texte cyan accent */
+  color: #667eea; /* Texte cyan accent */
   letter-spacing: 2px; /* Espacement moderne */
   text-transform: uppercase;
   
   /* Ombre de texte pour plus de profondeur */
-  text-shadow-color: rgba(78, 205, 196, 0.3);
+  text-shadow-color: rgba(154, 78, 205, 0.3);
   text-shadow-offset: 0px 2px;
   text-shadow-radius: 4px;
 `;

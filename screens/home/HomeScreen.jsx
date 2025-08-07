@@ -84,7 +84,7 @@ export default function HomeScreen() {
               <Text style={styles.learnMoreSubtitle}>Apprenez les méthodes des champions</Text>
             </View>
           </View>
-          <SecondaryButton onPress={() => {/* action */}}>
+          <SecondaryButton onPress={() => navigation.navigate('Discover')}>
             En savoir plus
           </SecondaryButton>
         </View>

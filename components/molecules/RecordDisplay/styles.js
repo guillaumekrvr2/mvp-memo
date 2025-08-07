@@ -30,14 +30,14 @@ export default StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#4ecdc420', // Fond cyan transparent
+    backgroundColor: '#7a3d1a30', // Fond jaune transparent
     borderWidth: 1,
-    borderColor: '#4ecdc4', // Bordure cyan accent
+    borderColor: '#FACC48', // Bordure jaune accent
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
     // Petit glow pour l'icône
-    shadowColor: '#4ecdc4',
+    shadowColor: '#FACC48',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 4,

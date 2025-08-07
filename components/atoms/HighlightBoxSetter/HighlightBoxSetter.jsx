@@ -11,9 +11,13 @@ export default function HighlightBoxSetter({
   textStyle
 }) {
   return (
-    <S.Container style={style} onPress={onPress} activeOpacity={0.7}>
-      <S.Label style={textStyle}>{label}</S.Label>
-      {icon}
+    <S.Container style={style} onPress={onPress} activeOpacity={0.8}>
+      <S.ContentWrapper>
+        <S.Label style={textStyle}>{label}</S.Label>
+        <S.IconContainer>
+          {icon}
+        </S.IconContainer>
+      </S.ContentWrapper>
     </S.Container>
   );
 }

@@ -15,7 +15,7 @@ export default function RecordDisplay({ score, time, hidden = false }) {
         <Ionicons
           name="trophy"
           size={20}
-          color="#4ecdc4"
+          color="#FACC48"
         />
       </View>
       <View style={styles.textContainer}>

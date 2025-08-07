@@ -2,20 +2,60 @@
 import styled from 'styled-components/native';
 
 export const Container = styled.TouchableOpacity`
+  background-color: #2a2a3e; /* Fond moderne cohérent */
+  border-width: 1px;
+  border-color: #3a3a4e; /* Bordure subtile */
+  border-radius: 12px; /* Border radius moderne */
+  padding: 20px 24px; /* Padding généreux */
+  margin-top: 20px;
+  margin-bottom: 16px;
+  
+  /* Ombre moderne subtile */
+  shadow-color: #000;
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.1;
+  shadow-radius: 4px;
+  elevation: 3;
+  
+  /* Effet hover moderne */
+  transform: scale(1);
+`;
+
+export const ContentWrapper = styled.View`
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  border-width: ${({ theme }) => theme.border.width}px;
-  border-color: ${({ theme }) => theme.colors.textOnDark};
-  border-radius: ${({ theme }) => theme.border.radiusLg}px;
-  padding: ${({ theme }) => theme.spacing.lg}px;
-  margin-top: ${({ theme }) => theme.spacing.lg}px;
-  margin-bottom: ${({ theme }) => theme.spacing.sm}px;
+  justify-content: space-between;
+  width: 100%;
 `;
 
 export const Label = styled.Text`
-  color: ${({ theme }) => theme.colors.textOnDark};
-  font-size: ${({ theme }) => theme.typography.size.xl}px;
-  font-weight: ${({ theme }) => theme.typography.weight.semibold};
-  margin-right: ${({ theme }) => theme.spacing.md}px;
+  color: #ffffff; /* Texte principal blanc */
+  font-size: 24px; /* Taille importante pour les chiffres */
+  font-weight: 700; /* Bold moderne */
+  letter-spacing: 2px; /* Espacement moderne pour les chiffres */
+  flex: 1;
+  text-align: center;
+  
+  /* Ombre de texte pour profondeur */
+  text-shadow-color: rgba(255, 255, 255, 0.1);
+  text-shadow-offset: 0px 1px;
+  text-shadow-radius: 2px;
+`;
+
+export const IconContainer = styled.View`
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: #7a4ecd20; /* Fond cyan transparent */
+  border-width: 1px;
+  border-color: #667eea; /* Bordure cyan accent */
+  justify-content: center;
+  align-items: center;
+  
+  /* Glow effect pour l'icône */
+  shadow-color: #667eea;
+  shadow-offset: 0px 0px;
+  shadow-opacity: 0.3;
+  shadow-radius: 6px;
+  elevation: 4;
 `;
