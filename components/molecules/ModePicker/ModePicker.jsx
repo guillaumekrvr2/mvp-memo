@@ -15,7 +15,7 @@ export function ModePicker({
   const isCommunity = variant === 'community';
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // Pour la variante community, utilise le picker custom
+  // Pour la variante community, utilise le picker custom avec modal
   if (isCommunity) {
     // Trouver le label de l'option sélectionnée
     const selectedOption = options.find(opt => opt.value === selectedValue);
@@ -40,8 +40,8 @@ export function ModePicker({
           <Text style={S.customPickerText}>{displayText}</Text>
           <Ionicons 
             name="chevron-down" 
-            size={16}                    // 🎯 Icône plus petite et discrète
-            color="#a0a9c0"             // 🎯 Couleur assortie au texte
+            size={16}
+            color="#a0a9c0"
             style={S.customPickerIcon}
           />
         </TouchableOpacity>
@@ -100,34 +100,85 @@ export function ModePicker({
     );
   }
 
-  // Pour les autres variantes, garde l'ancien système
-  return (
-    <View style={[
-      S.wrapper,
-      S.wrapperNumbers
-    ]}>
-      <RNPickerSelect
-        onValueChange={onValueChange}
-        value={selectedValue}
-        items={options}
-        useNativeAndroidPickerStyle={false}
-        fixAndroidTouchableBug={true}
+  // Pour la variante numbers, utilisons maintenant le même système de modal custom que community
+  if (!isCommunity) {
+    // Trouver le label de l'option sélectionnée
+    const selectedOption = options.find(opt => opt.value === selectedValue);
+    const displayText = selectedOption?.label || 'Sélectionner';
 
-        style={{
-          viewContainer: S.viewContainerNumbers,
-          inputAndroid: S.inputAndroidNumbers,
-          inputIOS: S.inputIOSNumbers,
-          iconContainer: S.iconContainerNumbers,
-        }}
+    const handleOptionSelect = (value) => {
+      onValueChange(value);
+      setIsModalVisible(false);
+    };
 
-        touchableWrapperProps={{
-          hitSlop: { top: 8, bottom: 8, left: 8, right: 8 }
-        }}
+    return (
+      <View style={S.wrapperNumbers}>
+        {/* Picker custom modern style */}
+        <TouchableOpacity
+          style={S.customPickerContainerNumbers}
+          onPress={() => setIsModalVisible(true)}
+          activeOpacity={0.8}
+        >
+          <Text style={S.customPickerTextNumbers}>{displayText}</Text>
+          <Ionicons 
+            name="chevron-down" 
+            size={16}
+            color="#a0a9c0"
+            style={S.customPickerIconNumbers}
+          />
+        </TouchableOpacity>
 
-        Icon={() => (
-          <Ionicons name="chevron-down" size={20} color="#fff" />
-        )}
-      />
-    </View>
-  );
+        {/* Modal pour les options - identique à community */}
+        <Modal
+          visible={isModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setIsModalVisible(false)}
+        >
+          <TouchableOpacity
+            style={S.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setIsModalVisible(false)}
+          >
+            <View style={S.modalContent}>
+              <View style={S.modalHeader}>
+                <Text style={S.modalTitle}>Mode de jeu</Text>
+                <TouchableOpacity
+                  onPress={() => setIsModalVisible(false)}
+                  style={S.modalCloseButton}
+                >
+                  <Ionicons name="close" size={24} color="#a0a9c0" />
+                </TouchableOpacity>
+              </View>
+
+              <FlatList
+                data={options}
+                keyExtractor={(item) => item.value}
+                showsVerticalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={[
+                      S.modalOption,
+                      item.value === selectedValue && S.selectedOption
+                    ]}
+                    onPress={() => handleOptionSelect(item.value)}
+                  >
+                    <Text style={[
+                      S.modalOptionText,
+                      item.value === selectedValue && S.selectedOptionText
+                    ]}>
+                      {item.label}
+                    </Text>
+                    {item.value === selectedValue && (
+                      <Ionicons name="checkmark" size={20} color="#4ecdc4" />
+                    )}
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          </TouchableOpacity>
+        </Modal>
+      </View>
+    );
+  }
 }

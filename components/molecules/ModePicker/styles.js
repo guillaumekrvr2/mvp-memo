@@ -13,33 +13,30 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 4,              // 🎯 Padding horizontal pour alignement
-    marginVertical: 16,                // 🎯 Moins de margin vertical (plus compact)
+    paddingHorizontal: 4,
+    marginVertical: 16,
   },
   label: {
     color: '#ffffff',
     fontSize: 18,
     fontWeight: '700',
     flex: 1,
-    // 🎯 Style amélioré pour le label
     textShadowColor: 'rgba(255, 255, 255, 0.1)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
   
-  // 🎯 Container custom picker plus discret
   customPickerContainer: {
-    backgroundColor: '#2a2a3e',         // 🎯 Fond plus discret (moins contrasté)
-    borderRadius: 12,                   // 🎯 Border radius plus subtil
+    backgroundColor: '#2a2a3e',
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#3a3a4e',            // 🎯 Bordure plus subtile (gris bleuté)
-    height: 40,                        // 🎯 Légèrement plus compact
-    width: 180,                        // 🎯 Largeur augmentée pour plus d'espace
+    borderColor: '#3a3a4e',
+    height: 40,
+    width: 180,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,             // 🎯 Plus de padding pour le texte
-    // 🎯 Ombre plus subtile
+    paddingHorizontal: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -47,19 +44,17 @@ export default StyleSheet.create({
     elevation: 2,
   },
 
-  // 🎯 Texte du picker avec plus d'espace
   customPickerText: {
-    color: '#a0a9c0',                  // 🎯 Couleur plus subtile (gris bleuté)
+    color: '#a0a9c0',
     fontSize: 15,
-    fontWeight: '500',                 // 🎯 Poids plus léger
+    fontWeight: '500',
     flex: 1,
     textAlign: 'center',
   },
 
-  // 🎯 Icône chevron plus discrète
   customPickerIcon: {
     marginLeft: 8,
-    opacity: 0.7,                      // 🎯 Légèrement transparente
+    opacity: 0.7,
   },
 
   // === MODAL STYLES ===
@@ -79,7 +74,6 @@ export default StyleSheet.create({
     maxHeight: 400,
     borderWidth: 1,
     borderColor: '#2a2a3e',
-    // Ombre moderne
     shadowColor: '#4ecdc4',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
@@ -135,43 +129,45 @@ export default StyleSheet.create({
     fontWeight: '700',
   },
 
-  // === NUMBERS - INCHANGÉ ===
+  // === NUMBERS - VERSION MODAL CUSTOM IDENTIQUE À COMMUNITY ===
   wrapperNumbers: {
-    // Garde le style existant pour numbers
+    marginVertical: 16, // Plus compact comme community
   },
-  viewContainerNumbers: {
-    width: '100%',
-    height: 50,
-    justifyContent: 'center',
-    paddingLeft: 16,
-    paddingRight: 40,
-  },
-  inputIOSNumbers: {
-    backgroundColor: '#111',
-    borderRadius: 16,
+
+  // Container du picker custom pour Numbers (même style que community)
+  customPickerContainerNumbers: {
+    backgroundColor: '#2a2a3e',
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#fff',
-    height: 50,
+    borderColor: '#3a3a4e',
+    height: 48,
+    width: '100%', // Pleine largeur pour Numbers
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '700',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+
+  customPickerTextNumbers: {
+    color: '#a0a9c0',
+    fontSize: 15,
+    fontWeight: '500',
+    flex: 1,
     textAlign: 'center',
   },
-  inputAndroidNumbers: {
-    backgroundColor: '#111',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#fff',
-    height: 50,
-    paddingHorizontal: 16,
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '700',
-    textAlign: 'center',
+
+  customPickerIconNumbers: {
+    marginLeft: 8,
+    opacity: 0.7,
   },
-  iconContainerNumbers: {
-    top: (50 - 20) / 2,
-    right: 12,
+
+  // Style pour l'icône du picker numbers (maintenu pour rétrocompatibilité)
+  pickerIcon: {
+    opacity: 0.7,
   },
 });
