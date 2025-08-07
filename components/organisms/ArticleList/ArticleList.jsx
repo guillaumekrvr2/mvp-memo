@@ -1,9 +1,12 @@
 import React from 'react'
 import { FlatList, View, Text } from 'react-native'
-import ArticleCard from '../../molecules/ArticleCard/ArticleCard'  // ← vérifie que ton chemin est bon
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import ArticleCard from '../../molecules/ArticleCard/ArticleCard'
 import styles from './styles'
 
 export default function ArticleList({ data, onPressItem }) {
+  const insets = useSafeAreaInsets()
+
   if (data.length === 0) {
     return (
       <View style={styles.emptyContainer}>
@@ -14,16 +17,19 @@ export default function ArticleList({ data, onPressItem }) {
 
   return (
     <FlatList
-      style={{ flex: 1 }}
-      contentContainerStyle={styles.list}
       data={data}
-      keyExtractor={item => item.id}                                             // ← ici
-      renderItem={({ item }) => (                                              // ← et ici
+      keyExtractor={item => item.id}
+      renderItem={({ item }) => (
         <ArticleCard
           article={item}
           onPress={() => onPressItem(item)}
         />
       )}
+      contentContainerStyle={[
+        styles.list,
+        { paddingBottom: insets.bottom + 20 } // ← Espace pour la tab bar + marge
+      ]}
+      showsVerticalScrollIndicator={false}
     />
   )
 }

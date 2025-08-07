@@ -1,18 +1,27 @@
-// screens/discover/DiscoverScreen.jsx
-import { SafeAreaView, View, StyleSheet, Text } from 'react-native'
+import React from 'react'
+import { SafeAreaView, View, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useDiscover } from '../../hooks/useDiscover'
+import SearchBar from '../../components/atoms/SearchBar/SearchBar'
 import ArticleList from '../../components/organisms/ArticleList/ArticleList'
 
 export default function DiscoverScreen() {
-  const { filtered } = useDiscover()
+  const { query, setQuery, filtered } = useDiscover() // ← Assure-toi d'avoir query et setQuery
   const nav = useNavigation()
   const insets = useSafeAreaInsets()
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Espaceur pour éviter le header transparent */}
+    <SafeAreaView style={styles.container}>
+      {/* Header avec SearchBar flottante */}
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        <SearchBar
+          value={query}
+          onChange={setQuery}
+          placeholder="Rechercher un article..."
+          style={styles.searchBar}
+        />
+      </View>
 
       {/* Liste des articles */}
       <View style={styles.contentSection}>
@@ -26,33 +35,29 @@ export default function DiscoverScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: 'transparent',
+  container: {
+    flex: 1,
+    backgroundColor: '#000', // ou ton theme.colors.background
   },
-  headerSpacer: {
-    backgroundColor: 'transparent',
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Fond semi-transparent
+    backdropFilter: 'blur(10px)', // Effet de flou (iOS principalement)
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.08)',
-    paddingVertical: 24,
   },
-  searchSection: {
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-    backgroundColor: 'rgba(255,255,255,0.1)'
+  searchBar: {
+    marginHorizontal: 24,
+    marginBottom: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   contentSection: {
     flex: 1,
-    paddingHorizontal: 24,
-    backgroundColor: 'transparent',
-  },
-  resultsCount: {
-    color: '#a0a9c0',
-    fontSize: 14,
-    fontWeight: '500',
-    marginTop: 20,
-    paddingLeft: 4,
   },
 })
