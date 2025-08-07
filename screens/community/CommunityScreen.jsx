@@ -1,33 +1,34 @@
 // screens/community/CommunityScreen.jsx
+import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { useState, useContext, useMemo, useEffect } from 'react';
 import { theme } from '../../theme'; 
 import { Carousel } from '../../components/molecules/Carousel/Carousel';
-import { ModePicker } from '../../components/molecules/ModePicker/ModePicker'
+import { ModePicker } from '../../components/molecules/ModePicker/ModePicker';
 import useLeaderboard from '../../hooks/useLeaderboard';
 import { LeaderboardList } from '../../components/organisms/LeaderboardList/LeaderboardList';
 import { AccountContext } from '../../contexts/AccountContext';
 import { ModeVariantContext } from '../../contexts/ModeVariantContext';
 
+// 🎯 DISCIPLINES avec les mêmes emojis et couleurs que HomeScreen
 const DISCIPLINES = [
-  { key: 'global',  label: 'Global' },
-  { key: 'numbers', label: 'Numbers' },
-  { key: 'cards',   label: 'Cards' },
-  { key: 'words',   label: 'Words' },
-  { key: 'binary',  label: 'Binary' },
-  { key: 'names',   label: 'Names' },
-  { key: 'images',  label: 'Images' },
+  { key: 'global', label: 'Global', emoji: '🌍', color: '#667eea' },
+  { key: 'numbers', label: 'Numbers', emoji: '🔢', color: '#667eea' },
+  { key: 'cards', label: 'Cards', emoji: '🃏', color: '#764ba2' },
+  { key: 'words', label: 'Words', emoji: '📝', color: '#f093fb' },
+  { key: 'binary', label: 'Binary', emoji: '💻', color: '#4facfe' },
+  { key: 'names', label: 'Names', emoji: '👥', color: '#43e97b' },
+  { key: 'images', label: 'Images', emoji: '🖼️', color: '#fa709a' },
 ];
 
 // Modes de base - seront étendus dynamiquement pour la discipline numbers
 const BASE_GAME_MODES = [
   { label: 'Memory League', value: 'memory-league' },
-  { label: 'IAM',           value: 'iam' },
+  { label: 'IAM', value: 'iam' },
 ];
 
 export default function CommunityScreen() {
   const [selectedDiscipline, setSelectedDiscipline] = useState('numbers');
-  const [selectedMode, setSelectedMode] = useState('7'); // Initialiser avec le premier variant numbers
+  const [selectedMode, setSelectedMode] = useState('7');
   
   // Récupération de l'utilisateur connecté pour le highlight
   const { current } = useContext(AccountContext);
@@ -40,44 +41,35 @@ export default function CommunityScreen() {
     if (selectedDiscipline === 'numbers' && !variantsLoading) {
       const numbersVariants = byDiscipline['numbers'] || byDiscipline[7] || [];
       if (numbersVariants.length > 0 && (selectedMode === 'memory-league' || selectedMode === 'iam')) {
-        // Si on a encore l'ancienne valeur, prendre le premier variant
         setSelectedMode(numbersVariants[0].id.toString());
-        
       }
     }
   }, [byDiscipline, variantsLoading, selectedDiscipline, selectedMode]);
 
   // Construction dynamique des options du ModePicker selon la discipline
   const gameModesOptions = useMemo(() => {
-    // Pour la discipline numbers, on utilise les variants du contexte
     if (selectedDiscipline === 'numbers') {
-      // Recherche de l'ID de la discipline numbers (peut être 'numbers' ou un ID numérique)
       const numbersVariants = byDiscipline['numbers'] || byDiscipline[7] || [];
       
-      
       if (numbersVariants.length > 0) {
-        // Transformer les variants en options pour le picker
         const options = numbersVariants.map(variant => ({
           label: variant.label,
-          value: variant.id.toString(), // Utiliser l'ID comme value
+          value: variant.id.toString(),
         }));
         return options;
       }
     }
     
-    // Pour les autres disciplines, utiliser les modes de base
     return BASE_GAME_MODES;
   }, [selectedDiscipline, byDiscipline]);
 
   // Détermination du variantId selon le mode sélectionné
   const variantId = useMemo(() => {
     if (selectedDiscipline === 'numbers') {
-      // Pour numbers, selectedMode contient directement l'ID du variant
       const parsed = parseInt(selectedMode, 10);
       return isNaN(parsed) ? null : parsed;
     }
     
-    // Pour les autres disciplines, utiliser la logique existante
     const result = selectedMode === 'iam' ? 7 : 10;
     return result;
   }, [selectedDiscipline, selectedMode]);
@@ -86,7 +78,6 @@ export default function CommunityScreen() {
   const handleDisciplineChange = (newDiscipline) => {
     setSelectedDiscipline(newDiscipline);
     
-    // Réinitialiser le mode selon la nouvelle discipline
     if (newDiscipline === 'numbers') {
       const numbersVariants = byDiscipline['numbers'] || byDiscipline[7] || [];
       if (numbersVariants.length > 0) {
@@ -97,9 +88,9 @@ export default function CommunityScreen() {
     }
   };
 
-  // Pour le hook useLeaderboard, il faut passer le mode original pour les autres disciplines
+  // Pour le hook useLeaderboard
   const leaderboardMode = selectedDiscipline === 'numbers' 
-    ? (variantId === 10 ? 'memory-league' : 'iam')  // 10 = memory-league; 7,8,9 = iam
+    ? (variantId === 10 ? 'memory-league' : 'iam')
     : selectedMode;
 
   // Utilise le hook pour obtenir la liste triée
@@ -107,12 +98,12 @@ export default function CommunityScreen() {
     selectedDiscipline,
     leaderboardMode,
     DISCIPLINES,
-    variantId // Passer le variantId au hook
+    variantId
   );
 
   return (
     <View style={styles.container}>
-      {/* Sélecteur de discipline */}
+      {/* Sélecteur de discipline avec emojis et couleurs */}
       <Carousel
         data={DISCIPLINES}
         selectedKey={selectedDiscipline}
@@ -154,5 +145,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
     padding: 20,
+    marginTop: 100,
+  },
+  tabs: {
+    marginBottom: 20,
   },
 });

@@ -9,7 +9,7 @@ import {
   Dimensions,
   SafeAreaView 
 } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context' // 🎯 Hook pour les insets
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import { AccountContext } from '../../contexts/AccountContext'
 import { MenuButton } from '../../components/atoms/MenuButton/MenuButton'
@@ -20,7 +20,7 @@ const { width } = Dimensions.get('window')
 export default function HomeScreen() {
   const navigation = useNavigation()
   const { current } = useContext(AccountContext)
-  const insets = useSafeAreaInsets() // 🎯 Récupère les insets de l'écran
+  const insets = useSafeAreaInsets()
   
   const options = [
     { label: 'Numbers', screen: 'Numbers', emoji: '🔢', color: '#667eea', description: 'Mémorisation de nombres' },
@@ -40,42 +40,41 @@ export default function HomeScreen() {
   }
 
   const userName = current?.firstName || current?.email?.split('@')[0] || 'Champion'
-
-  // 🎯 Hauteur estimée du header (SafeAreaView + container + marginTop)
-  const headerHeight = insets.top + 60 + 20 // top inset + container height + marginTop
+  const headerHeight = insets.top + 60 + 20
 
   return (
     <ScrollView 
       style={styles.container} 
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: insets.bottom + 100 }} // 🎯 Espace pour tab bar
+      contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
     >
-      {/* Header avec salutation - avec padding pour éviter le header */}
+      {/* Header avec salutation */}
       <View style={[styles.header, { paddingTop: headerHeight + 8 }]}>
         <Text style={styles.greeting}>{getGreeting()}</Text>
         <Text style={styles.userName}>{userName} 👋</Text>
         <Text style={styles.subtitle}>Prêt à entraîner votre mémoire ?</Text>
       </View>
 
-      {/* Grid des disciplines */}
+      {/* Grid des disciplines - CORRIGÉE */}
       <View style={styles.disciplinesContainer}>
         <Text style={styles.sectionTitle}>🧠 Choisissez votre discipline</Text>
         
-        <View style={styles.grid}>
+        <View style={styles.gridFixed}>
           {options.map((option) => (
-            <MenuButton
-              key={option.screen}
-              label={option.label}
-              emoji={option.emoji}
-              color={option.color}
-              description={option.description}
-              onPress={() => navigation.navigate(option.screen)}
-            />
+            <View key={option.screen} style={styles.gridItem}>
+              <MenuButton
+                label={option.label}
+                emoji={option.emoji}
+                color={option.color}
+                description={option.description}
+                onPress={() => navigation.navigate(option.screen)}
+              />
+            </View>
           ))}
         </View>
       </View>
 
-      {/* Section Learn More améliorée */}
+      {/* Section Learn More */}
       <View style={styles.learnMoreSection}>
         <View style={styles.learnMoreCard}>
           <View style={styles.learnMoreHeader}>
@@ -130,7 +129,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 30,
     backgroundColor: '#1a1a2e',
-    // 🎯 paddingTop sera calculé dynamiquement
   },
   greeting: {
     color: '#a0a9c0',
@@ -148,18 +146,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 8,
   },
-  disciplinesContainer: {
+   disciplinesContainer: {
     paddingHorizontal: 20,
     paddingVertical: 20,
+    // ❌ Supprime alignItems: 'center' qui centre tout le container
   },
   sectionTitle: {
     color: '#fff',
     fontSize: 22,
     fontWeight: '700',
     marginBottom: 20,
+    textAlign: 'center', // ✅ Centre seulement le titre
   },
-  grid: {
-    gap: 12,
+  // 🎯 GRILLE 2x3 VRAIMENT CENTRÉE ET HARMONIEUSE
+  gridFixed: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between', // ✅ Retour à space-between pour 2 colonnes égales
+    alignItems: 'flex-start', // ✅ Une seule déclaration alignItems
+    // ❌ Supprime alignItems en double
+  },
+  gridItem: {
+    width: '47%', // ✅ Simple et efficace : 47% + 47% + 6% d'espace = 100%
+    marginBottom: 16, // ✅ Espacement vertical entre les lignes
+    alignItems: 'center', // ✅ Centre chaque MenuButton dans son conteneur
   },
   learnMoreSection: {
     paddingHorizontal: 20,

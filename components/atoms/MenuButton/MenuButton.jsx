@@ -1,15 +1,13 @@
-// src/components/atoms/MenuButton/MenuButton.jsx
-import React from 'react'
+// components/atoms/MenuButton/MenuButton.jsx
+import React from 'react';
 import { 
   Container, 
   EmojiContainer, 
   Emoji, 
   Content, 
   Label, 
-  Description,
-  Arrow,
-  ArrowText 
-} from './styles'
+  Description 
+} from './styles';
 
 export function MenuButton({ 
   label, 
@@ -17,31 +15,31 @@ export function MenuButton({
   emoji = '🎯', 
   color = '#667eea', 
   description,
-  isActive = false 
+  isActive = false,
+  isCarousel = false,
+  style // Pour les styles additionnels du parent
 }) {
   return (
     <Container 
       onPress={onPress} 
       color={color} 
       isActive={isActive}
-      activeOpacity={0.7}
+      isCarousel={isCarousel}
+      activeOpacity={0.8}
+      style={style}
     >
-      <EmojiContainer color={color}>
-        <Emoji>{emoji}</Emoji>
+      <EmojiContainer color={color} isCarousel={isCarousel}>
+        <Emoji isCarousel={isCarousel}>{emoji}</Emoji>
       </EmojiContainer>
       
-      <Content>
-        <Label isActive={isActive} color={color}>
+      <Content isCarousel={isCarousel}>
+        <Label isActive={isActive} color={color} isCarousel={isCarousel}>
           {label}
         </Label>
-        {description && (
+        {description && !isCarousel && (
           <Description>{description}</Description>
         )}
       </Content>
-      
-      <Arrow color={color}>
-        <ArrowText color={color}>→</ArrowText>
-      </Arrow>
     </Container>
-  )
+  );
 }

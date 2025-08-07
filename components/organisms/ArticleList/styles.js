@@ -4,10 +4,9 @@ import { theme } from '../../../theme'
 export default StyleSheet.create({
   list: {
     paddingTop: 16,
-    marginTop: 30,
-    marginBottom: 100,
-    paddingBottom: 32,
-    // Supprime marginTop: 60 qui causait des problèmes
+    paddingHorizontal: 24,
+    marginTop: 72,
+    paddingBottom: 120,
   },
   emptyContainer: {
     flex: 1,

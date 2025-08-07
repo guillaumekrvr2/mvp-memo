@@ -1,70 +1,88 @@
 // src/components/atoms/MenuButton/styles.js
-import styled from 'styled-components/native'
+import styled from 'styled-components/native';
 
 export const Container = styled.TouchableOpacity`
-  background-color: #1e1e2e;
-  border-radius: 16px;
-  padding: 20px;
-  flex-direction: row;
+  width: ${({ isCarousel }) => (isCarousel ? '140px' : '140px')};
+  height: ${({ isCarousel }) => (isCarousel ? '140px' : '140px')};
+  margin: ${({ isCarousel, theme }) => (isCarousel ? '0px' : theme.spacing.sm + 'px')};
+  
+  /* Ajout de padding intérieur pour aérer le contenu */
+  padding: ${({ isCarousel, theme }) =>
+    isCarousel
+      ? theme.spacing.sm + 'px'
+      : theme.spacing.sm * 2 + 'px'
+  };
+  
+  background-color: ${({ theme, isActive, isCarousel, color }) => {
+    if (isActive && isCarousel && color) {
+      return color + '20';
+    }
+    if (isActive) {
+      return theme.colors.primary;
+    }
+    return theme.colors.surface;
+  }};
+  
+  border-width: ${({ theme }) => theme.border?.width || 1}px;
+  border-color: ${({ theme, isActive, isCarousel, color }) => {
+    if (isActive && isCarousel && color) {
+      return color;
+    }
+    if (isActive) {
+      return theme.colors.primary;
+    }
+    return theme.colors.borderOnDark;
+  }};
+  border-style: solid;
+  
+  border-radius: ${({ theme }) => theme.border?.radius || 12}px;
+  justify-content: center;
   align-items: center;
-  border-width: 1px;
-  border-color: #2a2a3e;
-  border-left-width: 4px;
-  border-left-color: ${({ color }) => color || '#667eea'};
-  margin-vertical: 6px;
-  shadow-color: ${({ color }) => color || '#667eea'};
-  shadow-offset: 0px 4px;
-  shadow-opacity: 0.1;
-  shadow-radius: 8px;
-  elevation: 4;
-  ${({ isActive, color }) => isActive && `
-    background-color: ${color}20;
-    border-color: ${color};
-  `}
-`
+`;
 
 export const EmojiContainer = styled.View`
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
+  width: ${({ isCarousel }) => (isCarousel ? '36px' : '40px')};
+  height: ${({ isCarousel }) => (isCarousel ? '36px' : '40px')};
+  margin-bottom: ${({ isCarousel }) => (isCarousel ? '4px' : '8px')};
+  border-radius: ${({ isCarousel }) => (isCarousel ? '18px' : '20px')};
+  background-color: ${({ color, isCarousel }) => 
+    color + (isCarousel ? '30' : '20')
+  };
   justify-content: center;
   align-items: center;
-  margin-right: 16px;
-  background-color: ${({ color }) => color || '#667eea'}20;
-`
+`;
 
 export const Emoji = styled.Text`
-  font-size: 24px;
-`
+  font-size: ${({ isCarousel }) => (isCarousel ? '16px' : '20px')};
+`;
 
 export const Content = styled.View`
-  flex: 1;
-`
+  align-items: center;
+`;
 
 export const Label = styled.Text`
-  color: ${({ theme, isActive, color }) =>
-    isActive ? color || '#667eea' : theme?.colors?.textOnDark || '#ffffff'};
-  font-weight: 600;
-  font-size: 18px;
-  margin-bottom: 4px;
-`
+  color: ${({ theme, isActive, isCarousel, color }) => {
+    if (isActive && isCarousel && color) {
+      return color;
+    }
+    if (isActive) {
+      return theme.colors.textOnLight;
+    }
+    return theme.colors.textOnDark;
+  }};
+  font-weight: ${({ theme }) => theme.typography.weight.semibold};
+  font-size: ${({ theme, isCarousel }) => 
+    (isCarousel 
+      ? (theme.typography.size.sm || 12)
+      : (theme.typography.size.md || 14)
+    ) + 'px'
+  };
+  text-align: center;
+`;
 
 export const Description = styled.Text`
-  color: #a0a9c0;
-  font-size: 14px;
-`
-
-export const Arrow = styled.View`
-  width: 30px;
-  height: 30px;
-  border-radius: 15px;
-  background-color: ${({ color }) => color || '#667eea'}20;
-  justify-content: center;
-  align-items: center;
-`
-
-export const ArrowText = styled.Text`
-  color: ${({ color }) => color || '#667eea'};
-  font-size: 18px;
-  font-weight: 600;
-`
+  color: ${({ theme }) => theme.colors.textSecondary || '#a0a9c0'};
+  font-size: ${({ theme }) => (theme.typography.size.xs || 10) + 'px'};
+  text-align: center;
+  margin-top: 4px;
+`;

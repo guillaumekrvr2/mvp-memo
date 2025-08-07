@@ -1,18 +1,9 @@
 // components/molecules/Carousel/styles.js
 import { StyleSheet } from 'react-native';
+import { theme } from '../../../theme';
 
 export default StyleSheet.create({
-  container: {
-    paddingBottom: 10,
-    marginBottom: 8,
-    flexDirection: 'row',
-  },
-  scrollView: {
-    flexGrow: 0,
-    flexShrink: 0,
-    alignSelf: 'flex-start',
-  },
-  shadowWrapper: {
+  wrapperShadow: {
     // iOS
     shadowColor: '#000',
     shadowOffset: { width: 4, height: 0 },
@@ -20,7 +11,22 @@ export default StyleSheet.create({
     shadowRadius: 4,
     // Android
     elevation: 3,
-    backgroundColor: 'transparent', // ou theme.colors.background si tu veux
+    backgroundColor: 'transparent',
     overflow: 'visible',
+  },
+  container: {
+    paddingBottom: 4,
+    flexDirection: 'row',
+    paddingHorizontal: theme.spacing.xs, // Espacement aux extrémités
+  },
+  scrollView: {
+    flexGrow: 0,
+    flexShrink: 0,
+    alignSelf: 'flex-start',
+  },
+  // 🎯 Wrapper pour chaque MenuButton dans le carousel
+  buttonWrapper: {
+    marginRight: 12,
+    // Pas de largeur fixe pour permettre au MenuButton de s'adapter
   },
 });
