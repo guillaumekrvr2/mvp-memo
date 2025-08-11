@@ -12,8 +12,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import { AccountContext } from '../../contexts/AccountContext'
-import { MenuButton } from '../../components/atoms/MenuButton/MenuButton'
-import { SecondaryButton } from '../../components/atoms/SecondaryButton/SecondaryButton'
+import { MenuButton } from '../../components/atoms/Commons/MenuButton/MenuButton'
+import { SecondaryButton } from '../../components/atoms/Commons/SecondaryButton/SecondaryButton'
 
 const { width } = Dimensions.get('window')
 

@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 // on n'utilise plus signUp du context ici
 import { supabase } from '../../data/supabase/supabaseClient';
-import InputField from '../../components/atoms/InputField/InputField';
-import { SecondaryButton } from '../../components/atoms/SecondaryButton/SecondaryButton';
+import InputField from '../../components/atoms/Numbers/InputField/InputField';
+import { SecondaryButton } from '../../components/atoms/Commons/SecondaryButton/SecondaryButton';
 
 export default function SignUpScreen({ navigation }) {
   const [firstName, setFirstName] = useState('');

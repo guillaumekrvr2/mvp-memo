@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import useCorrectionGrid from '../../../hooks/useCorrectionGrid';
-import { CorrectionCell } from '../../atoms/CorrectionCell/CorrectionCell';
+import { CorrectionCell } from '../../atoms/Numbers/CorrectionCell/CorrectionCell';
 import styles from './styles';
 
 export default function CorrectionGrid({ inputs, numbers, cols }) {

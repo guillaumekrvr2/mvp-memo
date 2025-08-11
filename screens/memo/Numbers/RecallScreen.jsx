@@ -11,9 +11,9 @@ import {
   ScrollView,
 } from 'react-native'
 
-import MemorizationHeader from '../../../components/molecules/MemorizationHeader/MemorizationHeader'
-import { SecondaryButton } from '../../../components/atoms/SecondaryButton/SecondaryButton'
-import BorderedContainer from '../../../components/atoms/BorderedContainer/BorderedContainer'
+import MemorizationHeader from '../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
+import { SecondaryButton } from '../../../components/atoms/Commons/SecondaryButton/SecondaryButton'
+import BorderedContainer from '../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
 
 export default function RecallScreen({ route, navigation }) {
   // Debug: voir ce qui est reçu

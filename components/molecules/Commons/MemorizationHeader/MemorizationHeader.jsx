@@ -2,10 +2,10 @@
 import React, { useRef } from 'react'
 import { View, StyleSheet, Animated } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import BackButton from '../../atoms/BackButton/BackButton'
-import DoneButton from '../../atoms/DoneButton/DoneButton'
-import ProgressBar from '../../atoms/ProgressBar/ProgressBar'
-import useProgressWithCallback from '../../../hooks/useProgressWithCallback'
+import BackButton from '../../../atoms/Commons/BackButton/BackButton'
+import DoneButton from '../../../atoms/Commons/DoneButton/DoneButton'
+import ProgressBar from '../../../atoms/Commons/ProgressBar/ProgressBar'
+import useProgressWithCallback from '../../../../hooks/useProgressWithCallback'
 
 export default function MemorizationHeader({ 
   onBack, 

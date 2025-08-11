@@ -7,8 +7,8 @@ import {
   ScrollView,
 } from 'react-native'
 
-import { SecondaryButton } from '../../../../components/atoms/SecondaryButton/SecondaryButton'
-import BorderedContainer from '../../../../components/atoms/BorderedContainer/BorderedContainer'
+import { SecondaryButton } from '../../../../components/atoms/Commons/SecondaryButton/SecondaryButton'
+import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
 import CorrectionGrid from '../../../../components/organisms/CorrectionGrid/CorrectionGrid'
 import useSaveBestScore from '../../../../hooks/useSaveBestScore'
 import styles from './styles'

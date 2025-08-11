@@ -3,7 +3,7 @@ import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { theme } from '../../theme'; 
 import { Carousel } from '../../components/molecules/Carousel/Carousel';
-import { ModePicker } from '../../components/molecules/ModePicker/ModePicker';
+import { ModePicker } from '../../components/molecules/Commons/ModePicker/ModePicker';
 import useLeaderboard from '../../hooks/useLeaderboard';
 import { LeaderboardList } from '../../components/organisms/LeaderboardList/LeaderboardList';
 import { AccountContext } from '../../contexts/AccountContext';

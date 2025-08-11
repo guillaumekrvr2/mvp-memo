@@ -1,8 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { AccountContext } from '../../contexts/AccountContext';
-import { SecondaryButton } from '../../components/atoms/SecondaryButton/SecondaryButton';
-import InputField from '../../components/atoms/InputField/InputField';
+import { SecondaryButton } from '../../components/atoms/Commons/SecondaryButton/SecondaryButton';
+import InputField from '../../components/atoms/Numbers/InputField/InputField';
 
 
 export default function LoginScreen({ navigation }) {

@@ -1,8 +1,8 @@
 // components/atoms/Text/styles.js
 import styled from 'styled-components/native';
-import { theme } from '../../../theme';
-import typography from '../../../theme/typography';
-import spacing from '../../../theme/spacing';
+import { theme } from '../../../../theme';
+import typography from '../../../../theme/typography';
+import spacing from '../../../../theme/spacing';
 
 // Map semantic variants to design tokens
 const VARIANT_STYLES = {

@@ -1,7 +1,7 @@
 // components/molecules/Carousel/Carousel.jsx
 import React from 'react';
 import { View, ScrollView } from 'react-native';
-import { MenuButton } from '../../atoms/MenuButton/MenuButton';
+import { MenuButton } from '../../atoms/Commons/MenuButton/MenuButton';
 import styles from './styles';
 
 export function Carousel({

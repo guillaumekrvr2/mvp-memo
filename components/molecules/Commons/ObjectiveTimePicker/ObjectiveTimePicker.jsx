@@ -2,7 +2,7 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import styles from './styles'
-import InputField from '../../atoms/InputField/InputField'
+import InputField from '../../../atoms/Numbers/InputField/InputField'
 
 export default function ObjectiveTimePicker({
   mode,

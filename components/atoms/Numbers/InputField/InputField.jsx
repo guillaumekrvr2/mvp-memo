@@ -2,7 +2,7 @@
 import React, { memo } from 'react'
 import { TextInput, StyleSheet } from 'react-native'
 import styles from './styles'
-import useControlledInput from '../../../hooks/useControlledInput'
+import useControlledInput from '../../../../hooks/useControlledInput'
 
 function InputField({
   value,

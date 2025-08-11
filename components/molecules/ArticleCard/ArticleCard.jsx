@@ -1,7 +1,7 @@
 // components/molecules/ArticleCard/ArticleCard.jsx
 import React from 'react'
 import { TouchableOpacity, Text, View } from 'react-native'
-import TimeBadge from '../../atoms/TimeBadge/TimeBadge'
+import TimeBadge from '../../atoms/Commons/TimeBadge/TimeBadge'
 import styles from './styles'
 
 export default function ArticleCard({ article, onPress }) {

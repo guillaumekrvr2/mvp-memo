@@ -4,7 +4,7 @@ import { View, StyleSheet, FlatList } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import { useDiscover } from '../../hooks/useDiscover'
-import SearchBar from '../../components/atoms/SearchBar/SearchBar'
+import SearchBar from '../../components/atoms/Commons/SearchBar/SearchBar'
 import ArticleCard from '../../components/molecules/ArticleCard/ArticleCard' // 🎯 Chemin corrigé
 
 export default function DiscoverScreen() {
