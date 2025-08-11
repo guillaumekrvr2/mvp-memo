@@ -16,6 +16,9 @@ import { SecondaryButton } from '../../components/atoms/SecondaryButton/Secondar
 import BorderedContainer from '../../components/atoms/BorderedContainer/BorderedContainer'
 
 export default function RecallScreen({ route, navigation }) {
+  // Debug: voir ce qui est reçu
+  console.log('RecallScreen route.params:', route.params)
+  
   const { objectif, numbers, temps, variant, mode } = route.params
 
   const totalTime = 4 * 60
@@ -38,7 +41,18 @@ export default function RecallScreen({ route, navigation }) {
 
   // Placeholder simple
   const createPlaceholder = () => {
-    return '123456789012\n345678901234\n567890123456...'
+    return '123456789012...'
+  }
+
+  // Fonction pour naviguer vers la correction (utilisée par les deux boutons)
+  const navigateToCorrection = () => {
+    navigation.navigate('Correction', {
+      inputs: getUserInputArray(),
+      numbers,
+      temps,
+      mode,
+      variant,
+    })
   }
 
   return (
@@ -57,14 +71,7 @@ export default function RecallScreen({ route, navigation }) {
           <MemorizationHeader
             duration={totalTime}
             onBack={() => navigation.goBack()}
-            onDone={() =>
-              navigation.navigate('Correction', {
-                inputs: getUserInputArray(),
-                numbers,
-                temps,
-                variant,
-              })
-            }
+            onDone={navigateToCorrection}
           />
 
           {/* INSTRUCTIONS */}
@@ -102,17 +109,7 @@ export default function RecallScreen({ route, navigation }) {
           </BorderedContainer>
 
           {/* BOUTON VALIDER */}
-          <SecondaryButton
-            onPress={() =>
-              navigation.navigate('Correction', {
-                inputs: getUserInputArray(),
-                numbers,
-                temps,
-                mode,
-                variant,
-              })
-            }
-          >
+          <SecondaryButton onPress={navigateToCorrection}>
             Valider
           </SecondaryButton>
         </ScrollView>

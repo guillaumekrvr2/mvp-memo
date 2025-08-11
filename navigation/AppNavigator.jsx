@@ -14,7 +14,7 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 const Tab = createBottomTabNavigator()
 
 // Écrans de HomeStack où on veut CACHER le header
-const hideOn = ['Memorisation', 'Decompte', 'Recall']
+const hideOn = ['Memorisation', 'Decompte', 'Recall',]
 
 export default function AppNavigator() {
   return (

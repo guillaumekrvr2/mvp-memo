@@ -6,7 +6,7 @@ import NumbersScreen from '../screens/memo/NumbersScreen/NumbersScreen'
 import DecompteScreen  from '../screens/common/DecompteScreen/DecompteScreen'
 import MemoScreen     from '../screens/memo/MemoScreen'
 import RecallScreen     from '../screens/memo/RecallScreen'
-import CorrectionScreen from '../screens/memo/CorrectionScreen'
+import CorrectionScreen from '../screens/memo/CorrectionScreen/CorrectionScreen'
 import { theme } from '../theme';
 import ArticleScreen from '../screens/ArticleScreen';
 

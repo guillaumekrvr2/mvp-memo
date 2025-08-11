@@ -11,6 +11,7 @@ import useNumbers from '../../hooks/useNumbers'
 import useTimer         from '../../hooks/useTimer'
 import useGrid          from '../../hooks/useGrid'
 import useAutoScroll    from '../../hooks/useAutoScroll'
+import { cellStyles } from '../../components/atoms/Grid/styles';
 
 export default function MemoScreen({ route, navigation }) {
   const { objectif, temps, variant, digitCount, autoAdvance } = route.params // routes
@@ -27,14 +28,16 @@ export default function MemoScreen({ route, navigation }) {
   useAutoAdvance(autoAdvance, totalTime, totalGroups, setHighlightIndex) //  Hook d'auto-advance
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <MemorizationHeader
-        onBack={() => navigation.goBack()}
-        onDone={() => navigation.replace('Recall', { objectif, temps, numbers, variant })}
-        duration={totalTime}
-      />
+  <SafeAreaView style={styles.container}>
+    {/* HEADER */}
+    <MemorizationHeader
+      onBack={() => navigation.goBack()}
+      onDone={() => navigation.replace('Recall', { objectif, temps, numbers, variant })}
+      duration={totalTime}
+    />
 
+    {/* CONTENU PRINCIPAL avec espacement équitable */}
+    <View style={styles.mainContent}>
       {/* HIGHLIGHT BOX */}
       <HighlightBox text={highlightDigits} />
 
@@ -45,24 +48,27 @@ export default function MemoScreen({ route, navigation }) {
           cols={cols}
           scrollRef={scrollRef}
           renderCell={(n, rowIdx, colIdx) => {
-            const globalIdx = rowIdx * cols + colIdx
-            const isHighlighted =
-              globalIdx >= highlightIndex * grouping &&
-              globalIdx < highlightIndex * grouping + grouping
+          const globalIdx = rowIdx * cols + colIdx;
+          const groupStart = highlightIndex * grouping;
+          const groupEnd = groupStart + grouping;
+          
+          const isInGroup = globalIdx >= groupStart && globalIdx < groupEnd;
+          // Suppression de isMainHighlight - maintenant tout le groupe a le même style
 
-            return (
-              <View
-                key={`r${rowIdx}-c${colIdx}`}
-                style={[
-                  styles.cell,
-                  colIdx < cols - 1 && styles.separator,
-                  isHighlighted && styles.highlightCell,
-                ]}
-              >
-                <Text style={styles.cellText}>{n}</Text>
-              </View>
-            )
-          }}
+          return (
+            <View
+              key={`r${rowIdx}-c${colIdx}`}
+              style={[
+                cellStyles.cell,
+                isInGroup && cellStyles.highlightCell // Tout le groupe a le style highlight
+              ]}
+            >
+              <Text style={isInGroup ? cellStyles.highlightCellText : cellStyles.cellText}>
+                {n}
+              </Text>
+            </View>
+          );
+        }}
         />
       </BorderedContainer>
 
@@ -77,9 +83,11 @@ export default function MemoScreen({ route, navigation }) {
           onPress={() => setHighlightIndex(i => Math.min(maxIndex, i + 1))}
         />
       </View>
-    </SafeAreaView>
-  )
+    </View>
+  </SafeAreaView>
+)
 }
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
@@ -88,5 +96,15 @@ const styles = StyleSheet.create({
   cell: { width: 42, height: 42, justifyContent: 'center', alignItems: 'center' },
   cellText: { color: '#fff', fontSize: 18, fontWeight: '600' },
   highlightCell: { backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 4 },
-  controls: { flexDirection: 'row', justifyContent: 'space-around', paddingVertical: 16 }
+    mainContent: {
+    flex: 1,
+    justifyContent: 'space-between', // Espacement équitable entre les 3 éléments
+    alignItems: 'center', // Centrage horizontal
+    paddingVertical: 20, // Un peu de padding en haut et bas
+  },
+    controls: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-around', 
+    width: '100%', // Pour que les chevrons utilisent toute la largeur
+  }
 })

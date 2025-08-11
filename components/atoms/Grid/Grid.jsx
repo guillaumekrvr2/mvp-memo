@@ -1,6 +1,7 @@
 // components/atoms/Grid/Grid.jsx
 import React from 'react';
-import * as S from './styles';
+import { ScrollView, View } from 'react-native';
+import { styles } from './styles';
 
 export default function Grid({
   data,
@@ -9,16 +10,21 @@ export default function Grid({
   contentContainerStyle,
 }) {
   return (
-    <S.ScrollContainer ref={scrollRef} contentContainerStyle={contentContainerStyle}>
+    <ScrollView 
+      ref={scrollRef} 
+      style={styles.scrollContainer}
+      contentContainerStyle={[styles.contentContainer, contentContainerStyle]}
+      showsVerticalScrollIndicator={false}
+    >
       {data.map((row, rowIdx) => (
-        <S.Row key={`row-${rowIdx}`}>
+        <View key={`row-${rowIdx}`} style={styles.row}>
           {row.map((item, colIdx) => (
-            <S.CellContainer key={`r${rowIdx}-c${colIdx}`}>
+            <View key={`r${rowIdx}-c${colIdx}`} style={styles.cellContainer}>
               {renderCell(item, rowIdx, colIdx)}
-            </S.CellContainer>
+            </View>
           ))}
-        </S.Row>
+        </View>
       ))}
-    </S.ScrollContainer>
+    </ScrollView>
   );
 }

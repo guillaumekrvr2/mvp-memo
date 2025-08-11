@@ -1,6 +1,6 @@
 // components/atoms/CorrectionCell/CorrectionCell.jsx
-import React from 'react';
-import * as S from './styles';
+import { TouchableOpacity, Text } from 'react-native';
+import styles from './styles';
 
 export function CorrectionCell({
   value,
@@ -13,14 +13,20 @@ export function CorrectionCell({
   const display = isCorrect || isRevealed ? correctValue : value;
 
   return (
-    <S.Touchable
-      isCorrect={isCorrect}
+    <TouchableOpacity
+      style={[
+        styles.touchable,
+        isCorrect && styles.correctTouchable
+      ]}
       disabled={isCorrect || disabled}
       onPress={onReveal}
     >
-      <S.CellText isCorrect={isCorrect}>
+      <Text style={[
+        styles.cellText,
+        isCorrect && styles.correctText
+      ]}>
         {display}
-      </S.CellText>
-    </S.Touchable>
+      </Text>
+    </TouchableOpacity>
   );
 }
