@@ -1,6 +1,7 @@
 // components/molecules/MemorizationHeader/MemorizationHeader.jsx
 import React, { useRef } from 'react'
 import { View, StyleSheet, Animated } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import BackButton from '../../atoms/BackButton/BackButton'
 import DoneButton from '../../atoms/DoneButton/DoneButton'
 import ProgressBar from '../../atoms/ProgressBar/ProgressBar'
@@ -11,24 +12,32 @@ export default function MemorizationHeader({
   onDone, 
   duration
 }) {
+  // Récupère les insets de la safe area
+  const insets = useSafeAreaInsets()
+  
   // Crée une Animated.Value statique pour le cas sans timer
   const staticProgress = useRef(new Animated.Value(0)).current
 
   // N'utilise le hook de progress QUE si duration est un nombre > 0
   const progress = (duration && duration > 0) 
     ? useProgressWithCallback(duration, onDone) 
-    : staticProgress // Utilise la valeur statique au lieu d'un nombre
+    : staticProgress
 
   return (
-    <View style={styles.header}>
-      <BackButton onPress={onBack} variant="minimal" />
-      <ProgressBar progress={progress} />
-      <DoneButton onPress={onDone} variant="primary" label="Done" />
+    <View style={[styles.container, { paddingTop: insets.top + 5 }]}>
+      <View style={styles.header}>
+        <BackButton onPress={onBack} variant="minimal" />
+        <ProgressBar progress={progress} />
+        <DoneButton onPress={onDone} variant="primary" label="Done" />
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: 'transparent',
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',

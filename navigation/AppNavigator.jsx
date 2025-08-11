@@ -14,7 +14,7 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 const Tab = createBottomTabNavigator()
 
 // Écrans de HomeStack où on veut CACHER le header
-const hideOn = ['Memorisation', 'Decompte', 'Recall',]
+const hideOn = ['Memorisation', 'Decompte', 'Recall', 'Cards']
 
 export default function AppNavigator() {
   return (
@@ -88,7 +88,7 @@ export default function AppNavigator() {
         component={HomeStackNavigator}
         options={({ route }) => {
           const nested = getFocusedRouteNameFromRoute(route) ?? 'HomeMain'
-          const hideOn = ['Memorisation', 'Decompte', 'Recall', 'Numbers']
+          const hideOn = ['Memorisation', 'Decompte', 'Recall', 'Numbers', 'Cards']
           if (hideOn.includes(nested)) {
             return { tabBarStyle: { display: 'none' } }
           }

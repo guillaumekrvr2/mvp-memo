@@ -88,9 +88,9 @@ const Card = ({ card, index, originalIndex, isTopCard, onSwipe, totalCards }) =>
     })
 
   const animatedStyle = useAnimatedStyle(() => {
-    // Position dans la stack
+    // Position dans la stack (sans changement de taille)
     const stackY = (totalCards - 1 - index) * -6
-    const stackScale = 1 - ((totalCards - 1 - index) * 0.05)
+    const stackScale = 1 // ← TOUTES LES CARTES À LA MÊME TAILLE
     
     // Opacité basée sur la distance de swipe
     const opacity = Math.max(0, 1 - Math.abs(translateX.value) / (screenWidth * 0.8))
@@ -99,10 +99,10 @@ const Card = ({ card, index, originalIndex, isTopCard, onSwipe, totalCards }) =>
       transform: [
         { translateX: translateX.value },
         { translateY: translateY.value + stackY },
-        { rotateZ: `${rotateZ.value}deg` }, // ← Rotation ajoutée
-        { scale: scale.value * stackScale },
+        { rotateZ: `${rotateZ.value}deg` },
+        { scale: scale.value * stackScale }, // ← Plus de réduction de taille
       ],
-      opacity: opacity, // ← Fade out pendant le swipe
+      opacity: opacity,
       zIndex: totalCards - index,
     }
   })
@@ -253,16 +253,13 @@ const styles = StyleSheet.create({
     width: 280,
     height: 380,
     borderRadius: 16,
-    backgroundColor: '#1e1e2e',
+    backgroundColor: 'transparent', // ← Fond transparent
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.4,
     shadowRadius: 20,
     elevation: 15,
     overflow: 'hidden',
-    // Bordure subtile pour plus de réalisme
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   cardImage: {
     width: '100%',

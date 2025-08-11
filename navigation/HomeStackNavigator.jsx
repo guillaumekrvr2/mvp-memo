@@ -23,7 +23,7 @@ export default function HomeStackNavigator() {
     >
       <Stack.Screen name="HomeMain" component={HomeScreen} />
       <Stack.Screen name="Numbers" component={NumbersScreen} />
-      <Stack.Screen name="Cards" component={CardsScreen} />
+      <Stack.Screen name="Cards" component={CardsScreen} options={{ headerShown: false }}/>
       <Stack.Screen 
         name="Decompte" 
         component={DecompteScreen} 
