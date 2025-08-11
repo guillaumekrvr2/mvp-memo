@@ -6,6 +6,7 @@ import {
   Text,
   ScrollView,
 } from 'react-native'
+
 import { SecondaryButton } from '../../../components/atoms/SecondaryButton/SecondaryButton'
 import BorderedContainer from '../../../components/atoms/BorderedContainer/BorderedContainer'
 import CorrectionGrid from '../../../components/organisms/CorrectionGrid/CorrectionGrid'
@@ -43,6 +44,9 @@ export default function CorrectionScreen({ route, navigation }) {
     return acc + (v === String(numbers[i]) ? 1 : 0)
   }, 0)
 
+  // Hook pour la sauvegarde du meilleur score
+  const { saveBestScore, loading, error } = useSaveBestScore()
+
   // Calcul de la précision
   const accuracy = Math.round((score / total) * 100)
 
@@ -54,21 +58,34 @@ export default function CorrectionScreen({ route, navigation }) {
     accuracy 
   })
 
-  const handleRetry = () => {
-    console.log('Retry button pressed')
-    navigation.navigate('Numbers')
+  const handleRetry = async () => {
+    try {
+      console.log('Retry button pressed - saving score...')
+      
+      // Sauvegarde conditionnelle du score s'il est meilleur
+      if (modeVariantId && typeof modeVariantId === 'number') {
+        await saveBestScore(modeVariantId, score)
+        console.log('Score saved successfully!')
+      } else {
+        console.log('No modeVariantId to save score for:', modeVariantId)
+      }
+      
+      navigation.navigate('Numbers')
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error)
+      // Continuer vers Numbers même en cas d'erreur
+      navigation.navigate('Numbers')
+    }
   }
 
-  // VERSION FINALE AVEC TOUS LES COMPOSANTS ET STYLES
+  // VERSION FINALE AVEC TOUS LES COMPOSANTS ET STYLES + PADDING
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView 
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingTop: 80, paddingBottom: 100 }]}
         showsVerticalScrollIndicator={false}
       >
-
-
         {/* RÉSULTATS */}
         <View style={styles.resultsContainer}>
           <Text style={styles.resultsTitle}>Résultats</Text>
@@ -103,8 +120,9 @@ export default function CorrectionScreen({ route, navigation }) {
         <SecondaryButton
           style={styles.retryButton}
           onPress={handleRetry}
+          disabled={loading} // Désactive pendant la sauvegarde
         >
-          Retry
+          {loading ? 'Saving...' : 'Retry'}
         </SecondaryButton>
       </ScrollView>
     </SafeAreaView>
