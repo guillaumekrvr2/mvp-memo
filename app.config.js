@@ -11,16 +11,11 @@ export default ({ config }) => ({
   platforms: ["ios", "android", "web"],
   orientation: "portrait",
 
-  // Configuration des mises à jour OTA (EAS Update)
+  // 🔧 Configuration des mises à jour OTA DÉSACTIVÉE pour le développement
   updates: {
-    url: config.updates?.url,
-    enabled: true,
+    enabled: false,  // ← DÉSACTIVÉ temporairement
     fallbackToCacheTimeout: 0,
-    checkAutomatically: "ON_LOAD",
-    requestHeaders: {
-      // Remplace par ton channel ou injecte via .env
-      "expo-channel-name": process.env.EXPO_CHANNEL_NAME || "production"
-    }
+    checkAutomatically: "NEVER", // ← Pas de vérification automatique
   },
 
   // Variables extra, dont les clés Supabase et l'ID EAS

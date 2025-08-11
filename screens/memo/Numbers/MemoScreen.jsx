@@ -1,17 +1,17 @@
 // screens/MemoScreen.jsx
 import React, { useState, useRef } from 'react'
 import { SafeAreaView, View, Text, StyleSheet } from 'react-native'
-import useAutoAdvance from '../../hooks/useAutoAdvance'
-import MemorizationHeader from '../../components/molecules/MemorizationHeader/MemorizationHeader.jsx'
-import HighlightBox from '../../components/atoms/HighlightBox/HighlightBox.jsx'
-import ChevronButton from '../../components/atoms/ChevronButton/ChevronButton'
-import BorderedContainer from '../../components/atoms/BorderedContainer/BorderedContainer'
-import Grid  from '../../components/atoms/Grid/Grid'
-import useNumbers from '../../hooks/useNumbers'
-import useTimer         from '../../hooks/useTimer'
-import useGrid          from '../../hooks/useGrid'
-import useAutoScroll    from '../../hooks/useAutoScroll'
-import { cellStyles } from '../../components/atoms/Grid/styles';
+import useAutoAdvance from '../../../hooks/useAutoAdvance.js'
+import MemorizationHeader from '../../../components/molecules/MemorizationHeader/MemorizationHeader.jsx'
+import HighlightBox from '../../../components/atoms/HighlightBox/HighlightBox.jsx'
+import ChevronButton from '../../../components/atoms/ChevronButton/ChevronButton.jsx'
+import BorderedContainer from '../../../components/atoms/BorderedContainer/BorderedContainer.jsx'
+import Grid  from '../../../components/atoms/Grid/Grid.jsx'
+import useNumbers from '../../../hooks/useNumbers.js'
+import useTimer         from '../../../hooks/useTimer.js'
+import useGrid          from '../../../hooks/useGrid.js'
+import useAutoScroll    from '../../../hooks/useAutoScroll.js'
+import { cellStyles } from '../../../components/atoms/Grid/styles.js';
 
 export default function MemoScreen({ route, navigation }) {
   const { objectif, temps, variant, digitCount, autoAdvance } = route.params // routes

@@ -8,6 +8,7 @@ import { ThemeProvider } from 'styled-components/native';
 import { AccountProvider } from './contexts/AccountContext';
 import { ModeVariantProvider } from './contexts/ModeVariantContext';
 import { theme as styledTheme } from './theme';    // <- ton design system
+import 'react-native-gesture-handler'
 
 
 // Auth screens

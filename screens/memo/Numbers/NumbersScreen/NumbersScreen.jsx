@@ -7,24 +7,24 @@ import { Ionicons } from '@expo/vector-icons';
 // 🎯 Import des styles depuis le fichier séparé
 import { styles } from './styles';
 
-import AutoAdvanceSwitch from '../../../components/atoms/AutoAdvanceSwitch/AutoAdvanceSwitch';
-import useDigitPicker from '../../../hooks/useDigitPicker';
-import { ModePicker } from '../../../components/molecules/ModePicker/ModePicker';
-import DigitPickerModal from '../../../components/molecules/DigitPickerModal/DigitPickerModal';
-import PlayButton from '../../../components/atoms/PlayButton/PlayButton';
-import { SecondaryButton } from '../../../components/atoms/SecondaryButton/SecondaryButton';
-import RecordDisplay from '../../../components/molecules/RecordDisplay/RecordDisplay';
-import ObjectiveTimePicker from '../../../components/molecules/ObjectiveTimePicker/ObjectiveTimePicker';
-import HighlightBoxSetter from '../../../components/atoms/HighlightBoxSetter/HighlightBoxSetter';
-import IAMVariantPickerModal from '../../../components/molecules/IAMVariantPickerModal/IAMVariantPickerModal';
+import AutoAdvanceSwitch from '../../../../components/atoms/AutoAdvanceSwitch/AutoAdvanceSwitch';
+import useDigitPicker from '../../../../hooks/useDigitPicker';
+import { ModePicker } from '../../../../components/molecules/ModePicker/ModePicker';
+import DigitPickerModal from '../../../../components/molecules/DigitPickerModal/DigitPickerModal';
+import PlayButton from '../../../../components/atoms/PlayButton/PlayButton';
+import { SecondaryButton } from '../../../../components/atoms/SecondaryButton/SecondaryButton';
+import RecordDisplay from '../../../../components/molecules/RecordDisplay/RecordDisplay';
+import ObjectiveTimePicker from '../../../../components/molecules/ObjectiveTimePicker/ObjectiveTimePicker';
+import HighlightBoxSetter from '../../../../components/atoms/HighlightBoxSetter/HighlightBoxSetter';
+import IAMVariantPickerModal from '../../../../components/molecules/IAMVariantPickerModal/IAMVariantPickerModal';
 
-import useMode from '../../../hooks/useMode';
-import { modeOptions } from '../../../config/gameConfig';
-import useObjective from '../../../hooks/useObjective';
-import useCountdown from '../../../hooks/useCountdown';
-import useAutoAdvancePreference from '../../../hooks/useAutoAdvancePreference';
-import useFetchBestScore from '../../../hooks/useFetchBestScore';
-import { useModeVariants } from '../../../hooks/useModeVariants';
+import useMode from '../../../../hooks/useMode';
+import { modeOptions } from '../../../../config/gameConfig';
+import useObjective from '../../../../hooks/useObjective';
+import useCountdown from '../../../../hooks/useCountdown';
+import useAutoAdvancePreference from '../../../../hooks/useAutoAdvancePreference';
+import useFetchBestScore from '../../../../hooks/useFetchBestScore';
+import { useModeVariants } from '../../../../hooks/useModeVariants';
 
 export default function NumbersScreen() {
   const navigation = useNavigation();

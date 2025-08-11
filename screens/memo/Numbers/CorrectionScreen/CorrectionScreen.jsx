@@ -7,10 +7,10 @@ import {
   ScrollView,
 } from 'react-native'
 
-import { SecondaryButton } from '../../../components/atoms/SecondaryButton/SecondaryButton'
-import BorderedContainer from '../../../components/atoms/BorderedContainer/BorderedContainer'
-import CorrectionGrid from '../../../components/organisms/CorrectionGrid/CorrectionGrid'
-import useSaveBestScore from '../../../hooks/useSaveBestScore'
+import { SecondaryButton } from '../../../../components/atoms/SecondaryButton/SecondaryButton'
+import BorderedContainer from '../../../../components/atoms/BorderedContainer/BorderedContainer'
+import CorrectionGrid from '../../../../components/organisms/CorrectionGrid/CorrectionGrid'
+import useSaveBestScore from '../../../../hooks/useSaveBestScore'
 import styles from './styles'
 
 export default function CorrectionScreen({ route, navigation }) {
