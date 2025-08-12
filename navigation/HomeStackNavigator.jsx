@@ -3,7 +3,8 @@ import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import HomeScreen from '../screens/home/HomeScreen'
 import NumbersScreen from '../screens/memo/Numbers/NumbersScreen/NumbersScreen'
-import CardsScreen from '../screens/memo/Cards/CardsScreen' // ← Import corrigé
+import CardsScreen from '../screens/memo/Cards/CardsScreen'
+import CardsSettingsScreen from '../screens/memo/Cards/CardsSettingsScreen'
 import DecompteScreen from '../screens/common/DecompteScreen/DecompteScreen'
 import MemoScreen from '../screens/memo/Numbers/MemoScreen'
 import RecallScreen from '../screens/memo/Numbers/RecallScreen'
@@ -23,7 +24,8 @@ export default function HomeStackNavigator() {
     >
       <Stack.Screen name="HomeMain" component={HomeScreen} />
       <Stack.Screen name="Numbers" component={NumbersScreen} />
-      <Stack.Screen name="Cards" component={CardsScreen} options={{ headerShown: false }}/>
+      <Stack.Screen name="Cards" component={CardsSettingsScreen} />
+      <Stack.Screen name="CardsGame" component={CardsScreen} />
       <Stack.Screen 
         name="Decompte" 
         component={DecompteScreen} 

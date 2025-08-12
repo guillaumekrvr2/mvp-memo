@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react'
+// hooks/Cards/useCardDeck.js - VERSION AMÉLIORÉE
+import { useState, useCallback, useEffect } from 'react'
 
 const cardAssets = {
   // 2
@@ -78,25 +79,74 @@ const cardAssets = {
   'king_of_diamonds2': require('../../assets/cards/king_of_diamonds2.png'),
   'king_of_hearts2': require('../../assets/cards/king_of_hearts2.png'),
   'king_of_spades2': require('../../assets/cards/king_of_spades2.png'),
-};
+}
 
-const generateDeck = () => {
+// 🃏 Génération du paquet complet de 52 cartes
+const generateFullDeck = () => {
   const suits = ['clubs', 'diamonds', 'hearts', 'spades']
-  const ranks = ['2', '3']
+  const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'ace', 'jack2', 'queen2', 'king2']
   
   return suits.flatMap(suit => 
-    ranks.map(rank => ({
-      id: `${rank}_of_${suit}`,
-      suit,
-      rank,
-      asset: cardAssets[`${rank}_of_${suit}`]
-    }))
+    ranks.map(rank => {
+      // Gestion des noms spéciaux pour les assets
+      const assetKey = (rank.endsWith('2') && rank !== '2') 
+        ? rank.replace('2', '') + '_of_' + suit + '2'  // Figures : jack2 → jack_of_clubs2
+        : rank + '_of_' + suit                         // Normales : 2 → 2_of_clubs
+      
+      return {
+        id: `${rank}_of_${suit}`,
+        suit,
+        rank: rank.replace('2', ''), // Nettoie le nom pour l'affichage
+        asset: cardAssets[assetKey]
+      }
+    })
   )
 }
 
-export function useCardDeck() {
-  const [deck, setDeck] = useState(generateDeck())
+// 🃏 Fonction de shuffle (Fisher-Yates)
+const shuffleArray = (array) => {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
+
+// 🃏 Génère le deck selon l'objectif
+const generateDeckForObjective = (objectif) => {
+  const fullDeck = generateFullDeck() // 52 cartes
+  const fullDecks = Math.floor(objectif / 52) // Nombre de paquets complets
+  const remainder = objectif % 52 // Cartes supplémentaires
+  
+  let finalDeck = []
+  
+  // Ajoute les paquets complets
+  for (let i = 0; i < fullDecks; i++) {
+    finalDeck = [...finalDeck, ...shuffleArray(fullDeck)]
+  }
+  
+  // Ajoute les cartes supplémentaires si nécessaire
+  if (remainder > 0) {
+    const shuffledDeck = shuffleArray(fullDeck)
+    finalDeck = [...finalDeck, ...shuffledDeck.slice(0, remainder)]
+  }
+  
+  // Shuffle final du deck complet
+  return shuffleArray(finalDeck)
+}
+
+export function useCardDeck(objectif = 52, displayCount = 1) { // renommé pour clarifier
+  const [deck, setDeck] = useState([])
   const [removedCards, setRemovedCards] = useState(new Set())
+  
+  // 🃏 Génération du deck au changement d'objectif
+  useEffect(() => {
+    const initialDeck = generateDeckForObjective(objectif)
+    setDeck(initialDeck)
+    setRemovedCards(new Set())
+    console.log(`🃏 Deck généré: ${initialDeck.length} cartes pour objectif de ${objectif}`)
+  }, [objectif])
   
   const handleCardSwipe = useCallback((originalIndex) => {
     if (removedCards.has(originalIndex)) return
@@ -104,16 +154,18 @@ export function useCardDeck() {
     setRemovedCards(prev => {
       const newSet = new Set([...prev, originalIndex])
       
+      // Auto-reset si toutes les cartes sont supprimées (pour mode démo)
       if (newSet.size >= deck.length) {
+        console.log('🎯 Toutes les cartes mémorisées!')
         setTimeout(() => {
           setRemovedCards(new Set())
-          setDeck(generateDeck())
+          setDeck(generateDeckForObjective(objectif))
         }, 1500)
       }
       
       return newSet
     })
-  }, [deck.length, removedCards])
+  }, [deck.length, removedCards, objectif])
 
   const handleCardRestore = useCallback((index) => {
     if (removedCards.has(index)) {
@@ -125,13 +177,19 @@ export function useCardDeck() {
     }
   }, [removedCards])
 
-  const visibleCards = deck.filter((_, index) => !removedCards.has(index))
+  // 🃏 Cartes visibles (non supprimées) - PLUS de limitation par displayCount
+  const allVisibleCards = deck.filter((_, index) => !removedCards.has(index))
+  const visibleCards = allVisibleCards // Plus de slice ici, c'est le CardsScreen qui gère
 
   return {
     deck,
     removedCards,
     visibleCards,
+    allVisibleCards,
     handleCardSwipe,
-    handleCardRestore
+    handleCardRestore,
+    totalCards: deck.length,
+    remainingCards: deck.length - removedCards.size,
+    isComplete: removedCards.size >= deck.length
   }
 }

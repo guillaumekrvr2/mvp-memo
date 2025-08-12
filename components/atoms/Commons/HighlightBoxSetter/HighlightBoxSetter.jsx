@@ -1,6 +1,7 @@
-// components/atoms/HighlightBoxSetter/HighlightBoxSetter.jsx
+// components/atoms/Commons/HighlightBoxSetter/HighlightBoxSetter.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
 import * as S from './styles';
 
 export default function HighlightBoxSetter({
@@ -10,8 +11,16 @@ export default function HighlightBoxSetter({
   style,
   textStyle
 }) {
+  
+  const handlePress = () => {
+    console.log('🎯 HighlightBoxSetter pressed with label:', label)
+    if (onPress) {
+      onPress()
+    }
+  }
+
   return (
-    <S.Container style={style} onPress={onPress} activeOpacity={0.8}>
+    <S.Container style={style} onPress={handlePress} activeOpacity={0.8}>
       <S.ContentWrapper>
         <S.Label style={textStyle}>{label}</S.Label>
         <S.IconContainer>

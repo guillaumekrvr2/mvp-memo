@@ -6,17 +6,23 @@ import { styles } from './styles'
 
 export function CardsThumbnailRow({ 
   deck, 
-  removedCards, 
-  onCardRestore 
+  currentGroupIndex = 0,
+  groupSize = 1
 }) {
-  const renderThumbnail = ({ item, index }) => (
-    <CardThumbnail
-      item={item}
-      index={index}
-      isRemoved={removedCards.has(index)}
-      onPress={onCardRestore}
-    />
-  )
+  const renderThumbnail = ({ item, index }) => {
+    // Calcule dans quel groupe se trouve cette carte
+    const cardGroupIndex = Math.floor(index / groupSize)
+    const isCompleted = cardGroupIndex < currentGroupIndex
+    
+    return (
+      <CardThumbnail
+        item={item}
+        index={index}
+        isRemoved={isCompleted} // Groupe déjà mémorisé
+        onPress={() => {}} // Pas de restauration en mode groupe
+      />
+    )
+  }
 
   return (
     <FlatList

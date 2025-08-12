@@ -1,12 +1,13 @@
-// screens/memo//NumbersScreen/NumbersScreen.jsx - Version avec import des styles
+// screens/memo/Cards/CardsSettingsScreen/CardsSettingsScreen.jsx
+import React, { useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
-import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 // 🎯 Import des styles depuis le fichier séparé
 import { styles } from './styles';
 
+// 🎯 Imports des composants - chemins corrects basés sur la structure du projet
 import AutoAdvanceSwitch from '../../../../components/atoms/Commons/AutoAdvanceSwitch/AutoAdvanceSwitch';
 import useDigitPicker from '../../../../hooks/useDigitPicker';
 import { ModePicker } from '../../../../components/molecules/Commons/ModePicker/ModePicker';
@@ -18,6 +19,7 @@ import ObjectiveTimePicker from '../../../../components/molecules/Commons/Object
 import HighlightBoxSetter from '../../../../components/atoms/Commons/HighlightBoxSetter/HighlightBoxSetter';
 import IAMVariantPickerModal from '../../../../components/molecules/Commons/IAMVariantPickerModal/IAMVariantPickerModal';
 
+// 🎯 Imports des hooks - chemins corrects
 import useMode from '../../../../hooks/useMode';
 import { modeOptions } from '../../../../config/gameConfig';
 import useObjective from '../../../../hooks/useObjective';
@@ -26,26 +28,28 @@ import useAutoAdvancePreference from '../../../../hooks/useAutoAdvancePreference
 import useFetchBestScore from '../../../../hooks/useFetchBestScore';
 import { useModeVariants } from '../../../../hooks/useModeVariants';
 
-export default function NumbersScreen() {
+export default function CardsSettingsScreen() {
   const navigation = useNavigation();
   const [iamVariantModalVisible, setIamVariantModalVisible] = useState(false);
 
-  // Digit picker pour le nombre de chiffres
+  // 🃏 Digit picker pour le nombre de cartes simultanées
   const {
-    digitCount,
-    previewDigits,
+    digitCount: cardsCount,
+    previewDigits: previewCards,
     modalVisible,
     openModal,
     closeModal,
-    setDigitCount,
-  } = useDigitPicker(6);
+    setDigitCount: setCardsCount,
+  } = useDigitPicker(1); // 🃏 CORRECTION : Par défaut 1 carte (pas 3)
+
+  console.log('🃏 CardsSettingsScreen - cardsCount:', cardsCount)
 
   // Mode de jeu (memory-league, iam, custom…)
   const { mode, onModeChange, options } = useMode('memory-league', modeOptions);
 
-  // Objectif (nombre d'items) persistant par mode
-  const defaultObj = mode === 'memory-league' ? '60' : '';
-  const { objectif, setObjectif } = useObjective(`numbers:objectif:${mode}`, defaultObj);
+  // 🃏 Objectif (nombre de cartes) persistant par mode
+  const defaultObj = mode === 'memory-league' ? '52' : ''; // Jeu complet par défaut
+  const { objectif, setObjectif } = useObjective(`cards:objectif:${mode}`, defaultObj);
 
   // Temps (pour custom) géré par le hook countdown
   const { temps, setTemps } = useCountdown(mode);
@@ -53,13 +57,13 @@ export default function NumbersScreen() {
   // Auto-advance uniquement pour custom
   const { autoAdvance, toggleAutoAdvance } = useAutoAdvancePreference(mode);
 
-  // Variants (durées) pour le mode/disciplines standards
+  // 🃏 Variants (durées) pour le mode cards depuis la DB (discipline_id: 8)
   const {
     variants,
     loading: variantsLoading,
     selectedVariant,
     setSelectedVariant,
-  } = useModeVariants('numbers', mode);
+  } = useModeVariants('cards', mode);
 
   // Dernier meilleur score pour le variant sélectionné
   const variantId = selectedVariant?.id;
@@ -85,6 +89,31 @@ export default function NumbersScreen() {
     setSelectedVariant(variant);
   };
 
+  // 🃏 Fonction pour générer l'affichage des cartes dans le HighlightBoxSetter
+  const getCardsPreview = () => {
+    const cardSymbols = ['🂡', '🂢', '🂣', '🂤']; // Exemples de cartes Unicode
+    return Array.from({ length: cardsCount }, (_, i) => 
+      cardSymbols[i % cardSymbols.length]
+    ).join(' ');
+  };
+
+  // 🃏 Handler pour le bouton Play avec debug
+  const handlePlay = () => {
+    const navigationParams = {
+      objectif: parseInt(objectif, 10),
+      temps: playTime,
+      mode,
+      variant: selectedVariant?.id,
+      cardsCount, // 🃏 CLEF : Paramètre spécifique aux cartes
+      autoAdvance,
+      discipline: 'cards' // 🃏 CLEF : Indique la discipline
+    }
+    
+    console.log('🃏 CardsSettingsScreen - Navigation params:', navigationParams)
+    
+    navigation.navigate('Decompte', navigationParams)
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={[
@@ -96,14 +125,14 @@ export default function NumbersScreen() {
         <View style={styles.topSection}>
           <HighlightBoxSetter
             style={styles.highlightBoxSetter}
-            label={previewDigits.join('')}
-            icon={<Ionicons name="settings-outline" size={24} color="#667eea" />}
+            label={getCardsPreview()}
+            icon={<Ionicons name="settings-outline" size={24} color="#764ba2" />}
             onPress={openModal}
           />
           
           <ModePicker
             style={styles.modePicker}
-            variant="numbers"
+            variant="cards"
             selectedValue={mode}
             onValueChange={onModeChange}
             options={options}
@@ -151,21 +180,11 @@ export default function NumbersScreen() {
           />
         </View>
 
-{/* 🎯 SECTION DU BAS - Actions principales */}
+        {/* 🎯 SECTION DU BAS - Actions principales */}
         <View style={styles.bottomSection}>
           <PlayButton
             style={styles.playButton}
-            onPress={() =>
-              navigation.navigate('Decompte', {
-                objectif: parseInt(objectif, 10),
-                temps: playTime,
-                mode,
-                variant: selectedVariant?.id,
-                digitCount,
-                autoAdvance,
-                discipline: 'numbers' // 🎯 AJOUTÉ : Indique la discipline numbers
-              })
-            }
+            onPress={handlePlay} // 🃏 Utilise le handler avec debug
           />
 
           <SecondaryButton 
@@ -180,9 +199,12 @@ export default function NumbersScreen() {
         {/* Modales */}
         <DigitPickerModal
           visible={modalVisible}
-          digitCount={digitCount}
-          onValueChange={setDigitCount}
+          digitCount={cardsCount}
+          onValueChange={setCardsCount}
           onClose={closeModal}
+          title="Nombre de cartes simultanées" // 🃏 Titre personnalisé
+          min={1}
+          max={3} // 🃏 Maximum 3 cartes simultanées
         />
 
         <IAMVariantPickerModal

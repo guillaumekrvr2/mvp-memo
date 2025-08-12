@@ -9,7 +9,7 @@ const { width: screenWidth } = Dimensions.get('window')
 export function useCardSwipeGesture({ originalIndex, isTopCard, onSwipe }) {
   const translateX = useSharedValue(0)
   const translateY = useSharedValue(0)
-  const rotateZ = useSharedValue(-10 + Math.random() * 20)
+  const rotateZ = useSharedValue(0) // Pas de rotation aléatoire initiale
   const scale = useSharedValue(1)
   
   const panGesture = Gesture.Pan()
@@ -41,7 +41,7 @@ export function useCardSwipeGesture({ originalIndex, isTopCard, onSwipe }) {
       } else {
         translateX.value = withSpring(0, { damping: 15, stiffness: 150 })
         translateY.value = withSpring(0, { damping: 15, stiffness: 150 })
-        rotateZ.value = withSpring(-10 + Math.random() * 20, { damping: 15 })
+        rotateZ.value = withSpring(0, { damping: 15 }) // Pas de rotation aléatoire au retour
         scale.value = withSpring(1, { damping: 15, stiffness: 150 })
       }
     })

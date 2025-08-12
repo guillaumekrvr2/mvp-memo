@@ -13,36 +13,32 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 
 const Tab = createBottomTabNavigator()
 
-// Écrans de HomeStack où on veut CACHER le header
-const hideOn = ['Memorisation', 'Decompte', 'Recall', 'Cards']
+const hideOn = ['Memorisation', 'Decompte', 'Recall', 'Cards', 'CardsGame']
 
 export default function AppNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route, navigation }) => {
-        // Par défaut on affiche le header
         const nested = route.name === 'Home'
          ? getFocusedRouteNameFromRoute(route) ?? 'HomeMain'
           : null
         const showHeader = !(nested && hideOn.includes(nested))
 
         return {
-          // Header transparent
           header: showHeader
             ? ({ back }) => <Header navigation={navigation} back={back} />
             : undefined,
           headerShown: showHeader,
-          headerTransparent: true,        // 🎯 Header transparent
-          headerBackground: () => null,   // 🎯 Pas de fond pour le header
+          headerTransparent: true,
+          headerBackground: () => null,
           
-          // Tab bar transparente
           tabBarActiveTintColor: '#fff',
           tabBarInactiveTintColor: '#888',
           tabBarShowLabel: false,
           tabBarStyle: {
-            backgroundColor: 'rgba(10, 10, 10, 0.85)', // 🎯 Semi-transparent au lieu de transparent
-            backdropFilter: 'blur(10px)',              // Effet blur
-            borderTopWidth: 1,                         // Bordure subtile
+            backgroundColor: 'rgba(10, 10, 10, 0.85)',
+            backdropFilter: 'blur(10px)',
+            borderTopWidth: 1,
             borderTopColor: 'rgba(255, 255, 255, 0.1)',
             elevation: 0,
             shadowOpacity: 0,
@@ -51,12 +47,11 @@ export default function AppNavigator() {
             left: 0,
             right: 0,
             height: 80,
-            paddingTop: 15,        // 🎯 Plus d'espace en haut
-            paddingBottom: 5,      // 🎯 Moins d'espace en bas
-            justifyContent: 'center', // 🎯 Centre les icônes verticalement
+            paddingTop: 15,
+            paddingBottom: 5,
+            justifyContent: 'center',
           },
           
-          // Bouton personnalisé sans effets visuels
           tabBarButton: (props) => (
             <PlatformPressable
               {...props}
@@ -88,8 +83,8 @@ export default function AppNavigator() {
         component={HomeStackNavigator}
         options={({ route }) => {
           const nested = getFocusedRouteNameFromRoute(route) ?? 'HomeMain'
-          const hideOn = ['Memorisation', 'Decompte', 'Recall', 'Numbers', 'Cards']
-          if (hideOn.includes(nested)) {
+          const hideTabsOn = ['Memorisation', 'Decompte', 'Recall', 'Numbers', 'Cards', 'CardsGame']
+          if (hideTabsOn.includes(nested)) {
             return { tabBarStyle: { display: 'none' } }
           }
           return {}

@@ -1,11 +1,10 @@
-// components/DigitPickerModal.jsx
+// components/molecules/DigitPickerModal/DigitPickerModal.jsx
 import React from 'react'
 import {
   Modal,
   View,
   Text,
   TouchableOpacity,
-  StyleSheet
 } from 'react-native'
 import PropTypes from 'prop-types'
 import styles from './styles';
@@ -15,9 +14,12 @@ export default function DigitPickerModal({
   digitCount,
   onValueChange,
   onClose,
-  maxDigits = 6,
+  title = "Choisir le nombre de chiffres à afficher", // 🎯 Titre personnalisable
+  min = 1, // 🎯 Valeur minimum personnalisable
+  max = 6, // 🎯 Valeur maximum personnalisable (ancien maxDigits)
 }) {
-  const items = Array.from({ length: maxDigits }, (_, i) => i + 1)
+  // 🎯 Génération dynamique des options selon min/max
+  const items = Array.from({ length: max - min + 1 }, (_, i) => i + min)
 
   return (
     <Modal
@@ -28,7 +30,8 @@ export default function DigitPickerModal({
     >
       <View style={styles.backdrop}>
         <View style={styles.container}>
-          <Text style={styles.title}>Choisir le nombre de chiffres à afficher</Text>
+          {/* 🎯 Titre personnalisé */}
+          <Text style={styles.title}>{title}</Text>
 
           <View style={styles.grid}>
             {items.map(n => (
@@ -66,5 +69,7 @@ DigitPickerModal.propTypes = {
   digitCount: PropTypes.number.isRequired,
   onValueChange: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
-  maxDigits: PropTypes.number,
+  title: PropTypes.string, // 🎯 Nouveau prop pour personnaliser le titre
+  min: PropTypes.number, // 🎯 Nouveau prop pour la valeur minimum
+  max: PropTypes.number, // 🎯 Nouveau prop pour la valeur maximum (remplace maxDigits)
 }
