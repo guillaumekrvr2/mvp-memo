@@ -1,6 +1,6 @@
 // screens/memo/Cards/CardsScreen.jsx - VERSION AVEC GROUPES/PAQUETS
-import React, { useState, useMemo } from 'react'
-import { SafeAreaView } from 'react-native'
+import React, { useState, useMemo, useCallback } from 'react'
+import { SafeAreaView, View, TouchableOpacity, Text } from 'react-native'
 import MemorizationHeader from '../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { CardsStack } from '../../../components/molecules/Cards/CardsStack/CardsStack'
 import { CardsThumbnailRow } from '../../../components/molecules/Cards/CardsThumbnailRow/CardsThumbnailRow'
@@ -72,15 +72,35 @@ export default function CardsScreen({ route, navigation }) {
   console.log('  - groupsToDisplay.length:', groupsToDisplay.length)
   console.log('  - deck.length:', deck.length)
 
+  // 🃏 Navigation vers CardsRecall
+  const navigateToRecall = useCallback(() => {
+    console.log('🎯 Navigating to CardsRecall...')
+    console.log('🔍 Navigation params:', { objectif, temps, mode, variant, discipline })
+    
+    try {
+      navigation.navigate('CardsRecall', {
+        objectif,
+        temps,
+        mode,
+        variant,
+        discipline,
+        memorizedCards: deck
+      })
+      console.log('✅ Navigation successful!')
+    } catch (error) {
+      console.error('❌ Navigation failed:', error)
+      console.error('Error details:', error.message)
+    }
+  }, [navigation, objectif, temps, mode, variant, discipline, deck])
+
   // 🃏 Gestion du swipe de groupe - tout le groupe part d'un coup
   const handleGroupSwipe = () => {
     console.log('🃏 Group swiped:', currentGroupIndex, 'groupSize:', currentGroup.length)
     
     if (isLastGroup) {
-      // Dernier groupe → jeu terminé
-      console.log('🎯 Tous les groupes mémorisés!')
+      // Dernier groupe → navigation vers CardsRecall
       setTimeout(() => {
-        navigation.goBack()
+        navigateToRecall()
       }, 1000)
     } else {
       // Passer au groupe suivant
@@ -88,11 +108,17 @@ export default function CardsScreen({ route, navigation }) {
     }
   }
 
+  // 🃏 Gestion du bouton Done - toujours aller au recall
+  const handleDone = useCallback(() => {
+    console.log('🟢 Done button pressed - going to CardsRecall')
+    navigateToRecall()
+  }, [navigateToRecall])
+
   return (
     <SafeAreaView style={styles.container}>
       <MemorizationHeader
         onBack={() => navigation.goBack()}
-        onDone={() => navigation.goBack()}
+        onDone={handleDone} // 🃏 Utilise la nouvelle fonction handleDone
         duration={temps} // 🃏 Utilise le temps des paramètres
       />
 
@@ -109,6 +135,36 @@ export default function CardsScreen({ route, navigation }) {
         currentGroupIndex={currentGroupIndex} // 🃏 Progrès par groupes
         groupSize={cardsCount}
       />
+
+      {/* DEBUG: Bouton temporaire pour tester CardsRecall */}
+      <View style={{ position: 'absolute', bottom: 100, right: 20 }}>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#ff4444',
+            padding: 15,
+            borderRadius: 10,
+          }}
+          onPress={() => {
+            console.log('🔴 DEBUG: Test navigation to CardsRecall')
+            try {
+              navigation.navigate('CardsRecall', {
+                objectif,
+                temps,
+                mode,
+                variant,
+                discipline,
+                memorizedCards: deck
+              })
+            } catch (error) {
+              console.error('❌ Navigation error:', error)
+            }
+          }}
+        >
+          <Text style={{ color: '#fff', fontWeight: 'bold' }}>
+            TEST RECALL
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   )
 }

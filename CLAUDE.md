@@ -72,8 +72,16 @@ This is a React Native Expo memory training app with the following key architect
 
 ### Memory Game Flow
 1. **Numbers**: HomeScreen → NumbersScreen → Decompte → Memorisation → Recall → Correction
-2. **Cards**: HomeScreen → CardsSettingsScreen → CardsGame (with swipe gestures)
+2. **Cards**: HomeScreen → CardsSettingsScreen → CardsGame (memorization with swipe gestures) → CardsRecall (tactile grid recall)
 3. **Settings**: Mode selection, time objectives, auto-advance preferences stored in AsyncStorage
+
+### Cards Recall Screen
+- **CardsRecallScreen**: Tactile grid interface for recalling exact card order
+- **Features**: Suit-based grid layout, thumb glide selection, swipe-up commit, undo/redo
+- **Navigation**: Triggered after CardsGame completion, hides header/tab bar
+- **Grid Organization**: Cards organized by suit (spades, hearts, diamonds, clubs) with ≥44pt touch targets
+- **Interaction**: Continuous thumb glide for preselection, swipe up to commit batches to output slots
+- **Visual Feedback**: High contrast, used cards disabled/hidden, haptic feedback on commit
 
 ### Styling
 - **Styled Components**: Primary styling approach with theme provider

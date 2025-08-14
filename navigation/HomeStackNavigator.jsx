@@ -8,6 +8,7 @@ import CardsSettingsScreen from '../screens/memo/Cards/CardsSettingsScreen'
 import DecompteScreen from '../screens/common/DecompteScreen/DecompteScreen'
 import MemoScreen from '../screens/memo/Numbers/MemoScreen'
 import RecallScreen from '../screens/memo/Numbers/RecallScreen'
+import CardsRecallScreen from '../screens/memo/Cards/CardsRecallScreen'
 import CorrectionScreen from '../screens/memo/Numbers/CorrectionScreen/CorrectionScreen'
 import ArticleScreen from '../screens/ArticleScreen'
 import { theme } from '../theme'
@@ -39,6 +40,11 @@ export default function HomeStackNavigator() {
       <Stack.Screen 
         name="Recall" 
         component={RecallScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="CardsRecall" 
+        component={CardsRecallScreen} 
         options={{ headerShown: false }}
       />
       <Stack.Screen name="Correction" component={CorrectionScreen} />
