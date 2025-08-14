@@ -18,8 +18,6 @@ export default function CardsScreen({ route, navigation }) {
     autoAdvance,
     discipline 
   } = route.params || {}
-
-  console.log('🃏 CardsScreen params:', { objectif, temps, cardsCount, mode, variant, autoAdvance, discipline })
   
   // État local pour l'index du groupe actuel
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0)
@@ -44,10 +42,6 @@ export default function CardsScreen({ route, navigation }) {
     const maxGroupsToShow = cardsCount === 1 ? 5 : 3
     const groupsToDisplay = []
     
-    console.log('🔍 getGroupsToDisplay:')
-    console.log('  - currentGroupIndex:', currentGroupIndex)
-    console.log('  - maxGroupsToShow:', maxGroupsToShow)
-    
     for (let i = currentGroupIndex; i < Math.min(currentGroupIndex + maxGroupsToShow, cardGroups.length); i++) {
       if (cardGroups[i]) {
         groupsToDisplay.push(cardGroups[i])
@@ -64,18 +58,8 @@ export default function CardsScreen({ route, navigation }) {
   const totalGroups = cardGroups.length
   const isLastGroup = currentGroupIndex >= totalGroups - 1
 
-  // 🚨 DEBUG: Logs pour diagnostiquer
-  console.log('🔍 DEBUG CardsScreen:')
-  console.log('  - currentGroupIndex:', currentGroupIndex)
-  console.log('  - totalGroups:', totalGroups)
-  console.log('  - currentGroup.length:', currentGroup.length)
-  console.log('  - groupsToDisplay.length:', groupsToDisplay.length)
-  console.log('  - deck.length:', deck.length)
-
   // 🃏 Navigation vers CardsRecall
   const navigateToRecall = useCallback(() => {
-    console.log('🎯 Navigating to CardsRecall...')
-    console.log('🔍 Navigation params:', { objectif, temps, mode, variant, discipline })
     
     try {
       navigation.navigate('CardsRecall', {
@@ -95,7 +79,7 @@ export default function CardsScreen({ route, navigation }) {
 
   // 🃏 Gestion du swipe de groupe - tout le groupe part d'un coup
   const handleGroupSwipe = () => {
-    console.log('🃏 Group swiped:', currentGroupIndex, 'groupSize:', currentGroup.length)
+  
     
     if (isLastGroup) {
       // Dernier groupe → navigation vers CardsRecall
@@ -110,7 +94,6 @@ export default function CardsScreen({ route, navigation }) {
 
   // 🃏 Gestion du bouton Done - toujours aller au recall
   const handleDone = useCallback(() => {
-    console.log('🟢 Done button pressed - going to CardsRecall')
     navigateToRecall()
   }, [navigateToRecall])
 
@@ -135,36 +118,6 @@ export default function CardsScreen({ route, navigation }) {
         currentGroupIndex={currentGroupIndex} // 🃏 Progrès par groupes
         groupSize={cardsCount}
       />
-
-      {/* DEBUG: Bouton temporaire pour tester CardsRecall */}
-      <View style={{ position: 'absolute', bottom: 100, right: 20 }}>
-        <TouchableOpacity
-          style={{
-            backgroundColor: '#ff4444',
-            padding: 15,
-            borderRadius: 10,
-          }}
-          onPress={() => {
-            console.log('🔴 DEBUG: Test navigation to CardsRecall')
-            try {
-              navigation.navigate('CardsRecall', {
-                objectif,
-                temps,
-                mode,
-                variant,
-                discipline,
-                memorizedCards: deck
-              })
-            } catch (error) {
-              console.error('❌ Navigation error:', error)
-            }
-          }}
-        >
-          <Text style={{ color: '#fff', fontWeight: 'bold' }}>
-            TEST RECALL
-          </Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   )
 }

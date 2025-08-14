@@ -1,32 +1,44 @@
 // screens/memo/Cards/CardsRecallScreen.jsx
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { SafeAreaView, View, ScrollView, Vibration, Text, TouchableOpacity, Image } from 'react-native'
+import { SafeAreaView, View, ScrollView, Vibration, Text, TouchableOpacity, Image, PanResponder, Animated } from 'react-native'
 import MemorizationHeader from '../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { useCardDeck } from '../../../hooks/Cards/useCardDeck'
 import { theme } from '../../../theme'
 
-export default function CardsRecallScreen({ route, navigation }) {
-  console.log('🎯 CardsRecallScreen rendering...')
-  console.log('📦 Route params:', route?.params)
+export default function CardsRecallScreen(props) {
+  // Extraction ultra-sécurisée des props
+  const route = props && props.route ? props.route : null
+  const navigation = props && props.navigation ? props.navigation : null
   
-  const { 
-    objectif = 52, 
-    temps = 120,
-    mode,
-    variant,
-    discipline,
-    memorizedCards = [] // Cards that were memorized in previous screen
-  } = route?.params || {}
-
-  console.log('🔧 Processed params:', { objectif, temps, mode, variant, discipline })
+  // Protection contre les props invalides
+  if (!route || !navigation) {
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Error: Missing navigation props</Text>
+      </SafeAreaView>
+    )
+  }
+  
+  console.log('🎯 CardsRecallScreen rendering...')
+  
+  // Extraction sécurisée des paramètres
+  const params = route?.params || {}
+  const objectif = params.objectif || 52
+  const temps = params.temps || 120
+  const mode = params.mode || ''
+  const variant = params.variant || ''
+  const discipline = params.discipline || ''
+  const memorizedCards = params.memorizedCards || []
 
   const startTime = useRef(Date.now())
   const [preselectedCards, setPreselectedCards] = useState(new Set())
-  const [usedCardIds, setUsedCardIds] = useState(new Set())
   const [outputSlots, setOutputSlots] = useState([])
   const [undoStack, setUndoStack] = useState([])
   const [redoStack, setRedoStack] = useState([])
   const [selectedSuitTab, setSelectedSuitTab] = useState('spades')
+  const [hoveredCardIndex, setHoveredCardIndex] = useState(-1) // Pour effet cover flow
+  const [panStartY, setPanStartY] = useState(0) // Position Y de début de pan
+  const [containerRef, setContainerRef] = useState(null) // Ref du container pour mesures
   const outputScrollRef = useRef(null)
   
   const { deck } = useCardDeck(objectif)
@@ -67,24 +79,36 @@ export default function CardsRecallScreen({ route, navigation }) {
     clubs: '♣'
   }
 
-  const handleCardSelect = useCallback((card) => {
-    if (usedCardIds.has(card.id)) {
-      // Vibration d'erreur pour carte déjà utilisée
-      Vibration.vibrate([0, 30, 50, 30])
-      return
-    }
+  const handleComplete = useCallback((finalSlots) => {
+    const endTime = Date.now()
+    const durationMs = endTime - startTime.current
+    const placedCards = finalSlots.map(slot => slot.card).filter(Boolean)
     
-    // Directement ajouter la carte à l'output (pas de sélection intermédiaire)
+    // Calculate errors (simplified)
+    const errorsCount = 0 // TODO: comparer avec memorizedCards
+    
+    const result = {
+      placed: placedCards,
+      durationMs,
+      errorsCount
+    }
+
+    // Navigate to correction or back with result
+    navigation.goBack()
+    // TODO: navigation.navigate('Correction', result)
+  }, [navigation])
+
+  const handleCardSelect = useCallback((card) => {
+    // Directement ajouter la carte à l'output (pas de vérification "used")
     const availableSlots = outputSlots.filter(slot => slot.card === null)
     if (availableSlots.length === 0) {
-      Vibration.vibrate([0, 50, 100, 50])
+      Vibration.vibrate([0, 50, 100, 50]) // Vibration si plus de place
       return
     }
 
     // Save current state for undo
     const currentState = {
-      outputSlots: [...outputSlots],
-      usedCardIds: new Set(usedCardIds)
+      outputSlots: [...outputSlots]
     }
     setUndoStack(prev => [...prev, currentState])
     setRedoStack([])
@@ -96,9 +120,6 @@ export default function CardsRecallScreen({ route, navigation }) {
       card: card
     }
     setOutputSlots(newOutputSlots)
-
-    // Mark card as used
-    setUsedCardIds(prev => new Set([...prev, card.id]))
     
     // Success vibration
     Vibration.vibrate([0, 30, 20, 50])
@@ -124,27 +145,7 @@ export default function CardsRecallScreen({ route, navigation }) {
     if (filledSlots >= objectif) {
       handleComplete(newOutputSlots)
     }
-  }, [usedCardIds, outputSlots, objectif])
-
-
-  const handleComplete = useCallback((finalSlots) => {
-    const endTime = Date.now()
-    const durationMs = endTime - startTime.current
-    const placedCards = finalSlots.map(slot => slot.card).filter(Boolean)
-    
-    // Calculate errors (simplified)
-    const errorsCount = 0 // Would compare with memorizedCards
-    
-    const result = {
-      placed: placedCards,
-      durationMs,
-      errorsCount
-    }
-
-    // Navigate to correction or back with result
-    navigation.goBack()
-    // TODO: navigation.navigate('Correction', result)
-  }, [navigation])
+  }, [outputSlots, objectif, handleComplete])
 
   const handleUndo = useCallback(() => {
     if (undoStack.length === 0) {
@@ -154,18 +155,16 @@ export default function CardsRecallScreen({ route, navigation }) {
 
     const lastState = undoStack[undoStack.length - 1]
     const currentState = {
-      outputSlots: [...outputSlots],
-      usedCardIds: new Set(usedCardIds)
+      outputSlots: [...outputSlots]
     }
 
     setRedoStack(prev => [...prev, currentState])
     setUndoStack(prev => prev.slice(0, -1))
     
     setOutputSlots(lastState.outputSlots)
-    setUsedCardIds(lastState.usedCardIds)
     
     Vibration.vibrate([0, 40, 20, 40])
-  }, [undoStack, outputSlots, usedCardIds])
+  }, [undoStack, outputSlots])
 
   const handleRedo = useCallback(() => {
     if (redoStack.length === 0) {
@@ -175,22 +174,77 @@ export default function CardsRecallScreen({ route, navigation }) {
 
     const nextState = redoStack[redoStack.length - 1]
     const currentState = {
-      outputSlots: [...outputSlots],
-      usedCardIds: new Set(usedCardIds)
+      outputSlots: [...outputSlots]
     }
 
     setUndoStack(prev => [...prev, currentState])
     setRedoStack(prev => prev.slice(0, -1))
     
     setOutputSlots(nextState.outputSlots)
-    setUsedCardIds(nextState.usedCardIds)
     
     Vibration.vibrate([0, 20, 40, 20])
-  }, [redoStack, outputSlots, usedCardIds])
+  }, [redoStack, outputSlots])
 
+  // PanResponder global pour le carousel
+  const carouselPanResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    
+    onPanResponderGrant: (evt) => {
+      setPanStartY(evt.nativeEvent.pageY)
+      // Calculer immédiatement quelle carte est touchée
+      if (containerRef) {
+        containerRef.measureInWindow((x, y, width) => {
+          const touchX = evt.nativeEvent.pageX - x
+          const containerWidth = width
+          const cardWidth = 90 // Nouvelle taille 50% plus grande
+          const totalCards = cardsBySuit[selectedSuitTab].length
+          const spacing = totalCards > 1 ? (containerWidth - cardWidth) / (totalCards - 1) : containerWidth
+
+          const cardIndex = Math.floor(touchX / spacing)
+          if (cardIndex >= 0 && cardIndex < totalCards) {
+            setHoveredCardIndex(cardIndex)
+            Vibration.vibrate(10)
+          }
+        })
+      }
+    },
+    
+    onPanResponderMove: (evt, gestureState) => {
+      if (Math.abs(gestureState.dy) < 50 && containerRef) {
+        containerRef.measureInWindow((x, y, width) => {
+          const touchX = evt.nativeEvent.pageX - x
+          const containerWidth = width
+          const cardWidth = 90
+          const totalCards = cardsBySuit[selectedSuitTab].length
+          const spacing = totalCards > 1 ? (containerWidth - cardWidth) / (totalCards - 1) : containerWidth
+          
+          const cardIndex = Math.floor(touchX / spacing)
+          if (cardIndex >= 0 && cardIndex < totalCards && cardIndex !== hoveredCardIndex) {
+            setHoveredCardIndex(cardIndex)
+            Vibration.vibrate(3)
+          }
+        })
+      }
+    },
+    
+    onPanResponderRelease: (evt, gestureState) => {
+      // Swipe up pour envoyer la carte
+      if (gestureState.dy < -50 && hoveredCardIndex >= 0) {
+        const selectedCard = cardsBySuit[selectedSuitTab][hoveredCardIndex]
+        if (selectedCard) {
+          handleCardSelect(selectedCard)
+          Vibration.vibrate([0, 30, 20, 50])
+        }
+      }
+      
+      // Reset hover
+      setHoveredCardIndex(-1)
+    }
+  })
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors?.background || '#000' }}>
       <MemorizationHeader
         onBack={() => navigation.goBack()}
         onDone={() => navigation.goBack()}
@@ -275,12 +329,10 @@ export default function CardsRecallScreen({ route, navigation }) {
                       borderRadius: 6,
                       borderWidth: 0, // Pas de bordure du tout
                       borderColor: 'transparent', // Bordure transparente
-                      // elevation: index + 1, // Shadow supprimée
                       zIndex: index + 1,
                       alignItems: 'flex-start', // IMPORTANT: alignement à gauche
                       justifyContent: 'flex-start', // IMPORTANT: voir le HAUT de la carte
-                      overflow: 'visible', // Important: laisser déborder l'image
-                      // opacity: 1 // Containers opaques
+                      overflow: 'visible' // Important: laisser déborder l'image
                     }}
                   >
                     <Image 
@@ -288,8 +340,7 @@ export default function CardsRecallScreen({ route, navigation }) {
                       style={{ 
                         width: 207, // Carte = taille du container
                         height: 276, // Hauteur = taille du container
-                        borderRadius: 5,
-                        // backgroundColor: 'transparent' // Pas de fond sur l'image
+                        borderRadius: 5
                       }} 
                       resizeMode="contain" // Contient toute la carte sans rognage 
                     />
@@ -346,72 +397,96 @@ export default function CardsRecallScreen({ route, navigation }) {
             ))}
           </View>
 
-          {/* Cards Carousel for Selected Suit */}
-          <View style={{ flex: 1 }}>
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false}
-              style={{ flex: 1 }}
-              contentContainerStyle={{ 
-                paddingHorizontal: 8,
-                alignItems: 'center'
+          {/* Cover Flow Carousel for Selected Suit */}
+          <View style={{ flex: 1, paddingHorizontal: 0 }}>
+            <View 
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingHorizontal: 0,
+                overflow: 'visible'
               }}
+              ref={setContainerRef}
+              {...carouselPanResponder.panHandlers}
             >
-              {cardsBySuit[selectedSuitTab].map(card => {
-                const isUsed = usedCardIds.has(card.id)
+              {cardsBySuit[selectedSuitTab].map((card, index) => {
+                // Calcul dynamique de l'espacement pour utiliser toute la largeur
+                const containerWidth = 400 // Approximation; mesuré dynamiquement via measureInWindow
+                const cardWidth = 90
+                const totalCards = cardsBySuit[selectedSuitTab].length
+                const spacing = (containerWidth - cardWidth) / Math.max(1, totalCards - 1)
+                
+                const isHovered = hoveredCardIndex === index
+                const distanceFromHovered = hoveredCardIndex >= 0 ? Math.abs(index - hoveredCardIndex) : 5
+                
+                // Effets visuels
+                const waveEffect = hoveredCardIndex >= 0 ? Math.max(0, 25 - distanceFromHovered * 5) : 0
+                const separationEffect = isHovered ? 40 : 0
                 
                 return (
-                  <TouchableOpacity
+                  <View
                     key={card.id}
                     style={{
-                      width: 70,
-                      height: 100,
-                      marginHorizontal: 4,
+                      position: 'absolute',
+                      left: index * spacing,
+                      width: cardWidth,
+                      height: 135,
+                      zIndex: isHovered ? 100 : index,
+                      elevation: isHovered ? 100 : index
+                    }}
+                  >
+                    <Animated.View style={{
+                      width: cardWidth,
+                      height: 135,
                       borderRadius: 8,
-                      borderWidth: isUsed ? 1 : 3,
-                      borderColor: isUsed 
-                        ? 'rgba(255, 255, 255, 0.2)' 
-                        : '#4caf50',
-                      backgroundColor: 'transparent',
+                      borderWidth: isHovered ? 4 : 2,
+                      borderColor: isHovered ? '#ff4444' : '#4caf50',
+                      backgroundColor: '#fff',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      opacity: isUsed ? 0.3 : 1,
-                      overflow: 'hidden'
-                    }}
-                    onPress={() => handleCardSelect(card)}
-                    disabled={isUsed}
-                    activeOpacity={0.7}
-                  >
-                    <Image 
-                      source={card.asset} 
-                      style={{ 
-                        width: 60, 
-                        height: 90, 
-                        borderRadius: 6
-                      }} 
-                      resizeMode="contain" 
-                    />
-                    {isUsed && (
-                      <View style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                        borderRadius: 6,
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}>
-                        <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>
-                          USED
-                        </Text>
-                      </View>
-                    )}
-                  </TouchableOpacity>
+                      transform: [
+                        { translateY: -(waveEffect + separationEffect) },
+                        { scale: isHovered ? 1.15 : 1 },
+                        { rotateZ: isHovered ? '2deg' : '0deg' }
+                      ],
+                      shadowColor: '#000',
+                      shadowOffset: { width: 3, height: isHovered ? 12 : 4 },
+                      shadowOpacity: isHovered ? 0.6 : 0.3,
+                      shadowRadius: isHovered ? 12 : 4
+                    }}>
+                      <Image 
+                        source={card.asset} 
+                        style={{ 
+                          width: 75,
+                          height: 112,
+                          borderRadius: 6
+                        }} 
+                        resizeMode="contain" 
+                      />
+                    </Animated.View>
+                  </View>
                 )
               })}
-            </ScrollView>
+            </View>
+            
+            {/* Indicateur Swipe Up */}
+            {hoveredCardIndex >= 0 && (
+              <View style={{
+                position: 'absolute',
+                bottom: 10,
+                alignSelf: 'center',
+                backgroundColor: 'rgba(255, 68, 68, 0.9)',
+                paddingHorizontal: 15,
+                paddingVertical: 5,
+                borderRadius: 15
+              }}>
+                <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>
+                  ↑ Swipe up to send
+                </Text>
+              </View>
+            )}
           </View>
 
           {/* Undo/Redo Controls - Plus Compacts */}
