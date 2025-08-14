@@ -42,8 +42,6 @@ export default function CardsSettingsScreen() {
     setDigitCount: setCardsCount,
   } = useDigitPicker(1); // 🃏 CORRECTION : Par défaut 1 carte (pas 3)
 
-  console.log('🃏 CardsSettingsScreen - cardsCount:', cardsCount)
-
   // Mode de jeu (memory-league, iam, custom…)
   const { mode, onModeChange, options } = useMode('memory-league', modeOptions);
 

@@ -45,11 +45,9 @@ export default function CardsScreen({ route, navigation }) {
     for (let i = currentGroupIndex; i < Math.min(currentGroupIndex + maxGroupsToShow, cardGroups.length); i++) {
       if (cardGroups[i]) {
         groupsToDisplay.push(cardGroups[i])
-        console.log(`  - Group ${i}:`, cardGroups[i].length, 'cards')
       }
     }
     
-    console.log('  - Total groups to display:', groupsToDisplay.length)
     return groupsToDisplay
   }
 

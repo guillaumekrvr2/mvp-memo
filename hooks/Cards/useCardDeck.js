@@ -145,7 +145,7 @@ export function useCardDeck(objectif = 52, displayCount = 1) { // renommé pour 
     const initialDeck = generateDeckForObjective(objectif)
     setDeck(initialDeck)
     setRemovedCards(new Set())
-    console.log(`🃏 Deck généré: ${initialDeck.length} cartes pour objectif de ${objectif}`)
+
   }, [objectif])
   
   const handleCardSwipe = useCallback((originalIndex) => {
