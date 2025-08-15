@@ -18,6 +18,21 @@ export function CoverFlowCarousel({
   const totalCards = cards.length
   const spacing = totalCards > 1 ? (containerWidth - cardWidth) / (totalCards - 1) : containerWidth
 
+  // Navigation functions
+  const navigateToCard = (direction) => {
+    const newIndex = direction === 'next' 
+      ? Math.min(hoveredCardIndex + 1, totalCards - 1)
+      : Math.max(hoveredCardIndex - 1, 0)
+    
+    if (newIndex !== hoveredCardIndex) {
+      setHoveredCardIndex(newIndex)
+      Vibration.vibrate(10)
+    }
+  }
+
+  const handlePreviousCard = () => navigateToCard('previous')
+  const handleNextCard = () => navigateToCard('next')
+
   const carouselPanResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,
@@ -89,6 +104,7 @@ export function CoverFlowCarousel({
 
   return (
     <View style={styles.container}>
+      
       <View 
         style={styles.carouselContainer}
         ref={setContainerRef}

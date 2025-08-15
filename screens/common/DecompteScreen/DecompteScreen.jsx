@@ -21,6 +21,29 @@ export default function DecompteScreen({ route, navigation }) {
   const [counter, setCounter] = useState(3)
   const [isAnimating, setIsAnimating] = useState(false)
 
+  // 🚀 Fonction pour passer directement au prochain écran
+  const handleSkipCountdown = () => {
+    if (discipline === 'cards') {
+      navigation.replace('CardsGame', { 
+        objectif, 
+        temps, 
+        variant, 
+        cardsCount, 
+        autoAdvance,
+        mode,
+        discipline
+      })
+    } else {
+      navigation.replace('Memorisation', { 
+        objectif, 
+        temps, 
+        variant, 
+        digitCount, 
+        autoAdvance 
+      })
+    }
+  }
+
   useEffect(() => {
     if (counter <= 0) {
       // 🎯 Navigation conditionnelle selon la discipline
@@ -101,6 +124,11 @@ export default function DecompteScreen({ route, navigation }) {
             </S.DetailItem>
           </S.DetailsContainer>
         </S.CountdownWrapper>
+
+        {/* Bouton Skip Countdown */}
+        <S.SkipButton onPress={handleSkipCountdown}>
+          <S.SkipButtonText>Skip countdown ›</S.SkipButtonText>
+        </S.SkipButton>
       </S.Container>
     </SafeAreaView>
   )

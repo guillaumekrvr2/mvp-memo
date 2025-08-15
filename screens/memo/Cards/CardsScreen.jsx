@@ -4,6 +4,7 @@ import { SafeAreaView, View, TouchableOpacity, Text } from 'react-native'
 import MemorizationHeader from '../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { CardsStack } from '../../../components/molecules/Cards/CardsStack/CardsStack'
 import { CardsThumbnailRow } from '../../../components/molecules/Cards/CardsThumbnailRow/CardsThumbnailRow'
+import { ChevronButton } from '../../../components/atoms/Cards/ChevronButton/ChevronButton'
 import { useCardDeck } from '../../../hooks/Cards/useCardDeck'
 import { styles } from './styles'
 
@@ -95,6 +96,19 @@ export default function CardsScreen({ route, navigation }) {
     navigateToRecall()
   }, [navigateToRecall])
 
+  // 🎯 Navigation entre les groupes avec les chevrons
+  const handlePreviousGroup = useCallback(() => {
+    if (currentGroupIndex > 0) {
+      setCurrentGroupIndex(prev => prev - 1)
+    }
+  }, [currentGroupIndex])
+
+  const handleNextGroup = useCallback(() => {
+    if (currentGroupIndex < totalGroups - 1) {
+      setCurrentGroupIndex(prev => prev + 1)
+    }
+  }, [currentGroupIndex, totalGroups])
+
   return (
     <SafeAreaView style={styles.container}>
       <MemorizationHeader
@@ -103,13 +117,46 @@ export default function CardsScreen({ route, navigation }) {
         duration={temps} // 🃏 Utilise le temps des paramètres
       />
 
-      <CardsStack
-        groupsToDisplay={groupsToDisplay} // 🃏 Passe les groupes structurés
-        deck={deck}
-        onCardSwipe={handleGroupSwipe} // 🃏 Swipe de tout le groupe
-        cardsCount={cardsCount} // 🃏 Pour l'affichage en superposition
-        currentGroupSize={currentGroup.length} // 🃏 Taille du groupe actuel pour le swipe
-      />
+      {/* Container pour les cartes avec chevrons */}
+      <View style={{ flex: 1, position: 'relative' }}>
+        {/* Chevron gauche */}
+        <ChevronButton
+          direction="left"
+          onPress={handlePreviousGroup}
+          disabled={currentGroupIndex === 0}
+          style={{ 
+            position: 'absolute',
+            left: 20,
+            top: '45%',
+            zIndex: 1000,
+            elevation: 1000,
+            transform: [{ translateY: -20 }]
+          }}
+        />
+
+        {/* Chevron droit */}
+        <ChevronButton
+          direction="right"
+          onPress={handleNextGroup}
+          disabled={currentGroupIndex >= totalGroups - 1}
+          style={{ 
+            position: 'absolute',
+            right: 20,
+            top: '45%',
+            zIndex: 1000,
+            elevation: 1000,
+            transform: [{ translateY: -20 }]
+          }}
+        />
+
+        <CardsStack
+          groupsToDisplay={groupsToDisplay} // 🃏 Passe les groupes structurés
+          deck={deck}
+          onCardSwipe={handleGroupSwipe} // 🃏 Swipe de tout le groupe
+          cardsCount={cardsCount} // 🃏 Pour l'affichage en superposition
+          currentGroupSize={currentGroup.length} // 🃏 Taille du groupe actuel pour le swipe
+        />
+      </View>
 
       <CardsThumbnailRow
         deck={deck.slice(0, Math.min(20, totalCards))} // 🃏 Miniatures du deck

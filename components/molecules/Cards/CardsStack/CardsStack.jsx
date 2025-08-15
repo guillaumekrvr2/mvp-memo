@@ -131,15 +131,6 @@ function CardsGroup({
   const backgroundGroups = groupsToDisplay.slice(1) // Autres groupes = arrière-plan (piles)
   const backgroundCards = backgroundGroups.flat() // Aplatir les groupes d'arrière-plan
 
-  // 🚨 DEBUG: Logs pour voir les groupes
-  console.log('🔍 CardsGroup DEBUG:')
-  console.log('  - groupsToDisplay.length:', groupsToDisplay.length)
-  console.log('  - currentGroup.length:', currentGroup.length)
-  console.log('  - backgroundGroups.length:', backgroundGroups.length)
-  console.log('  - backgroundCards.length:', backgroundCards.length)
-  console.log('  - currentGroup cards:', currentGroup.map(c => c.id))
-  console.log('  - background cards:', backgroundCards.slice(0, 6).map(c => c.id), '...')
-
   return (
     <>
       {/* Cartes d'arrière-plan : pile statique sans gesture */}

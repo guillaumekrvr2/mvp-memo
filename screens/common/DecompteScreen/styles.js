@@ -85,3 +85,20 @@ export const DetailValue = styled.Text`
   font-size: ${({ theme }) => theme.typography.size.md}px;
   font-weight: ${({ theme }) => theme.typography.weight.semibold};
 `
+
+export const SkipButton = styled.TouchableOpacity`
+  position: absolute;
+  bottom: 60px;
+  padding: ${({ theme }) => theme.spacing.md}px ${({ theme }) => theme.spacing.lg}px;
+  border-radius: ${({ theme }) => theme.border.radiusLg}px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.3);
+`
+
+export const SkipButtonText = styled.Text`
+  color: ${({ theme }) => theme.colors.textOnDark};
+  font-size: ${({ theme }) => theme.typography.size.sm}px;
+  font-weight: ${({ theme }) => theme.typography.weight.medium};
+  opacity: 0.8;
+`
