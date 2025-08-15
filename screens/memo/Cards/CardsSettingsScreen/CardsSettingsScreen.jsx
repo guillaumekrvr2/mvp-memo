@@ -89,7 +89,7 @@ export default function CardsSettingsScreen() {
 
   // 🃏 Fonction pour générer l'affichage des cartes dans le HighlightBoxSetter
   const getCardsPreview = () => {
-    const cardSymbols = ['🂡', '🂢', '🂣', '🂤']; // Exemples de cartes Unicode
+    const cardSymbols = ['🃏', '🃏', '🃏', '🃏']; // Exemples de cartes Unicode
     return Array.from({ length: cardsCount }, (_, i) => 
       cardSymbols[i % cardSymbols.length]
     ).join(' ');

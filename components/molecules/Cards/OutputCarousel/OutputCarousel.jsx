@@ -7,7 +7,8 @@ import { styles } from './styles'
 export const OutputCarousel = forwardRef(({ 
   outputSlots, 
   objectif,
-  spacing = 30
+  spacing = 30,
+  onCardRemove
 }, ref) => {
   const filledCount = outputSlots.filter(slot => slot.card).length
 
@@ -48,6 +49,7 @@ export const OutputCarousel = forwardRef(({
                 card={slot.card}
                 index={index}
                 spacing={spacing}
+                onPress={() => onCardRemove && onCardRemove(index)}
               />
             )
           })}

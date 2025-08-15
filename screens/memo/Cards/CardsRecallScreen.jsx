@@ -40,7 +40,8 @@ export default function CardsRecallScreen(props) {
     cardsBySuit,
     handleCardSelect,
     handleUndo,
-    handleRedo
+    handleRedo,
+    handleRemoveCard
   } = useCardsRecall({ objectif, navigation })
 
 
@@ -58,6 +59,7 @@ export default function CardsRecallScreen(props) {
           ref={outputScrollRef}
           outputSlots={outputSlots}
           objectif={objectif}
+          onCardRemove={handleRemoveCard}
         />
 
         <CardsRecallInput

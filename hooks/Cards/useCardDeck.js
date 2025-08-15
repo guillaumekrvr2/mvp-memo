@@ -96,7 +96,7 @@ const generateFullDeck = () => {
       return {
         id: `${rank}_of_${suit}`,
         suit,
-        rank: rank.replace('2', ''), // Nettoie le nom pour l'affichage
+        rank: rank === 'jack2' ? 'jack' : rank === 'queen2' ? 'queen' : rank === 'king2' ? 'king' : rank, // Nettoie seulement les figures
         asset: cardAssets[assetKey]
       }
     })

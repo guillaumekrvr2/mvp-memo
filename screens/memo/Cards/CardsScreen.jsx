@@ -1,6 +1,6 @@
 // screens/memo/Cards/CardsScreen.jsx - VERSION AVEC GROUPES/PAQUETS
 import React, { useState, useMemo, useCallback } from 'react'
-import { SafeAreaView, View, TouchableOpacity, Text } from 'react-native'
+import { SafeAreaView, View } from 'react-native'
 import MemorizationHeader from '../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { CardsStack } from '../../../components/molecules/Cards/CardsStack/CardsStack'
 import { CardsThumbnailRow } from '../../../components/molecules/Cards/CardsThumbnailRow/CardsThumbnailRow'

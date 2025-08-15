@@ -115,10 +115,35 @@ export function useCardsRecallActions({
     Vibration.vibrate([0, 20, 40, 20])
   }, [redoStack, outputSlots, setOutputSlots, setUndoStack, setRedoStack])
 
+  const handleRemoveCard = useCallback((slotIndex) => {
+    const slot = outputSlots[slotIndex]
+    if (!slot || !slot.card) {
+      return // Pas de carte à supprimer
+    }
+
+    // Save current state for undo
+    const currentState = {
+      outputSlots: [...outputSlots]
+    }
+    setUndoStack(prev => [...prev, currentState])
+    setRedoStack([])
+
+    // Remove card from slot
+    const newOutputSlots = [...outputSlots]
+    newOutputSlots[slotIndex] = {
+      ...slot,
+      card: null
+    }
+    setOutputSlots(newOutputSlots)
+    
+    Vibration.vibrate([0, 20, 40])
+  }, [outputSlots, setOutputSlots, setUndoStack, setRedoStack])
+
   return {
     handleCardSelect,
     handleUndo,
     handleRedo,
+    handleRemoveCard,
     handleComplete
   }
 }

@@ -3,7 +3,8 @@ import { OutputCarousel } from '../../../molecules/Cards/OutputCarousel/OutputCa
 
 export const CardsRecallOutput = forwardRef(({ 
   outputSlots, 
-  objectif 
+  objectif,
+  onCardRemove 
 }, ref) => {
   return (
     <OutputCarousel
@@ -11,6 +12,7 @@ export const CardsRecallOutput = forwardRef(({
       outputSlots={outputSlots}
       objectif={objectif}
       spacing={30}
+      onCardRemove={onCardRemove}
     />
   )
 })

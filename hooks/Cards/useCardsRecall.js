@@ -25,6 +25,7 @@ export function useCardsRecall({ objectif, navigation }) {
     handleCardSelect,
     handleUndo,
     handleRedo,
+    handleRemoveCard,
     handleComplete
   } = useCardsRecallActions({
     outputSlots,
@@ -54,6 +55,7 @@ export function useCardsRecall({ objectif, navigation }) {
     // Actions
     handleCardSelect,
     handleUndo,
-    handleRedo
+    handleRedo,
+    handleRemoveCard
   }
 }
