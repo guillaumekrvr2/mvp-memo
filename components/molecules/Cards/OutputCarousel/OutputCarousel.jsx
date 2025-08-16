@@ -8,7 +8,10 @@ export const OutputCarousel = forwardRef(({
   outputSlots, 
   objectif,
   spacing = 30,
-  onCardRemove
+  onCardRemove,
+  // Props pour le mode correction
+  correctCards = [],
+  showCorrection = false
 }, ref) => {
   const filledCount = outputSlots.filter(slot => slot.card).length
 
@@ -43,6 +46,12 @@ export const OutputCarousel = forwardRef(({
               )
             }
             
+            // Calcul de la correction pour cette carte
+            const correctCard = correctCards[index]
+            const isCorrect = showCorrection && correctCard 
+              ? slot.card.id === correctCard.id 
+              : null
+            
             return (
               <PlacedCard
                 key={slot.id}
@@ -50,6 +59,8 @@ export const OutputCarousel = forwardRef(({
                 index={index}
                 spacing={spacing}
                 onPress={() => onCardRemove && onCardRemove(index)}
+                isCorrect={isCorrect}
+                showCorrection={showCorrection}
               />
             )
           })}

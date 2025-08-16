@@ -4,7 +4,7 @@ import { useCardsBySuit } from './useCardsBySuit'
 import { useCardsRecallState } from './useCardsRecallState'
 import { useCardsRecallActions } from './useCardsRecallActions'
 
-export function useCardsRecall({ objectif, navigation }) {
+export function useCardsRecall({ objectif, navigation, memorizedCards = [] }) {
   const { deck } = useCardDeck(objectif)
   const cardsBySuit = useCardsBySuit(deck)
   
@@ -37,7 +37,8 @@ export function useCardsRecall({ objectif, navigation }) {
     outputScrollRef,
     objectif,
     navigation,
-    startTime
+    startTime,
+    memorizedCards
   })
 
   return {
@@ -56,6 +57,7 @@ export function useCardsRecall({ objectif, navigation }) {
     handleCardSelect,
     handleUndo,
     handleRedo,
-    handleRemoveCard
+    handleRemoveCard,
+    handleComplete
   }
 }

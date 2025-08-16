@@ -162,12 +162,14 @@ function CardsGroup({
         <Animated.View style={[styles.groupContainer, groupAnimatedStyle]}>
           {currentGroup.map((card, index) => {
             const originalIndex = deck.findIndex(c => c.id === card.id)
+            // Inverser l'ordre pour l'affichage : index 0 à gauche, index 1 au milieu, index 2 à droite
+            const displayIndex = currentGroup.length - 1 - index
             
             return (
               <PlayingCard
                 key={card.id}
                 card={card}
-                index={index} // Position dans l'éventail
+                index={displayIndex} // Position dans l'éventail
                 originalIndex={originalIndex}
                 isTopCard={index === 0}
                 isSwipable={false} // Pas de gesture individuel

@@ -47,7 +47,7 @@ export function PlayingCard({
       // Rotations fixes selon la position (pas selon totalCards)
       const standardRotations = {
         0: '6deg',    // Carte du dessus : toujours +6°
-        1: '-4deg',   // Carte 1 : toujours -4°
+        1: '-2deg',   // Carte 1 : toujours -4°
         2: '-8deg'    // Carte 2 : toujours -8°
       }
       
@@ -65,8 +65,8 @@ export function PlayingCard({
         }
       } else {
         // Cartes suivantes : rotations fixes selon l'index
-        const leftOffset = centerOffset - (index * 18)
-        const upOffset = index * 12
+        const leftOffset = centerOffset - (index * 20)
+        const upOffset = index * 18
         const rotation = standardRotations[index] || '-12deg' // Rotation fixe par position
         
         return {

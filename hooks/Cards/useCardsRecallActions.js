@@ -12,24 +12,31 @@ export function useCardsRecallActions({
   outputScrollRef,
   objectif,
   navigation,
-  startTime
+  startTime,
+  memorizedCards
 }) {
   const handleComplete = useCallback((finalSlots) => {
     const endTime = Date.now()
     const durationMs = endTime - startTime.current
     const placedCards = finalSlots.map(slot => slot.card).filter(Boolean)
     
-    const errorsCount = 0 // TODO: comparer avec memorizedCards
+    // Calcul des erreurs en comparant avec les cartes mémorisées
+    const errorsCount = placedCards.reduce((errors, placedCard, index) => {
+      const correctCard = memorizedCards[index]
+      return errors + (placedCard && correctCard && placedCard.id !== correctCard.id ? 1 : 0)
+    }, 0)
     
     const result = {
-      placed: placedCards,
+      userCards: placedCards,
+      correctCards: memorizedCards,
       durationMs,
-      errorsCount
+      errorsCount,
+      objectif
     }
 
-    navigation.goBack()
-    // TODO: navigation.navigate('Correction', result)
-  }, [navigation, startTime])
+    // Navigation vers l'écran de correction des cartes
+    navigation.navigate('CardsCorrection', result)
+  }, [navigation, startTime, memorizedCards, objectif])
 
   const handleCardSelect = useCallback((card) => {
     const availableSlots = outputSlots.filter(slot => slot.card === null)

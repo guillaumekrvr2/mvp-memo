@@ -4,7 +4,10 @@ import { OutputCarousel } from '../../../molecules/Cards/OutputCarousel/OutputCa
 export const CardsRecallOutput = forwardRef(({ 
   outputSlots, 
   objectif,
-  onCardRemove 
+  onCardRemove,
+  // Props pour le mode correction
+  correctCards = [],
+  showCorrection = false
 }, ref) => {
   return (
     <OutputCarousel
@@ -13,6 +16,8 @@ export const CardsRecallOutput = forwardRef(({
       objectif={objectif}
       spacing={30}
       onCardRemove={onCardRemove}
+      correctCards={correctCards}
+      showCorrection={showCorrection}
     />
   )
 })

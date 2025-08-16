@@ -41,8 +41,14 @@ export default function CardsRecallScreen(props) {
     handleCardSelect,
     handleUndo,
     handleRedo,
-    handleRemoveCard
-  } = useCardsRecall({ objectif, navigation })
+    handleRemoveCard,
+    handleComplete
+  } = useCardsRecall({ objectif, navigation, memorizedCards })
+
+  // Fonction pour gérer le bouton Done
+  const handleDone = () => {
+    handleComplete(outputSlots)
+  }
 
 
 
@@ -50,7 +56,7 @@ export default function CardsRecallScreen(props) {
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors?.background || '#000' }}>
       <MemorizationHeader
         onBack={() => navigation.goBack()}
-        onDone={() => navigation.goBack()}
+        onDone={handleDone}
         duration={temps}
       />
 
