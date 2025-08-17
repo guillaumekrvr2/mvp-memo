@@ -108,6 +108,7 @@ export default function CardsCorrectionScreen({ route, navigation }) {
           />
         </CarouselSection>
 
+
         {/* Bouton Retry */}
         <ButtonSection>
           <SecondaryButton onPress={handleRetry}>
