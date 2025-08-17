@@ -35,13 +35,22 @@ export default function CommunityScreen() {
   
   // Récupération des variants depuis le contexte
   const { byDiscipline, loading: variantsLoading, error: variantsError } = useContext(ModeVariantContext);
+  
 
-  // Auto-sélection du premier variant quand les variants numbers se chargent
+  // Auto-sélection du premier variant selon la discipline
   useEffect(() => {
-    if (selectedDiscipline === 'numbers' && !variantsLoading) {
-      const numbersVariants = byDiscipline['numbers'] || byDiscipline[7] || [];
-      if (numbersVariants.length > 0 && (selectedMode === 'memory-league' || selectedMode === 'iam')) {
-        setSelectedMode(numbersVariants[0].id.toString());
+    if (!variantsLoading) {
+      if (selectedDiscipline === 'numbers') {
+        const numbersVariants = byDiscipline['numbers'] || byDiscipline[7] || [];
+        if (numbersVariants.length > 0 && (selectedMode === 'memory-league' || selectedMode === 'iam')) {
+          setSelectedMode(numbersVariants[0].id.toString());
+        }
+      } else if (selectedDiscipline === 'cards') {
+        // Chercher les variants cards (disciplineId potentiellement différent)
+        const cardsVariants = byDiscipline['cards'] || byDiscipline[8] || [];
+        if (cardsVariants.length > 0 && (selectedMode === 'memory-league' || selectedMode === 'iam')) {
+          setSelectedMode(cardsVariants[0].id.toString());
+        }
       }
     }
   }, [byDiscipline, variantsLoading, selectedDiscipline, selectedMode]);
@@ -58,6 +67,16 @@ export default function CommunityScreen() {
         }));
         return options;
       }
+    } else if (selectedDiscipline === 'cards') {
+      const cardsVariants = byDiscipline['cards'] || byDiscipline[8] || [];
+      
+      if (cardsVariants.length > 0) {
+        const options = cardsVariants.map(variant => ({
+          label: variant.label,
+          value: variant.id.toString(),
+        }));
+        return options;
+      }
     }
     
     return BASE_GAME_MODES;
@@ -66,6 +85,9 @@ export default function CommunityScreen() {
   // Détermination du variantId selon le mode sélectionné
   const variantId = useMemo(() => {
     if (selectedDiscipline === 'numbers') {
+      const parsed = parseInt(selectedMode, 10);
+      return isNaN(parsed) ? null : parsed;
+    } else if (selectedDiscipline === 'cards') {
       const parsed = parseInt(selectedMode, 10);
       return isNaN(parsed) ? null : parsed;
     }
@@ -83,15 +105,26 @@ export default function CommunityScreen() {
       if (numbersVariants.length > 0) {
         setSelectedMode(numbersVariants[0].id.toString());
       }
+    } else if (newDiscipline === 'cards') {
+      const cardsVariants = byDiscipline['cards'] || byDiscipline[8] || [];
+      if (cardsVariants.length > 0) {
+        setSelectedMode(cardsVariants[0].id.toString());
+      }
     } else {
       setSelectedMode('memory-league');
     }
   };
 
   // Pour le hook useLeaderboard
-  const leaderboardMode = selectedDiscipline === 'numbers' 
-    ? (variantId === 10 ? 'memory-league' : 'iam')
-    : selectedMode;
+  const leaderboardMode = useMemo(() => {
+    if (selectedDiscipline === 'numbers') {
+      return variantId === 10 ? 'memory-league' : 'iam';
+    } else if (selectedDiscipline === 'cards') {
+      // Cards variants: 14=memory-league, 11/12/13=iam
+      return variantId === 14 ? 'memory-league' : 'iam';
+    }
+    return selectedMode;
+  }, [selectedDiscipline, variantId, selectedMode]);
 
   // Utilise le hook pour obtenir la liste triée
   const { sorted, loading, error } = useLeaderboard(

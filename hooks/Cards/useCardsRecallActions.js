@@ -13,7 +13,10 @@ export function useCardsRecallActions({
   objectif,
   navigation,
   startTime,
-  memorizedCards
+  memorizedCards,
+  variant,
+  mode,
+  temps
 }) {
   const handleComplete = useCallback((finalSlots) => {
     const endTime = Date.now()
@@ -31,12 +34,15 @@ export function useCardsRecallActions({
       correctCards: memorizedCards,
       durationMs,
       errorsCount,
-      objectif
+      objectif,
+      variant,
+      mode,
+      temps
     }
 
     // Navigation vers l'écran de correction des cartes
     navigation.navigate('CardsCorrection', result)
-  }, [navigation, startTime, memorizedCards, objectif])
+  }, [navigation, startTime, memorizedCards, objectif, variant, mode, temps])
 
   const handleCardSelect = useCallback((card) => {
     const availableSlots = outputSlots.filter(slot => slot.card === null)

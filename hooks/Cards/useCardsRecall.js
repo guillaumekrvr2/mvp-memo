@@ -4,7 +4,7 @@ import { useCardsBySuit } from './useCardsBySuit'
 import { useCardsRecallState } from './useCardsRecallState'
 import { useCardsRecallActions } from './useCardsRecallActions'
 
-export function useCardsRecall({ objectif, navigation, memorizedCards = [] }) {
+export function useCardsRecall({ objectif, navigation, memorizedCards = [], variant, mode, temps }) {
   const { deck } = useCardDeck(objectif)
   const cardsBySuit = useCardsBySuit(deck)
   
@@ -38,7 +38,10 @@ export function useCardsRecall({ objectif, navigation, memorizedCards = [] }) {
     objectif,
     navigation,
     startTime,
-    memorizedCards
+    memorizedCards,
+    variant,
+    mode,
+    temps
   })
 
   return {

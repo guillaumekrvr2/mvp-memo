@@ -43,7 +43,14 @@ export default function CardsRecallScreen(props) {
     handleRedo,
     handleRemoveCard,
     handleComplete
-  } = useCardsRecall({ objectif, navigation, memorizedCards })
+  } = useCardsRecall({ 
+    objectif, 
+    navigation, 
+    memorizedCards, 
+    variant, 
+    mode, 
+    temps 
+  })
 
   // Fonction pour gérer le bouton Done
   const handleDone = () => {
