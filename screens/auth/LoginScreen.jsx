@@ -6,7 +6,7 @@ import InputField from '../../components/atoms/Numbers/InputField/InputField';
 
 
 export default function LoginScreen({ navigation }) {
-  const { login, signInWithGoogle } = useContext(AccountContext);
+  const { login, signInWithGoogle, signInWithDiscord } = useContext(AccountContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -38,6 +38,18 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
+  const onDiscordLogin = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await signInWithDiscord();
+      // Note: Discord OAuth ouvre un navigateur, la redirection se fait automatiquement
+    } catch (e) {
+      setError(e.message);
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Se connecter</Text>
@@ -62,13 +74,17 @@ export default function LoginScreen({ navigation }) {
         {loading ? 'Connexion...' : 'Connexion'}
       </SecondaryButton>
 
-      {/* TODO: Décommenter quand on publiera l'app (Google Sign-in nécessite un build natif)
       <View style={styles.divider}>
         <View style={styles.dividerLine} />
         <Text style={styles.dividerText}>ou</Text>
         <View style={styles.dividerLine} />
       </View>
 
+      <SecondaryButton onPress={onDiscordLogin} disabled={loading} style={styles.discordButton}>
+        🎮 Continuer avec Discord
+      </SecondaryButton>
+
+      {/* TODO: Décommenter quand on publiera l'app (Google Sign-in nécessite un build natif)
       <SecondaryButton onPress={onGoogleLogin} disabled={loading} variant="google">
         🔍 Continuer avec Google
       </SecondaryButton>
@@ -103,6 +119,10 @@ const styles = StyleSheet.create({
     color: '#aaa',
     marginHorizontal: 15,
     fontSize: 14,
+  },
+  discordButton: {
+    backgroundColor: '#5865F2',
+    marginVertical: 10,
   },
   switch:      { marginTop: 20, flexDirection: 'row', justifyContent: 'center' },
   switchText:  { color: '#fff', marginRight: 8 },

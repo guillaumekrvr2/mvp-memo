@@ -11,6 +11,8 @@ import { supabase } from '../data/supabase/supabaseClient';
 import SupabaseRecordRepository from '../data/repositories/SupabaseRecordRepository';
 import { GetBestScores } from '../usecases/GetBestScores';
 import { SupabaseUserRepository } from '../data/repositories/SupabaseUserRepository';
+import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
 // TODO: Décommenter pour le build natif
 // import { GoogleSignin } from '@react-native-google-signin/google-signin';
 // import { GOOGLE_CONFIG } from '../config/google';
@@ -95,6 +97,27 @@ export function AccountProvider({ children }) {
     };
   }, [userRepo, loadUserRecords]); // Dépendances du useEffect
 
+  // Gestionnaire pour les deep links (retour de Discord OAuth)
+  useEffect(() => {
+    const handleDeepLink = (url) => {
+      console.log('Deep link reçu:', url);
+      // Supabase gère automatiquement les tokens OAuth dans l'URL
+      // onAuthStateChange se déclenchera automatiquement
+    };
+
+    // Écouter les deep links
+    const subscription = Linking.addEventListener('url', handleDeepLink);
+
+    // Vérifier si l'app a été ouverte avec un deep link
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        handleDeepLink(url);
+      }
+    });
+
+    return () => subscription?.remove();
+  }, []);
+
   // --- Fonctions d'Action (simplifiées) ---
 
   // L'état 'current' sera mis à jour automatiquement par onAuthStateChange.
@@ -118,6 +141,34 @@ export function AccountProvider({ children }) {
   // Connexion avec Google
   const signInWithGoogle = async () => {
     throw new Error('Google Sign-in pas disponible dans Expo Go');
+  };
+
+  // Connexion avec Discord (fonctionne dans Expo Go !)
+  const signInWithDiscord = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'discord',
+        options: {
+          redirectTo: 'https://uyxwewlhdfjfwvplihbg.supabase.co/auth/v1/callback?redirect_to=myapp://',
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      });
+      
+      if (error) throw error;
+      
+      // Dans Expo Go, signInWithOAuth retourne une URL
+      if (data?.url) {
+        await WebBrowser.openBrowserAsync(data.url);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Discord Sign-In Error:', error);
+      throw error;
+    }
   };
   // const signInWithGoogle = async () => {
   //   try {
@@ -186,7 +237,7 @@ export function AccountProvider({ children }) {
   // Exposition des valeurs via le Provider
   return (
     <AccountContext.Provider
-      value={{ loading, current, signUp, login, signInWithGoogle, logout, updateRecord }}
+      value={{ loading, current, signUp, login, signInWithGoogle, signInWithDiscord, logout, updateRecord }}
     >
       {children}
     </AccountContext.Provider>
