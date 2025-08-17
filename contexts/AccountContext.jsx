@@ -11,8 +11,9 @@ import { supabase } from '../data/supabase/supabaseClient';
 import SupabaseRecordRepository from '../data/repositories/SupabaseRecordRepository';
 import { GetBestScores } from '../usecases/GetBestScores';
 import { SupabaseUserRepository } from '../data/repositories/SupabaseUserRepository';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { GOOGLE_CONFIG } from '../config/google';
+// TODO: Décommenter pour le build natif
+// import { GoogleSignin } from '@react-native-google-signin/google-signin';
+// import { GOOGLE_CONFIG } from '../config/google';
 
 export const AccountContext = createContext();
 
@@ -24,13 +25,14 @@ export function AccountProvider({ children }) {
   // recréer à chaque rendu du composant.
   const userRepo = useMemo(() => new SupabaseUserRepository(), []);
 
+  // TODO: Décommenter pour le build natif
   // Configuration Google Sign-In
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: GOOGLE_CONFIG.WEB_CLIENT_ID,
-      offlineAccess: true,
-    });
-  }, []);
+  // useEffect(() => {
+  //   GoogleSignin.configure({
+  //     webClientId: GOOGLE_CONFIG.WEB_CLIENT_ID,
+  //     offlineAccess: true,
+  //   });
+  // }, []);
 
   // Charge et formate les meilleurs scores de l'utilisateur.
   // `useCallback` évite de recréer la fonction à chaque rendu.
@@ -112,43 +114,48 @@ export function AccountProvider({ children }) {
     return data.user;
   };
 
+  // TODO: Décommenter pour le build natif
   // Connexion avec Google
   const signInWithGoogle = async () => {
-    try {
-      // Vérifier si Google Play Services est disponible
-      await GoogleSignin.hasPlayServices();
-      
-      // Obtenir les informations utilisateur de Google
-      const userInfo = await GoogleSignin.signIn();
-      
-      // Obtenir le token ID pour Supabase
-      const { idToken } = userInfo;
-      
-      // Se connecter avec Supabase en utilisant le token Google
-      const { data, error } = await supabase.auth.signInWithIdToken({
-        provider: 'google',
-        token: idToken,
-      });
-      
-      if (error) throw error;
-      return data.user;
-    } catch (error) {
-      console.error('Google Sign-In Error:', error);
-      throw error;
-    }
+    throw new Error('Google Sign-in pas disponible dans Expo Go');
   };
+  // const signInWithGoogle = async () => {
+  //   try {
+  //     // Vérifier si Google Play Services est disponible
+  //     await GoogleSignin.hasPlayServices();
+  //     
+  //     // Obtenir les informations utilisateur de Google
+  //     const userInfo = await GoogleSignin.signIn();
+  //     
+  //     // Obtenir le token ID pour Supabase
+  //     const { idToken } = userInfo;
+  //     
+  //     // Se connecter avec Supabase en utilisant le token Google
+  //     const { data, error } = await supabase.auth.signInWithIdToken({
+  //       provider: 'google',
+  //       token: idToken,
+  //     });
+  //     
+  //     if (error) throw error;
+  //     return data.user;
+  //   } catch (error) {
+  //     console.error('Google Sign-In Error:', error);
+  //     throw error;
+  //   }
+  // };
 
   // L'état 'current' sera mis à jour automatiquement par onAuthStateChange.
   const logout = async () => {
-    try {
-      // Déconnexion Google si connecté
-      const isSignedIn = await GoogleSignin.isSignedIn();
-      if (isSignedIn) {
-        await GoogleSignin.signOut();
-      }
-    } catch (error) {
-      console.warn('Google Sign-Out Error:', error);
-    }
+    // TODO: Décommenter pour le build natif
+    // try {
+    //   // Déconnexion Google si connecté
+    //   const isSignedIn = await GoogleSignin.isSignedIn();
+    //   if (isSignedIn) {
+    //     await GoogleSignin.signOut();
+    //   }
+    // } catch (error) {
+    //   console.warn('Google Sign-Out Error:', error);
+    // }
     
     const { error } = await supabase.auth.signOut();
     if (error) throw error;

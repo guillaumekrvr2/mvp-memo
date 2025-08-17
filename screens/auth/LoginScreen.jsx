@@ -62,6 +62,7 @@ export default function LoginScreen({ navigation }) {
         {loading ? 'Connexion...' : 'Connexion'}
       </SecondaryButton>
 
+      {/* TODO: Décommenter quand on publiera l'app (Google Sign-in nécessite un build natif)
       <View style={styles.divider}>
         <View style={styles.dividerLine} />
         <Text style={styles.dividerText}>ou</Text>
@@ -71,6 +72,7 @@ export default function LoginScreen({ navigation }) {
       <SecondaryButton onPress={onGoogleLogin} disabled={loading} variant="google">
         🔍 Continuer avec Google
       </SecondaryButton>
+      */}
 
       <View style={styles.switch}>
         <Text style={styles.switchText}>Pas encore de compte ?</Text>
