@@ -13,6 +13,7 @@ import { theme as styledTheme } from './theme';
 // Auth screens
 import LoginScreen from './screens/auth/LoginScreen';
 import SignUpScreen from './screens/auth/SignUpScreen';
+import EmailVerificationScreen from './screens/auth/EmailVerificationScreen';
 
 // Main tabs
 import MainStackNavigator from './navigation/MainStackNavigator';
@@ -45,6 +46,7 @@ export default function App() {
                 <RootStack.Screen name="Main" component={MainStackNavigator} />
                 <RootStack.Screen name="Login" component={LoginScreen} />
                 <RootStack.Screen name="SignUp" component={SignUpScreen} />
+                <RootStack.Screen name="EmailVerification" component={EmailVerificationScreen} />
               </RootStack.Navigator>
             </ModeVariantProvider>
           </AccountProvider>

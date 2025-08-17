@@ -29,8 +29,9 @@ export default function SignUpScreen({ navigation }) {
       });
 
       if (signUpError) throw signUpError;
-      // Tu peux éventuellement vérifier data.user.confirmed_at avant de naviguer
-      navigation.replace('Main');
+      
+      // Rediriger vers l'écran de vérification email
+      navigation.navigate('EmailVerification', { email });
     } catch (e) {
       setError(e.message);
     }

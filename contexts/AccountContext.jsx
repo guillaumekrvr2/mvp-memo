@@ -11,6 +11,8 @@ import { supabase } from '../data/supabase/supabaseClient';
 import SupabaseRecordRepository from '../data/repositories/SupabaseRecordRepository';
 import { GetBestScores } from '../usecases/GetBestScores';
 import { SupabaseUserRepository } from '../data/repositories/SupabaseUserRepository';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { GOOGLE_CONFIG } from '../config/google';
 
 export const AccountContext = createContext();
 
@@ -21,6 +23,14 @@ export function AccountProvider({ children }) {
   // Instancie le repository. `useMemo` est une optimisation pour éviter de le
   // recréer à chaque rendu du composant.
   const userRepo = useMemo(() => new SupabaseUserRepository(), []);
+
+  // Configuration Google Sign-In
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: GOOGLE_CONFIG.WEB_CLIENT_ID,
+      offlineAccess: true,
+    });
+  }, []);
 
   // Charge et formate les meilleurs scores de l'utilisateur.
   // `useCallback` évite de recréer la fonction à chaque rendu.
@@ -102,8 +112,44 @@ export function AccountProvider({ children }) {
     return data.user;
   };
 
+  // Connexion avec Google
+  const signInWithGoogle = async () => {
+    try {
+      // Vérifier si Google Play Services est disponible
+      await GoogleSignin.hasPlayServices();
+      
+      // Obtenir les informations utilisateur de Google
+      const userInfo = await GoogleSignin.signIn();
+      
+      // Obtenir le token ID pour Supabase
+      const { idToken } = userInfo;
+      
+      // Se connecter avec Supabase en utilisant le token Google
+      const { data, error } = await supabase.auth.signInWithIdToken({
+        provider: 'google',
+        token: idToken,
+      });
+      
+      if (error) throw error;
+      return data.user;
+    } catch (error) {
+      console.error('Google Sign-In Error:', error);
+      throw error;
+    }
+  };
+
   // L'état 'current' sera mis à jour automatiquement par onAuthStateChange.
   const logout = async () => {
+    try {
+      // Déconnexion Google si connecté
+      const isSignedIn = await GoogleSignin.isSignedIn();
+      if (isSignedIn) {
+        await GoogleSignin.signOut();
+      }
+    } catch (error) {
+      console.warn('Google Sign-Out Error:', error);
+    }
+    
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     // Pas besoin de setCurrent ici, onAuthStateChange s'en charge.
@@ -133,7 +179,7 @@ export function AccountProvider({ children }) {
   // Exposition des valeurs via le Provider
   return (
     <AccountContext.Provider
-      value={{ loading, current, signUp, login, logout, updateRecord }}
+      value={{ loading, current, signUp, login, signInWithGoogle, logout, updateRecord }}
     >
       {children}
     </AccountContext.Provider>

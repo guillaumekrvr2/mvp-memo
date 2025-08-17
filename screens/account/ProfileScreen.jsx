@@ -10,20 +10,33 @@ const DISCIPLINES = ['numbers', 'cards', 'words', 'binary', 'names', 'images']
 export default function ProfileScreen({ navigation }) {
   const { current, logout } = useContext(AccountContext)
   const { byDiscipline } = useContext(ModeVariantContext)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   // Redirige si non connecté
   useEffect(() => {
-    if (!current) navigation.replace('Login')
-  }, [current])
-
-  if (!current) return null
+    if (!current && !isLoggingOut) navigation.replace('Login')
+  }, [current, isLoggingOut])
 
   // === DEBUG : afficher les IDs et scores des variants "numbers" ===
   useEffect(() => {
+    if (!current || isLoggingOut) return // Évite l'exécution si déconnecté
     const nums = byDiscipline['numbers'] || byDiscipline[7] || []
     const ids = nums.map(v => v.id)
     const recs = ids.map(id => ({ id, score: current.records?.[id] ?? 0 }))
-  }, [byDiscipline, current])
+  }, [byDiscipline, current, isLoggingOut])
+
+  // Fonction de déconnexion sécurisée
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      await logout()
+      navigation.replace('Login')
+    } catch (error) {
+      setIsLoggingOut(false)
+    }
+  }
+
+  if (!current || isLoggingOut) return null
 
   // On utilise directement `current` depuis le Context
   const user = current
@@ -172,7 +185,7 @@ export default function ProfileScreen({ navigation }) {
       </View>
 
       {/* Bouton déconnexion */}
-      <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Se déconnecter</Text>
       </TouchableOpacity>
 

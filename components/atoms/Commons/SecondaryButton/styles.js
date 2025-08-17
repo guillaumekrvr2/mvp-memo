@@ -32,6 +32,16 @@ const variants = {
   ghost: css`
     background-color: transparent;
     border-width: 0px;
+  `,
+  google: css`
+    background-color: #ffffff;
+    border-width: 1px;
+    border-color: #dadce0;
+    shadow-color: #000;
+    shadow-offset: 0px 2px;
+    shadow-opacity: 0.1;
+    shadow-radius: 4px;
+    elevation: 3;
   `
 };
 
@@ -58,6 +68,8 @@ export const Label = styled.Text`
         return '#4ecdc4'; /* Texte cyan pour outline */
       case 'ghost':
         return '#a0a9c0'; /* Texte gris pour ghost */
+      case 'google':
+        return '#1f1f1f'; /* Texte foncé pour Google */
       default:
         return '#a0a9c0'; /* Texte gris moderne pour secondary */
     }
