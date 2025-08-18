@@ -166,7 +166,7 @@ export default function CommunityScreen() {
           discipline={selectedDiscipline}
           mode={leaderboardMode}
           disciplines={DISCIPLINES}
-          currentUserId={current?.id}
+          currentUserId={current?.id || null}
         />
       )}
     </View>

@@ -7,16 +7,22 @@
  */
 export function mapUserRowToAccount(raw) {
   // 1. Log de l'objet brut reçu de Supabase
+  console.log('[userMapper] Raw data from Supabase:', raw);
 
   const account = {
     id:        raw.id,
     firstName: raw.first_name,
     lastName:  raw.second_name,   // ou raw.second_name si c'est bien le champ dans ta BDD
     email:     raw.email,
+    displayName: raw.display_name, // Ajout du display_name
+    avatarUrl: raw.avatar_url,     // Ajout de l'avatar
+    streakCurrent: raw.streak_current, // Ajout du streak
+    isPremium: raw.is_premium,     // Ajout du statut premium
     records:   {},              // sera rempli plus tard
   };
 
   // 2. Log de l'objet transformé
+  console.log('[userMapper] Transformed account:', account);
 
   return account;
 }

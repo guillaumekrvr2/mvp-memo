@@ -27,11 +27,17 @@ export default function useLeaderboard(discipline, mode, disciplines, variantId 
 
     async function fetchLeaderboard() {
       try {
+        console.log('[useLeaderboard] Starting fetch with:', { discipline, mode, variantId });
 
         // 1) Récupère les comptes via le use-case GetUsers
         const userRepo = new SupabaseUserRepository();
         const getUsers = new GetUsers(userRepo);
         const accounts = await getUsers.execute({ mode, discipline });
+        
+        console.log('[useLeaderboard] Accounts received from GetUsers:', { 
+          accountsCount: accounts ? accounts.length : 0,
+          firstAccount: accounts?.[0]
+        });
 
         // Cas des modes basés sur variant : IAM et Memory League avec variantId
         if ((mode === 'iam' || mode === 'memory-league') && variantId != null) {
@@ -49,23 +55,59 @@ export default function useLeaderboard(discipline, mode, disciplines, variantId 
             })
           );
 
-          // Trie tous les utilisateurs par score décroissant (0 pour ceux sans record)
-          const sortedList = withRecords.sort(
+          // Filtre les utilisateurs avec score > 0, puis trie par score décroissant
+          const filteredRecords = withRecords.filter(user => 
+            (user.records[variantId]?.score || 0) > 0
+          );
+          
+          const sortedList = filteredRecords.sort(
             (a, b) =>
               (b.records[variantId]?.score || 0) -
               (a.records[variantId]?.score || 0)
           );
+
+          console.log('[useLeaderboard] Sorted list with records:', { 
+            sortedCount: sortedList.length,
+            firstSorted: sortedList[0]
+          });
 
           if (isMounted) setSorted(sortedList);
         } else {
           // Cas par défaut : utilisation de la logique existante avec sortLeaderboardScores
           const withRecords = accounts.map((user) => ({
             ...user,
-            records: user.id === current?.id ? current.records : user.records || {},
+            records: user.id === current?.id && current ? current.records : user.records || {},
           }));
 
           const sortedList = sortLeaderboardScores(withRecords, discipline, mode, disciplines);
-          if (isMounted) setSorted(sortedList);
+          
+          // Filtre les utilisateurs avec score > 0
+          const filteredList = sortedList.filter(user => {
+            if (discipline === 'global') {
+              // Somme des scores de toutes les disciplines sauf 'global'
+              const totalScore = disciplines
+                .filter(d => d.key !== 'global')
+                .reduce((sum, d) => {
+                  const rec = user.records?.[d.key]?.[mode];
+                  return sum + (rec?.score || 0);
+                }, 0);
+              return totalScore > 0;
+            }
+            // Cas simple : discipline unique
+            const rec = user.records?.[discipline];
+            if (rec && typeof rec === 'object') {
+              return (rec[mode]?.score || 0) > 0;
+            }
+            return (typeof rec === 'number' ? rec : 0) > 0;
+          });
+          
+          console.log('[useLeaderboard] Filtered list (default case):', { 
+            originalCount: sortedList.length,
+            filteredCount: filteredList.length,
+            firstFiltered: filteredList[0]
+          });
+          
+          if (isMounted) setSorted(filteredList);
         }
       } catch (err) {
         console.error('[useLeaderboard] Error:', err);
@@ -80,7 +122,7 @@ export default function useLeaderboard(discipline, mode, disciplines, variantId 
     return () => {
       isMounted = false;
     };
-  }, [discipline, mode, disciplines, variantId, current]);
+  }, [discipline, mode, disciplines, variantId, current?.id]);
 
   return { sorted, loading, error };
 }

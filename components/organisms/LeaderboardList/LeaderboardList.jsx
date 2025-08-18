@@ -26,6 +26,15 @@ export function LeaderboardList({
   currentUserId,
   emptyText = 'Aucun participant',
 }) {
+  console.log('[LeaderboardList] Rendering with data:', { 
+    dataCount: data ? data.length : 0,
+    discipline,
+    mode,
+    variantId,
+    firstItem: data?.[0],
+    isEmpty: !data || data.length === 0
+  });
+  
   return (
     <FlatList
       key={`${mode}-${discipline}`}
