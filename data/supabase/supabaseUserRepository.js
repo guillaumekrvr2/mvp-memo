@@ -14,18 +14,36 @@ export class SupabaseUserRepository extends UserRepository {
    * @override
    */
   async findAll({ mode, discipline }) {
-    // Pour l'instant on ne filtre pas encore par mode/discipline
+    console.log('[SupabaseUserRepository] findAll called with:', { mode, discipline });
+    
+    // Utilise la vue publique accessible aux utilisateurs anonymes
     const { data: rows, error } = await supabase
-      .from('users')
-      .select('*');
+      .from('public_leaderboard')
+      .select('*')
+      .order('created_at', { ascending: false });
+      
+    console.log('[SupabaseUserRepository] Supabase query result:', { 
+      rowsCount: rows ? rows.length : 0, 
+      error,
+      firstRow: rows?.[0]
+    });
+      
     if (error) {
+      console.error('Error fetching leaderboard profiles:', error);
       throw error;
     }
 
     // Mappe chaque ligne brute en instance Account
-    return rows.map(raw =>
+    const accounts = rows.map(raw =>
       new Account(mapUserRowToAccount(raw))
     );
+    
+    console.log('[SupabaseUserRepository] Mapped accounts:', { 
+      accountsCount: accounts.length,
+      firstAccount: accounts[0]
+    });
+    
+    return accounts;
   }
 
   /**

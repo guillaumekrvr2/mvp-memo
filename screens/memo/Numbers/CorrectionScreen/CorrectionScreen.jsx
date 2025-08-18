@@ -1,10 +1,11 @@
 // screens/memo/CorrectionScreen/CorrectionScreen.jsx
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   SafeAreaView,
   View,
   Text,
   ScrollView,
+  Alert,
 } from 'react-native'
 
 import { SecondaryButton } from '../../../../components/atoms/Commons/SecondaryButton/SecondaryButton'
@@ -58,24 +59,48 @@ export default function CorrectionScreen({ route, navigation }) {
     accuracy 
   })
 
-  const handleRetry = async () => {
-    try {
-      console.log('Retry button pressed - saving score...')
-      
-      // Sauvegarde conditionnelle du score s'il est meilleur
-      if (modeVariantId && typeof modeVariantId === 'number') {
-        await saveBestScore(modeVariantId, score)
-        console.log('Score saved successfully!')
-      } else {
-        console.log('No modeVariantId to save score for:', modeVariantId)
+  // Sauvegarde automatique du score à l'affichage
+  useEffect(() => {
+    const saveScoreOnMount = async () => {
+      try {
+        console.log('Auto-saving score on screen mount...')
+        
+        // Sauvegarde conditionnelle du score s'il est meilleur
+        if (modeVariantId && typeof modeVariantId === 'number') {
+          await saveBestScore(modeVariantId, score)
+          console.log('Score auto-saved successfully!')
+        } else {
+          console.log('No modeVariantId to save score for:', modeVariantId)
+        }
+      } catch (error) {
+        // Si l'utilisateur n'est pas connecté, afficher popup de connexion
+        if (error.message === 'No user logged in') {
+          Alert.alert(
+            'Score non sauvegardé',
+            'Connecte-toi pour sauvegarder tes scores !',
+            [
+              {
+                text: 'Plus tard',
+                style: 'cancel'
+              },
+              {
+                text: 'Se connecter',
+                onPress: () => navigation.navigate('SignUp')
+              }
+            ]
+          )
+        } else {
+          // Autres erreurs : logguer
+          console.error('Erreur lors de la sauvegarde automatique:', error)
+        }
       }
-      
-      navigation.navigate('Numbers')
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde:', error)
-      // Continuer vers Numbers même en cas d'erreur
-      navigation.navigate('Numbers')
     }
+
+    saveScoreOnMount()
+  }, [modeVariantId, score, saveBestScore, navigation])
+
+  const handleRetry = () => {
+    navigation.navigate('Numbers')
   }
 
   // VERSION FINALE AVEC TOUS LES COMPOSANTS ET STYLES + PADDING

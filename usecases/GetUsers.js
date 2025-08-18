@@ -21,15 +21,22 @@ export class GetUsers {
    * @returns {Promise<Account[]>}
    */
   async execute({ mode, discipline }) {
+    console.log('[GetUsers] execute called with:', { mode, discipline });
+    
     // 1. On invoque le repository pour récupérer tous les comptes
     const accounts = await this.userRepository.findAll({ mode, discipline });
+    
+    console.log('[GetUsers] Repository returned:', { 
+      accountsCount: accounts ? accounts.length : 0,
+      firstAccount: accounts?.[0]
+    });
 
     // 2. Ici tu peux ajouter ta logique métier :
     //    - Tri par score sur la discipline demandée
     //    - Filtrage de comptes « inactifs »
     //    - Calcul de statistiques globales, etc.
     //
-    // Pour l’instant, on renvoie brut :
+    // Pour l'instant, on renvoie brut :
     return accounts;
   }
 }
