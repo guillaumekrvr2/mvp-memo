@@ -87,3 +87,49 @@ This is a React Native Expo memory training app with the following key architect
 - **Styled Components**: Primary styling approach with theme provider
 - **Theme Structure**: colors, typography, spacing, borders defined in theme/
 - **Responsive**: Uses React Native's Flexbox for layout
+
+## 🚨 CRITICAL SECURITY RULES 🚨
+
+**NEVER perform ANY of these destructive operations without EXPLICIT user confirmation:**
+
+### ❌ FORBIDDEN DATABASE OPERATIONS
+- **NEVER DROP** tables, views, schemas, or databases
+- **NEVER TRUNCATE** or DELETE FROM tables without WHERE clauses
+- **NEVER ALTER** table structures in production
+- **NEVER REVOKE** permissions or drop users
+- **NEVER MODIFY** RLS (Row Level Security) policies without review
+
+### ❌ FORBIDDEN FILE OPERATIONS  
+- **NEVER DELETE** entire directories or critical files
+- **NEVER REMOVE** package.json, .env files, or config files
+- **NEVER OVERWRITE** without backing up important data
+- **NEVER MODIFY** .gitignore to expose secrets
+
+### ❌ FORBIDDEN SUPABASE OPERATIONS
+- **NEVER DELETE** user accounts or authentication records
+- **NEVER MODIFY** storage buckets or policies
+- **NEVER CHANGE** API keys or service roles
+- **NEVER RESET** production databases
+
+### ❌ FORBIDDEN DEPLOYMENT OPERATIONS
+- **NEVER DEPLOY** to production without testing
+- **NEVER MODIFY** environment variables in production
+- **NEVER DELETE** production builds or releases
+- **NEVER CHANGE** DNS or domain configurations
+
+### ✅ SAFE PRACTICES TO FOLLOW
+- **ALWAYS** create backups before major changes
+- **ALWAYS** test database changes in development first
+- **ALWAYS** use transactions for multi-step operations
+- **ALWAYS** validate user inputs and sanitize data
+- **ALWAYS** preserve existing functionality when refactoring
+- **ALWAYS** ask for confirmation before destructive operations
+
+### 🔒 SECURITY REMINDERS
+- **SECRETS**: Never commit API keys, passwords, or tokens
+- **VALIDATION**: Always validate and sanitize user inputs
+- **PERMISSIONS**: Follow principle of least privilege
+- **LOGGING**: Never log sensitive information
+- **AUTHENTICATION**: Always verify user permissions before operations
+
+**If asked to perform ANY destructive operation, STOP and ask for explicit confirmation with details about the risks.**

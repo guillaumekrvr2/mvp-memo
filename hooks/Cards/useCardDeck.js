@@ -113,23 +113,34 @@ const shuffleArray = (array) => {
   return shuffled
 }
 
-// 🃏 Génère le deck selon l'objectif
+// 🃏 Génère le deck selon l'objectif avec des IDs uniques
 const generateDeckForObjective = (objectif) => {
   const fullDeck = generateFullDeck() // 52 cartes
   const fullDecks = Math.floor(objectif / 52) // Nombre de paquets complets
   const remainder = objectif % 52 // Cartes supplémentaires
   
   let finalDeck = []
+  let cardIndex = 0 // Compteur pour les IDs uniques
   
   // Ajoute les paquets complets
   for (let i = 0; i < fullDecks; i++) {
-    finalDeck = [...finalDeck, ...shuffleArray(fullDeck)]
+    const shuffledDeck = shuffleArray(fullDeck)
+    // Assigne des IDs uniques à chaque carte
+    const deckWithUniqueIds = shuffledDeck.map(card => ({
+      ...card,
+      id: `${card.id}_${cardIndex++}` // Ajoute un suffixe unique
+    }))
+    finalDeck = [...finalDeck, ...deckWithUniqueIds]
   }
   
   // Ajoute les cartes supplémentaires si nécessaire
   if (remainder > 0) {
     const shuffledDeck = shuffleArray(fullDeck)
-    finalDeck = [...finalDeck, ...shuffledDeck.slice(0, remainder)]
+    const remainderWithUniqueIds = shuffledDeck.slice(0, remainder).map(card => ({
+      ...card,
+      id: `${card.id}_${cardIndex++}` // Ajoute un suffixe unique
+    }))
+    finalDeck = [...finalDeck, ...remainderWithUniqueIds]
   }
   
   // Shuffle final du deck complet
