@@ -91,9 +91,24 @@ export default function AppNavigator() {
         }}
       />
 
-      <Tab.Screen name="Discover" component={DiscoverScreen} />
-      <Tab.Screen name="Community" component={CommunityScreen} />
-      <Tab.Screen name="Shop" component={ShopScreen} />
+      <Tab.Screen 
+        name="Discover" 
+        component={DiscoverScreen} 
+      />
+      
+      <Tab.Screen 
+        name="Community" 
+        component={CommunityScreen} 
+      />
+      
+      <Tab.Screen 
+        name="Shop" 
+        component={ShopScreen}
+        options={{
+          headerShown: false,
+          tabBarStyle: { display: 'none' }
+        }}
+      />
     </Tab.Navigator>
   )
 }
