@@ -4,10 +4,11 @@ import { AccountContext } from '../../contexts/AccountContext';
 import { SecondaryButton } from '../../components/atoms/Commons/SecondaryButton/SecondaryButton';
 import InputField from '../../components/atoms/Numbers/InputField/InputField';
 import { theme } from '../../theme';
+import { supabase } from '../../data/supabase/supabaseClient';
 
 
 export default function LoginScreen({ navigation }) {
-  const { login, signInWithGoogle, signInWithDiscord } = useContext(AccountContext);
+  const { login, signInWithGoogle, signInWithDiscord, forceRefreshUserState } = useContext(AccountContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -53,12 +54,14 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header avec bouton retour */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backText}>‹</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Header avec bouton retour - seulement si on peut revenir en arrière */}
+      {navigation.canGoBack() && (
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Text style={styles.backText}>‹</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Logo et titre */}
       <View style={styles.titleSection}>
@@ -116,6 +119,7 @@ export default function LoginScreen({ navigation }) {
         >
           <Text style={styles.discordButtonText}>🎮 Continuer avec Discord</Text>
         </TouchableOpacity>
+
 
         {/* TODO: Décommenter quand on publiera l'app (Google Sign-in nécessite un build natif)
         <TouchableOpacity

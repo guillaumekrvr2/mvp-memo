@@ -1,12 +1,12 @@
 // App.js
-import React from 'react';
+import React, { useContext } from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer, DarkTheme as NavDarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ThemeProvider } from 'styled-components/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { AccountProvider } from './contexts/AccountContext';
+import { AccountProvider, AccountContext } from './contexts/AccountContext';
 import { ModeVariantProvider } from './contexts/ModeVariantContext';
 import { theme as styledTheme } from './theme';
 
@@ -30,6 +30,37 @@ const MyNavTheme = {
 
 const RootStack = createNativeStackNavigator();
 
+// Composant qui gère la navigation en fonction de l'authentification
+function AuthenticatedNavigator() {
+  const { loading, current } = useContext(AccountContext);
+
+  console.log('[AuthenticatedNavigator] State:', { loading, hasUser: !!current, userEmail: current?.email });
+
+  if (loading) {
+    // TODO: Remplacer par un vrai écran de chargement
+    return null;
+  }
+
+  return (
+    <RootStack.Navigator
+      initialRouteName={current ? "Main" : "Login"}
+      screenOptions={{ headerShown: false }}
+    >
+      {current ? (
+        // Utilisateur connecté
+        <RootStack.Screen name="Main" component={MainStackNavigator} />
+      ) : (
+        // Utilisateur non connecté
+        <>
+          <RootStack.Screen name="Login" component={LoginScreen} />
+          <RootStack.Screen name="SignUp" component={SignUpScreen} />
+          <RootStack.Screen name="EmailVerification" component={EmailVerificationScreen} />
+        </>
+      )}
+    </RootStack.Navigator>
+  );
+}
+
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -39,15 +70,7 @@ export default function App() {
         <NavigationContainer theme={MyNavTheme}>
           <AccountProvider>
             <ModeVariantProvider>
-              <RootStack.Navigator
-                initialRouteName="Main"
-                screenOptions={{ headerShown: false }}
-              >
-                <RootStack.Screen name="Main" component={MainStackNavigator} />
-                <RootStack.Screen name="Login" component={LoginScreen} />
-                <RootStack.Screen name="SignUp" component={SignUpScreen} />
-                <RootStack.Screen name="EmailVerification" component={EmailVerificationScreen} />
-              </RootStack.Navigator>
+              <AuthenticatedNavigator />
             </ModeVariantProvider>
           </AccountProvider>
         </NavigationContainer>
