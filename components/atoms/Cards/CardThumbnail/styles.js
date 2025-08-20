@@ -15,9 +15,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#2a2a3e',
   },
   cardThumbnailActive: {
-    borderWidth: 2,
-    borderColor: '#4ecdc4',
-    transform: [{ scale: 1.05 }],
+    borderWidth: 1,
+    borderColor: '#2a2a3e',
   },
   cardThumbnailImage: {
     width: '100%',

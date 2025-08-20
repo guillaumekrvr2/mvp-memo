@@ -163,7 +163,7 @@ export default function CardsScreen({ route, navigation }) {
       </View>
 
       <CardsThumbnailRow
-        deck={deck.slice(0, Math.min(20, totalCards))} // 🃏 Miniatures du deck
+        deck={deck} // 🃏 Toutes les cartes du deck
         currentGroupIndex={currentGroupIndex} // 🃏 Progrès par groupes
         groupSize={cardsCount}
       />
