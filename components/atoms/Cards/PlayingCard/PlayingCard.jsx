@@ -4,7 +4,6 @@ import React from 'react'
 import { Image, Dimensions, View } from 'react-native'
 import Animated, { useAnimatedStyle } from 'react-native-reanimated'
 import { GestureDetector } from 'react-native-gesture-handler'
-import { TopCardIndicator } from './TopCardIndicator'
 import { styles } from './styles'
 
 const { width: screenWidth } = Dimensions.get('window')
@@ -89,17 +88,11 @@ export function PlayingCard({
         <GestureDetector gesture={panGesture}>
           <Animated.View style={[styles.animatedCard, animatedStyle]}>
             <Image source={card.asset} style={styles.cardImage} resizeMode="contain" />
-            {isTopCard && (
-              <TopCardIndicator originalIndex={originalIndex} />
-            )}
           </Animated.View>
         </GestureDetector>
       ) : (
         <Animated.View style={[styles.animatedCard, animatedStyle]}>
           <Image source={card.asset} style={styles.cardImage} resizeMode="contain" />
-          {isTopCard && (
-            <TopCardIndicator originalIndex={originalIndex} />
-          )}
         </Animated.View>
       )}
     </View>

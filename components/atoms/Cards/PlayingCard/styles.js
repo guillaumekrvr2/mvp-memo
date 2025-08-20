@@ -27,18 +27,4 @@ export const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 16,
   },
-  topCardIndicator: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    backgroundColor: '#4ecdc4',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  topCardText: {
-    color: '#000',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
 })

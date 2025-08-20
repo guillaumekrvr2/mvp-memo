@@ -6,6 +6,7 @@ import { CardsStack } from '../../../components/molecules/Cards/CardsStack/Cards
 import { CardsThumbnailRow } from '../../../components/molecules/Cards/CardsThumbnailRow/CardsThumbnailRow'
 import { ChevronButton } from '../../../components/atoms/Cards/ChevronButton/ChevronButton'
 import { useCardDeck } from '../../../hooks/Cards/useCardDeck'
+import useAutoAdvance from '../../../hooks/useAutoAdvance'
 import { styles } from './styles'
 
 export default function CardsScreen({ route, navigation }) {
@@ -56,6 +57,9 @@ export default function CardsScreen({ route, navigation }) {
   const currentGroup = cardGroups[currentGroupIndex] || []
   const totalGroups = cardGroups.length
   const isLastGroup = currentGroupIndex >= totalGroups - 1
+
+  // 🎯 Auto-advance : avance automatiquement entre les groupes de cartes
+  useAutoAdvance(autoAdvance, temps, totalGroups, setCurrentGroupIndex)
 
   // 🃏 Navigation vers CardsRecall
   const navigateToRecall = useCallback(() => {
