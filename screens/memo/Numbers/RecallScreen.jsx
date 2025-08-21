@@ -12,7 +12,7 @@ import {
 } from 'react-native'
 
 import MemorizationHeader from '../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
-import { SecondaryButton } from '../../../components/atoms/Commons/SecondaryButton/SecondaryButton'
+import { PrimaryButton } from '../../../components/atoms/Commons/PrimaryButton/PrimaryButton'
 import BorderedContainer from '../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
 //import useAutoScrollCursor from '../../../hooks/useAutoScrollCursor'
 
@@ -145,9 +145,9 @@ export default function RecallScreen({ route, navigation }) {
           </BorderedContainer>
 
           {/* BOUTON VALIDER */}
-          <SecondaryButton onPress={navigateToCorrection}>
-            Valider
-          </SecondaryButton>
+            <PrimaryButton onPress={navigateToCorrection}>
+              Valider
+            </PrimaryButton>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

@@ -8,7 +8,7 @@ import {
   Alert,
 } from 'react-native'
 
-import { SecondaryButton } from '../../../../components/atoms/Commons/SecondaryButton/SecondaryButton'
+import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton'
 import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
 import CorrectionGrid from '../../../../components/organisms/CorrectionGrid/CorrectionGrid'
 import useSaveBestScore from '../../../../hooks/useSaveBestScore'
@@ -142,13 +142,13 @@ export default function CorrectionScreen({ route, navigation }) {
         </View>
 
         {/* BOUTON RETRY */}
-        <SecondaryButton
+        <PrimaryButton
           style={styles.retryButton}
           onPress={handleRetry}
           disabled={loading} // Désactive pendant la sauvegarde
         >
           {loading ? 'Saving...' : 'Retry'}
-        </SecondaryButton>
+        </PrimaryButton>
       </ScrollView>
     </SafeAreaView>
   )

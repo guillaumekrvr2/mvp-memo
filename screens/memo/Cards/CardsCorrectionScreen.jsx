@@ -1,7 +1,8 @@
 // screens/memo/Cards/CardsCorrectionScreen.jsx
 import React, { useEffect } from 'react'
-import { Alert, TouchableOpacity, Text } from 'react-native'
+import { Alert } from 'react-native'
 import { SecondaryButton } from '../../../components/atoms/Commons/SecondaryButton/SecondaryButton'
+import { PrimaryButton } from '../../../components/atoms/Commons/PrimaryButton/PrimaryButton'
 import { CardsRecallOutput } from '../../../components/organisms/Cards/CardsRecallOutput/CardsRecallOutput'
 import useSaveBestScore from '../../../hooks/useSaveBestScore'
 import { theme } from '../../../theme'
@@ -137,25 +138,9 @@ export default function CardsCorrectionScreen({ route, navigation }) {
 
         {/* Bouton Retry */}
         <ButtonSection>
-          <TouchableOpacity
-            style={{
-              backgroundColor: theme.colors.primary,
-              borderRadius: 50,
-              paddingVertical: 18,
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-            }}
-            onPress={handleRetry}
-          >
-            <Text style={{
-              color: theme.colors.textOnDark,
-              fontSize: 18,
-              fontWeight: 'bold',
-            }}>
-              Recommencer
-            </Text>
-          </TouchableOpacity>
+          <PrimaryButton onPress={handleRetry}>
+            Recommencer
+          </PrimaryButton>
         </ButtonSection>
       </ContentScrollView>
     </Container>

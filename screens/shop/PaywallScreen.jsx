@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Image
 import { LinearGradient } from 'expo-linear-gradient';
 import { theme } from '../../theme';
 import { SecondaryButton } from '../../components/atoms/Commons/SecondaryButton/SecondaryButton';
+import { PrimaryButton } from '../../components/atoms/Commons/PrimaryButton/PrimaryButton';
 
 const PaywallScreen = ({ navigation, onClose }) => {
   const [selectedPlan, setSelectedPlan] = useState('annual');
@@ -165,15 +166,14 @@ const PaywallScreen = ({ navigation, onClose }) => {
 
       {/* Bouton d'action */}
       <View style={styles.actionSection}>
-        <TouchableOpacity
-          style={styles.upgradeButton}
+        <PrimaryButton
           onPress={() => {
             // TODO: Lancer l'achat
             console.log('Achat plan:', selectedPlan);
           }}
         >
-          <Text style={styles.upgradeButtonText}>Devenir Pro</Text>
-        </TouchableOpacity>
+          Devenir Pro
+        </PrimaryButton>
       </View>
     </SafeAreaView>
   );
@@ -368,19 +368,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: '10%',
     paddingBottom: 50,
     paddingTop: 20,
-  },
-  upgradeButton: {
-    backgroundColor: theme.colors.primary,
-    borderRadius: 50,
-    paddingVertical: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  upgradeButtonText: {
-    color: theme.colors.textOnDark,
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });
 
