@@ -7,7 +7,6 @@
  */
 export function mapUserRowToAccount(raw) {
   // 1. Log de l'objet brut reçu de Supabase
-  console.log('[userMapper] Raw data from Supabase:', raw);
 
   const account = {
     id:        raw.id,
@@ -22,7 +21,6 @@ export function mapUserRowToAccount(raw) {
   };
 
   // 2. Log de l'objet transformé
-  console.log('[userMapper] Transformed account:', account);
 
   return account;
 }

@@ -1,5 +1,5 @@
-// screens/memo/RecallScreen.jsx - Version avec scroll dans BorderedContainer
-import React, { useState, useRef } from 'react'
+// screens/memo/RecallScreen.jsx - Version avec scroll dans BorderedContainer  
+import React, { useState, useRef, useCallback, useMemo } from 'react'
 import {
   SafeAreaView,
   StyleSheet,
@@ -34,11 +34,34 @@ export default function RecallScreen({ route, navigation }) {
   // Hook d'autoscroll basé sur la position du curseur
   //useAutoScrollCursor(scrollRef, scrollH, cursorPosition, cols, lineHeight)
 
-  // Nettoie l'input utilisateur
-  const handleInputChange = (text) => {
+  // Placeholder simple
+  const createPlaceholder = () => {
+    return '123456789012...'
+  }
+
+  // Calcul de la hauteur optimale du TextInput basé sur l'objectif
+  const calculatedInputHeight = useMemo(() => {
+    const cols = 12 // Colonnes approximatives avec letterSpacing: 30
+    const lineHeight = 36
+    const estimatedLines = Math.ceil(objectif / cols)
+    const minHeight = 200 // Hauteur minimale
+    return Math.max(minHeight, estimatedLines * lineHeight + 50) // +50px de marge
+  }, [objectif])
+
+  // Memoized values pour éviter re-renders
+  const placeholder = useMemo(() => createPlaceholder(), [])
+  const mainInputStyle = useMemo(() => ({
+    ...styles.mainInput,
+    height: calculatedInputHeight, // Hauteur calculée au lieu de fixe
+  }), [calculatedInputHeight])
+  const inputScrollContentStyle = useMemo(() => styles.inputScrollContent, [])
+
+  // Nettoie l'input utilisateur - Memoized pour éviter re-renders
+  const handleInputChange = useCallback((text) => {
     const cleanText = text.replace(/[^0-9]/g, '').slice(0, objectif)
     setUserInput(cleanText)
-  }
+    setCursorPosition(cleanText.length)
+  }, [objectif])
 
   // Transforme l'entrée utilisateur en tableau
   const getUserInputArray = () => {
@@ -46,13 +69,8 @@ export default function RecallScreen({ route, navigation }) {
     return digits.concat(Array(objectif - digits.length).fill(''))
   }
 
-  // Placeholder simple
-  const createPlaceholder = () => {
-    return '123456789012...'
-  }
-
-  // Fonction pour naviguer vers la correction (utilisée par les deux boutons)
-  const navigateToCorrection = () => {
+  // Fonction pour naviguer vers la correction - Memoized
+  const navigateToCorrection = useCallback(() => {
     navigation.navigate('Correction', {
       inputs: getUserInputArray(),
       numbers,
@@ -60,7 +78,7 @@ export default function RecallScreen({ route, navigation }) {
       mode,
       variant,
     })
-  }
+  }, [navigation, userInput, numbers, temps, mode, variant, objectif])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,23 +104,28 @@ export default function RecallScreen({ route, navigation }) {
           </View>
 
           {/* CHAMP DE SAISIE DANS BORDERCONTAINER AVEC MESURE */}
-          <BorderedContainer onLayout={e => setScrollH(e.nativeEvent.layout.height)}>
+          <BorderedContainer onLayout={useCallback(e => setScrollH(e.nativeEvent.layout.height), [])}>
             <ScrollView
               ref={scrollRef}
               style={styles.inputScrollContainer}
-              contentContainerStyle={styles.inputScrollContent}
+              contentContainerStyle={inputScrollContentStyle}
               showsVerticalScrollIndicator={true}
               keyboardShouldPersistTaps="handled"
+              onScroll={(e) => {
+                const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent
+                console.log(`📜 ScrollView - offset:${contentOffset.y.toFixed(1)} contentH:${contentSize.height.toFixed(1)} layoutH:${layoutMeasurement.height.toFixed(1)}`)
+              }}
+              onLayout={(e) => {
+                const { width, height } = e.nativeEvent.layout
+                console.log(`📜 ScrollView Layout - w:${width.toFixed(1)} h:${height.toFixed(1)}`)
+              }}
+              scrollEventThrottle={16}
             >
               <TextInput
-                style={styles.mainInput}
+                style={mainInputStyle}
                 value={userInput}
                 onChangeText={handleInputChange}
-                onSelectionChange={(event) => {
-                  // Track la position du curseur pour l'autoscroll
-                  setCursorPosition(event.nativeEvent.selection.start)
-                }}
-                placeholder={createPlaceholder()}
+                placeholder={placeholder}
                 placeholderTextColor="#666"
                 keyboardType="number-pad"
                 autoFocus={true}
@@ -111,6 +134,12 @@ export default function RecallScreen({ route, navigation }) {
                 scrollEnabled={false}
                 editable={true}
                 selectTextOnFocus={false}
+                removeClippedSubviews={true}
+                maxLength={objectif}
+                onLayout={(e) => {
+                  const { width, height, x, y } = e.nativeEvent.layout
+                  console.log(`📐 TextInput Layout - w:${width.toFixed(1)} h:${height.toFixed(1)} x:${x} y:${y} chars:${userInput.length}`)
+                }}
               />
             </ScrollView>
           </BorderedContainer>
@@ -172,6 +201,6 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     letterSpacing: 30,
     lineHeight: 36,
-    minHeight: 200, // hauteur minimale pour que le contenu soit scrollable
+    // Hauteur maintenant gérée dynamiquement dans mainInputStyle
   },
 })
