@@ -38,13 +38,10 @@ export default function ArticleScreen() {
   const getHeroImage = (articleId) => {
     // Mapping statique des images (nécessaire pour React Native)
     const imageMap = {
-      '1': require('../../assets/icons/Illustration_Article_1.png'),
-      '2': require('../../assets/icons/Illustration_Article_1.png'), // temporaire
-      '3': require('../../assets/icons/Illustration_Article_1.png'), // temporaire
-      '4': require('../../assets/icons/Illustration_Article_1.png'), // temporaire
-      '5': require('../../assets/icons/Illustration_Article_1.png'), // temporaire
-      '6': require('../../assets/icons/Illustration_Article_1.png'), // temporaire
-      '7': require('../../assets/icons/Illustration_Article_1.png'), // temporaire
+      '1': require('../../assets/icons/Illustration_Article_1.png'), // La lecture éclair
+      '2': require('../../assets/articles/numbers.png'), // Apprendre les nombres vite
+      '3': require('../../assets/articles/palais mentaux.png'), // La mémoire en action
+      '4': require('../../assets/articles/cartes.png'), // Mémoriser un paquet de cartes
     };
     
     return imageMap[articleId] || require('../../assets/icons/Illustration_Article_1.png');
