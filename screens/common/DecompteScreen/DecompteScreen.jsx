@@ -1,9 +1,10 @@
 // screens/common/DecompteScreen/DecompteScreen.jsx
 import React, { useState, useEffect } from 'react'
-import { SafeAreaView } from 'react-native'
+import { SafeAreaView, Image } from 'react-native'
 import * as Haptics from 'expo-haptics'
 import { theme } from '../../../theme'
 import * as S from './styles'
+import { useCardDeck } from '../../../hooks/Cards/useCardDeck'
 
 export default function DecompteScreen({ route, navigation }) {
   // 🎯 Récupération de tous les paramètres incluant la discipline
@@ -20,6 +21,31 @@ export default function DecompteScreen({ route, navigation }) {
 
   const [counter, setCounter] = useState(3)
   const [isAnimating, setIsAnimating] = useState(false)
+
+  // 🃏 Preload des cartes pendant le décompte si c'est une discipline cartes
+  const shouldPreloadCards = discipline === 'cards'
+  const { deck } = shouldPreloadCards ? useCardDeck(objectif, 1) : { deck: [] }
+
+  // 🃏 Preload des assets pendant le décompte
+  useEffect(() => {
+    if (shouldPreloadCards && deck.length > 0) {
+      // Preload les 12 premières cartes (4 groupes de 3) pendant les 3 secondes
+      const cardsToPreload = deck.slice(0, Math.min(12, deck.length))
+      cardsToPreload.forEach((card, index) => {
+        // Étale le preload sur la durée du décompte
+        setTimeout(() => {
+          try {
+            const resolvedAsset = Image.resolveAssetSource(card.asset)
+            if (resolvedAsset && resolvedAsset.uri) {
+              Image.prefetch(resolvedAsset.uri)
+            }
+          } catch (error) {
+            // Ignore les erreurs de preload
+          }
+        }, index * 250) // Étale sur 3 secondes (250ms * 12 = 3s)
+      })
+    }
+  }, [shouldPreloadCards, deck])
 
   // 🚀 Fonction pour passer directement au prochain écran
   const handleSkipCountdown = () => {

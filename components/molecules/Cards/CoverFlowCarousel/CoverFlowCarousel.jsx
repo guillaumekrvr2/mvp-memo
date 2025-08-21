@@ -84,7 +84,7 @@ export function CoverFlowCarousel({
           
           if (closestCardIndex >= 0 && closestCardIndex !== hoveredCardIndex) {
             setHoveredCardIndex(closestCardIndex)
-            Vibration.vibrate(3)
+            Vibration.vibrate(5) // Vibration légèrement plus perceptible
           }
         })
       }

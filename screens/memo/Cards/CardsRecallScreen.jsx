@@ -29,6 +29,9 @@ export default function CardsRecallScreen(props) {
   const variant = params.variant || ''
   const discipline = params.discipline || ''
   const memorizedCards = params.memorizedCards || []
+  
+  // Temps fixe pour le recall : 4 minutes comme pour Numbers
+  const recallTime = 4 * 60 // 240 secondes
 
   const {
     outputSlots,
@@ -64,7 +67,7 @@ export default function CardsRecallScreen(props) {
       <MemorizationHeader
         onBack={() => navigation.goBack()}
         onDone={handleDone}
-        duration={temps}
+        duration={recallTime}
       />
 
       <View style={{ flex: 1 }}>

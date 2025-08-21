@@ -17,9 +17,7 @@ export function CardSlot({
         }
       ]}
     >
-      <Text style={styles.positionText}>
-        {position}
-      </Text>
+      {/* Numéro de position supprimé */}
     </View>
   )
 }

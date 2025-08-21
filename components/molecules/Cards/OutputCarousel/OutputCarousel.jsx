@@ -46,10 +46,10 @@ export const OutputCarousel = forwardRef(({
               )
             }
             
-            // Calcul de la correction pour cette carte
+            // Calcul de la correction pour cette carte - comparer suit + rank
             const correctCard = correctCards[index]
-            const isCorrect = showCorrection && correctCard 
-              ? slot.card.id === correctCard.id 
+            const isCorrect = showCorrection && correctCard && slot.card
+              ? slot.card.suit === correctCard.suit && slot.card.rank === correctCard.rank
               : null
             
             return (

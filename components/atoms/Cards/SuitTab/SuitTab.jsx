@@ -28,12 +28,7 @@ export function SuitTab({
       ]}>
         {suitSymbol}
       </Text>
-      <Text style={[
-        styles.label,
-        isSelected && styles.labelSelected
-      ]}>
-        {suit.charAt(0).toUpperCase()}
-      </Text>
+      {/* Initiales supprimées */}
     </TouchableOpacity>
   )
 }

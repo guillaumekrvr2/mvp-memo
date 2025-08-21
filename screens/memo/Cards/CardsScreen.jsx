@@ -1,6 +1,6 @@
 // screens/memo/Cards/CardsScreen.jsx - VERSION AVEC GROUPES/PAQUETS
-import React, { useState, useMemo, useCallback } from 'react'
-import { SafeAreaView, View } from 'react-native'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
+import { SafeAreaView, View, Image } from 'react-native'
 import MemorizationHeader from '../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { CardsStack } from '../../../components/molecules/Cards/CardsStack/CardsStack'
 import { CardsThumbnailRow } from '../../../components/molecules/Cards/CardsThumbnailRow/CardsThumbnailRow'
@@ -29,6 +29,8 @@ export default function CardsScreen({ route, navigation }) {
     totalCards,
     isComplete
   } = useCardDeck(objectif, 1) // 🃏 Le hook génère le deck complet
+
+  // 🃏 Preload fait maintenant dans DecompteScreen pendant les 3 secondes
 
   // 🃏 Création des groupes de cartes selon cardsCount
   const cardGroups = useMemo(() => {

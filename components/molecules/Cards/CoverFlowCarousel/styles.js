@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 0,
+    paddingHorizontal: 16, // Padding pour que les cartes ne touchent pas les bords
     overflow: 'visible'
   }
 })

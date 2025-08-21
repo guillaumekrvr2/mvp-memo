@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
     borderBottomWidth: 2,
     borderBottomColor: 'rgba(255, 255, 255, 0.2)',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)'
+    backgroundColor: '#000000'
   },
   title: {
     color: '#fff', 

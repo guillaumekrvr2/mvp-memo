@@ -18,24 +18,18 @@ export function PlacedCard({
     }
   }
 
-  // Style de bordure pour la correction
-  const getBorderStyle = () => {
+  // Style de correction : grisement pour cartes fausses
+  const getCorrectionStyle = () => {
     if (!showCorrection || isCorrect === null) {
       return {}
     }
-    return {
-      borderWidth: 2,
-      borderColor: isCorrect ? '#4caf50' : '#f44336',
-      borderRadius: 5
+    // Griser seulement les cartes fausses
+    if (!isCorrect) {
+      return {
+        opacity: 0.4
+      }
     }
-  }
-
-  // Style du container pour le mode correction
-  const getContainerStyle = () => {
-    if (!showCorrection || isCorrect === null) {
-      return {}
-    }
-    return getBorderStyle()
+    return {}
   }
 
   return (
@@ -46,7 +40,7 @@ export function PlacedCard({
           transform: [{ translateX: index * spacing }],
           zIndex: index + 1
         },
-        getContainerStyle()
+        getCorrectionStyle()
       ]}
       onPress={handlePress}
       activeOpacity={0.8}

@@ -87,12 +87,22 @@ export function PlayingCard({
       {isSwipable && panGesture ? (
         <GestureDetector gesture={panGesture}>
           <Animated.View style={[styles.animatedCard, animatedStyle]}>
-            <Image source={card.asset} style={styles.cardImage} resizeMode="contain" />
+            <Image 
+              source={card.asset} 
+              style={styles.cardImage} 
+              resizeMode="contain"
+              fadeDuration={0}
+            />
           </Animated.View>
         </GestureDetector>
       ) : (
         <Animated.View style={[styles.animatedCard, animatedStyle]}>
-          <Image source={card.asset} style={styles.cardImage} resizeMode="contain" />
+          <Image 
+            source={card.asset} 
+            style={styles.cardImage} 
+            resizeMode="contain"
+            fadeDuration={0}
+          />
         </Animated.View>
       )}
     </View>
