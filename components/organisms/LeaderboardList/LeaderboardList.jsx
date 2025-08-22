@@ -55,6 +55,8 @@ export function LeaderboardList({
         <Text style={styles.empty}>{emptyText}</Text>
       )}
       contentContainerStyle={styles.listPadding}
+      showsVerticalScrollIndicator={false}
+      style={{ flex: 1 }}
     />
   );
 }

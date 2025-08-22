@@ -10,6 +10,7 @@ export default StyleSheet.create({
   },
   // Padding pour le container de la FlatList
   listPadding: {
-    paddingBottom: 20,
+    paddingBottom: 80,
+    flexGrow: 1,
   },
 });
