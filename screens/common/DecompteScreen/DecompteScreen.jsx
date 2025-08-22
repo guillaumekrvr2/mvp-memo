@@ -5,6 +5,7 @@ import * as Haptics from 'expo-haptics'
 import { theme } from '../../../theme'
 import * as S from './styles'
 import { useCardDeck } from '../../../hooks/Cards/useCardDeck'
+import { useFirstCards } from '../../../hooks/Cards/useFirstCards'
 
 export default function DecompteScreen({ route, navigation }) {
   // 🎯 Récupération de tous les paramètres incluant la discipline
@@ -22,30 +23,31 @@ export default function DecompteScreen({ route, navigation }) {
   const [counter, setCounter] = useState(3)
   const [isAnimating, setIsAnimating] = useState(false)
 
-  // 🃏 Preload des cartes pendant le décompte si c'est une discipline cartes
+  // 🃏 Hook léger pour preload rapide des 6 premières cartes seulement
   const shouldPreloadCards = discipline === 'cards'
-  const { deck } = shouldPreloadCards ? useCardDeck(objectif, 1) : { deck: [] }
+  const firstCards = shouldPreloadCards ? useFirstCards(6) : []
 
-  // 🃏 Preload des assets pendant le décompte
+  // 🃏 Preload RAPIDE des 6 premières cartes dès qu'elles sont prêtes
   useEffect(() => {
-    if (shouldPreloadCards && deck.length > 0) {
-      // Preload les 12 premières cartes (4 groupes de 3) pendant les 3 secondes
-      const cardsToPreload = deck.slice(0, Math.min(12, deck.length))
-      cardsToPreload.forEach((card, index) => {
-        // Étale le preload sur la durée du décompte
+    if (shouldPreloadCards && firstCards.length > 0) {
+      console.log('🚀 Démarrage preload des 6 premières cartes')
+      
+      firstCards.forEach((card, index) => {
+        // Preload immédiat sans délai
         setTimeout(() => {
           try {
             const resolvedAsset = Image.resolveAssetSource(card.asset)
             if (resolvedAsset && resolvedAsset.uri) {
               Image.prefetch(resolvedAsset.uri)
+              console.log(`✅ Carte ${index + 1}/6 preloadée`)
             }
           } catch (error) {
-            // Ignore les erreurs de preload
+            console.log(`❌ Erreur preload carte ${index + 1}:`, error)
           }
-        }, index * 250) // Étale sur 3 secondes (250ms * 12 = 3s)
+        }, index * 50) // 50ms entre chaque = 300ms total pour 6 cartes
       })
     }
-  }, [shouldPreloadCards, deck])
+  }, [shouldPreloadCards, firstCards])
 
   // 🚀 Fonction pour passer directement au prochain écran
   const handleSkipCountdown = () => {

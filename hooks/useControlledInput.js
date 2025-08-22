@@ -15,10 +15,8 @@ export default function useControlledInput(
   // 2. Si la prop `value` change (number, null, whatever), on re-cast et met à jour
   useEffect(() => {
     const str = String(value ?? '')
-    if (str !== internal) {
-      setInternal(str)
-    }
-  }, [value, internal])
+    setInternal(str)
+  }, [value])
 
   // 3. Quand l’utilisateur tape, on met à jour localement ET on appelle la callback
   const handleChange = useCallback(text => {
