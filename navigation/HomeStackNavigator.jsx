@@ -5,11 +5,15 @@ import HomeScreen from '../screens/home/HomeScreen'
 import NumbersScreen from '../screens/memo/Numbers/NumbersScreen/NumbersScreen'
 import CardsScreen from '../screens/memo/Cards/CardsScreen'
 import CardsSettingsScreen from '../screens/memo/Cards/CardsSettingsScreen'
+import BinariesScreen from '../screens/memo/Binaries/BinariesScreen/BinariesScreen'
 import DecompteScreen from '../screens/common/DecompteScreen/DecompteScreen'
 import MemoScreen from '../screens/memo/Numbers/MemoScreen'
+import BinaryMemoScreen from '../screens/memo/Binaries/MemoScreen'
 import RecallScreen from '../screens/memo/Numbers/RecallScreen'
+import BinaryRecallScreen from '../screens/memo/Binaries/RecallScreen'
 import CardsRecallScreen from '../screens/memo/Cards/CardsRecallScreen'
 import CorrectionScreen from '../screens/memo/Numbers/CorrectionScreen/CorrectionScreen'
+import BinaryCorrectionScreen from '../screens/memo/Binaries/CorrectionScreen/CorrectionScreen'
 import CardsCorrectionScreen from '../screens/memo/Cards/CardsCorrectionScreen'
 import ArticleScreen from '../screens/ArticleScreen'
 import { theme } from '../theme'
@@ -27,6 +31,7 @@ export default function HomeStackNavigator() {
       <Stack.Screen name="HomeMain" component={HomeScreen} />
       <Stack.Screen name="Numbers" component={NumbersScreen} />
       <Stack.Screen name="Cards" component={CardsSettingsScreen} />
+      <Stack.Screen name="Binaries" component={BinariesScreen} />
       <Stack.Screen name="CardsGame" component={CardsScreen} />
       <Stack.Screen 
         name="Decompte" 
@@ -39,8 +44,18 @@ export default function HomeStackNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen 
+        name="BinaryMemo" 
+        component={BinaryMemoScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
         name="Recall" 
         component={RecallScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="BinaryRecall" 
+        component={BinaryRecallScreen} 
         options={{ headerShown: false }}
       />
       <Stack.Screen 
@@ -49,6 +64,7 @@ export default function HomeStackNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="Correction" component={CorrectionScreen} />
+      <Stack.Screen name="BinaryCorrection" component={BinaryCorrectionScreen} />
       <Stack.Screen 
         name="CardsCorrection" 
         component={CardsCorrectionScreen} 

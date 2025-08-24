@@ -26,7 +26,7 @@ export default function HomeScreen() {
     { label: 'Numbers', screen: 'Numbers', emoji: '🔢', color: '#667eea', description: 'Mémorisation de nombres' },
     { label: 'Cards', screen: 'Cards', emoji: '🃏', color: '#764ba2', description: 'Jeux de cartes' },
     { label: 'Words', screen: 'Words', emoji: '📝', color: '#f093fb', description: 'Mots et vocabulaire' },
-    { label: 'Binary', screen: 'Binary', emoji: '💻', color: '#4facfe', description: 'Code binaire' },
+    { label: 'Binary', screen: 'Binaries', emoji: '💻', color: '#4facfe', description: 'Code binaire' },
     { label: 'Spoken', screen: 'Spoken', emoji: '🎤', color: '#43e97b', description: 'Mémorisation orale' },
     { label: 'Images', screen: 'Images', emoji: '🖼️', color: '#fa709a', description: 'Mémorisation visuelle' },
   ]

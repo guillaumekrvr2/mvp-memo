@@ -58,6 +58,14 @@ export default function ProfileScreen({ navigation }) {
     score: records[id] != null ? records[id] : 0,
   }))
 
+  // Prépare la liste simple des variants "binary"
+  const rawBinary = byDiscipline['binary'] || byDiscipline[10] || []
+  const binaryVariants = rawBinary.map(({ id, label }) => ({
+    id,
+    label,
+    score: records[id] != null ? records[id] : 0,
+  }))
+
   // Calculer le score total
   const totalScore = Object.values(records).reduce((sum, score) => sum + (score || 0), 0)
 
@@ -155,8 +163,28 @@ export default function ProfileScreen({ navigation }) {
           )}
         </View>
 
+        {/* Binary: liste détaillée */}
+        <View style={styles.disciplineCard}>
+          <View style={styles.disciplineHeader}>
+            <Text style={styles.disciplineTitle}>💻 Binary</Text>
+            <Text style={styles.variantCount}>{binaryVariants.length} variants</Text>
+          </View>
+          {binaryVariants.length > 0 ? (
+            binaryVariants.map(({ id, label, score }) => (
+              <View key={id} style={styles.variantRow}>
+                <Text style={styles.variantLabel}>{label}</Text>
+                <View style={styles.scoreChip}>
+                  <Text style={styles.scoreText}>{score}</Text>
+                </View>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.emptyText}>Aucun variant disponible</Text>
+          )}
+        </View>
+
         {/* Autres disciplines */}
-        {DISCIPLINES.filter(d => d !== 'numbers' && d !== 'cards').map(discipline => {
+        {DISCIPLINES.filter(d => d !== 'numbers' && d !== 'cards' && d !== 'binary').map(discipline => {
           const disciplineEmojis = {
             cards: '🃏',
             words: '📝',

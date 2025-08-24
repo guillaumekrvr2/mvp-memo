@@ -61,6 +61,14 @@ export default function DecompteScreen({ route, navigation }) {
         mode,
         discipline
       })
+    } else if (discipline === 'binaries') {
+      navigation.replace('BinaryMemo', { 
+        objectif, 
+        temps, 
+        variant, 
+        digitCount, 
+        autoAdvance 
+      })
     } else {
       navigation.replace('Memorisation', { 
         objectif, 
@@ -85,6 +93,15 @@ export default function DecompteScreen({ route, navigation }) {
           autoAdvance,
           mode,
           discipline
+        })
+      } else if (discipline === 'binaries') {
+        // 🔢 Navigation vers 'BinaryMemo' pour les binaires
+        navigation.replace('BinaryMemo', { 
+          objectif, 
+          temps, 
+          variant, 
+          digitCount, 
+          autoAdvance 
         })
       } else {
         // Par défaut, navigation vers MemoScreen pour les numbers
@@ -116,7 +133,9 @@ export default function DecompteScreen({ route, navigation }) {
 
   // 🎯 Affichage conditionnel des détails selon la discipline
   const getObjectifLabel = () => {
-    return discipline === 'cards' ? 'Cartes' : 'Objectif'
+    if (discipline === 'cards') return 'Cartes'
+    if (discipline === 'binaries') return 'Objectif (bits)'
+    return 'Objectif'
   }
 
   const getObjectifValue = () => {
