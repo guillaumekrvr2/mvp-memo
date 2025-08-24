@@ -107,3 +107,10 @@ export const BodyText = styled.Text`
 export const Paragraph = styled.View`
   margin-bottom: 16px;
 `;
+
+export const CTAContainer = styled.View`
+  padding-horizontal: 24px;
+  padding-top: 32px;
+  padding-bottom: 16px;
+  align-items: center;
+`;

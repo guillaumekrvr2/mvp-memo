@@ -1,11 +1,12 @@
 // components/screens/ArticleScreen/ArticleScreen.jsx
 import React from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, TouchableOpacity, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import articles from '../../data/repositories/ArticlesRepository.json';
+import { theme } from '../../theme';
 import { 
   Container, 
   BackButton,
@@ -19,7 +20,8 @@ import {
   PublishDate,
   BodyContainer,
   BodyText,
-  Paragraph
+  Paragraph,
+  CTAContainer
 } from './styles';
 
 export default function ArticleScreen() {
@@ -49,6 +51,44 @@ export default function ArticleScreen() {
 
   const handleBack = () => {
     navigation.goBack();
+  };
+
+  // Détermine le type d'article et l'action CTA appropriée
+  const getArticleType = (articleId, title) => {
+    if (articleId === '2' || title.toLowerCase().includes('nombres')) {
+      return 'numbers';
+    }
+    if (articleId === '4' || title.toLowerCase().includes('cartes')) {
+      return 'cards';
+    }
+    return null;
+  };
+
+  const handlePracticeNavigation = () => {
+    const articleType = getArticleType(article.id, article.title);
+    if (articleType === 'numbers') {
+      // Navigue vers l'onglet Home, puis vers l'écran Numbers
+      navigation.navigate('Tabs', {
+        screen: 'Home',
+        params: { screen: 'Numbers' }
+      });
+    } else if (articleType === 'cards') {
+      // Navigue vers l'onglet Home, puis vers l'écran Cards
+      navigation.navigate('Tabs', {
+        screen: 'Home', 
+        params: { screen: 'Cards' }
+      });
+    }
+  };
+
+  const articleType = getArticleType(article.id, article.title);
+  const getPracticeButtonText = () => {
+    if (articleType === 'numbers') {
+      return '🔢 Pratiquer les nombres';
+    } else if (articleType === 'cards') {
+      return '🃏 Pratiquer les cartes';
+    }
+    return null;
   };
 
   return (
@@ -186,6 +226,33 @@ export default function ArticleScreen() {
               );
             })}
           </BodyContainer>
+
+          {/* CTA Button pour pratiquer la discipline associée */}
+          {articleType && (
+            <CTAContainer>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: theme.colors.primary,
+                  borderRadius: 50,
+                  paddingVertical: 18,
+                  paddingHorizontal: 32,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                }}
+                onPress={handlePracticeNavigation}
+                activeOpacity={0.8}
+              >
+                <Text style={{
+                  color: theme.colors.textOnDark,
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                }}>
+                  {getPracticeButtonText()}
+                </Text>
+              </TouchableOpacity>
+            </CTAContainer>
+          )}
         </ContentContainer>
 
         {/* Espace pour éviter le chevauchement avec la navigation */}
