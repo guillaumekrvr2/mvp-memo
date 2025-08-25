@@ -50,4 +50,16 @@ export default StyleSheet.create({
   placeholderText: {
     color: '#aaa',
   },
+  // Nouveaux styles pour spokens (mode single input)
+  singleInputContainer: {
+    paddingHorizontal: 20,
+    marginVertical: 10,
+  },
+  fullWidthInputBox: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#333',
+    width: '100%',
+  },
 })

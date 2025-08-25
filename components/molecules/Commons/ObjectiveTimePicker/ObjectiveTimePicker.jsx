@@ -16,6 +16,7 @@ export default function ObjectiveTimePicker({
   onVariantSelect,
   onVariantPickerOpen,
   disabled = false,
+  hideTime = false, // Nouvelle prop pour masquer le champ temps
 }) {
   const staticTimes = {
     'memory-league': '1 minute',
@@ -30,8 +31,8 @@ export default function ObjectiveTimePicker({
   }
 
   return (
-    <View style={styles.row}>
-      <View style={styles.inputBox}>
+    <View style={hideTime ? styles.singleInputContainer : styles.row}>
+      <View style={hideTime ? styles.fullWidthInputBox : styles.inputBox}>
         <InputField
           style={styles.input}
           placeholder="Objectif"
@@ -42,39 +43,43 @@ export default function ObjectiveTimePicker({
         />
       </View>
 
-      {staticLabel ? (
-        // Memory League : temps fixe
-        <View style={styles.staticTimeBox}>
-          <Text style={styles.staticTime}>{staticLabel}</Text>
-        </View>
-      ) : mode === 'iam' ? (
-        // IAM : dropdown pour sélectionner le variant
-        <TouchableOpacity 
-          style={[styles.inputBox, styles.dropdownBox]}
-          onPress={onVariantPickerOpen}
-          disabled={disabled}
-        >
-          <Text style={[styles.dropdownText, !selectedVariant && styles.placeholderText]}>
-            {getIAMDisplayText()}
-          </Text>
-          <Ionicons 
-            name="chevron-down" 
-            size={20} 
-            color={disabled ? "#666" : "#fff"} 
-          />
-        </TouchableOpacity>
-      ) : (
-        // Custom : saisie libre du temps
-        <View style={styles.inputBox}>
-          <InputField
-            style={styles.input}
-            placeholder="Temps (s)"
-            keyboardType="number-pad"
-            value={temps?.toString() || ''}
-            onChangeText={onTempsChange}
-            editable={!disabled}
-          />
-        </View>
+      {!hideTime && (
+        <>
+          {staticLabel ? (
+            // Memory League : temps fixe
+            <View style={styles.staticTimeBox}>
+              <Text style={styles.staticTime}>{staticLabel}</Text>
+            </View>
+          ) : mode === 'iam' ? (
+            // IAM : dropdown pour sélectionner le variant
+            <TouchableOpacity 
+              style={[styles.inputBox, styles.dropdownBox]}
+              onPress={onVariantPickerOpen}
+              disabled={disabled}
+            >
+              <Text style={[styles.dropdownText, !selectedVariant && styles.placeholderText]}>
+                {getIAMDisplayText()}
+              </Text>
+              <Ionicons 
+                name="chevron-down" 
+                size={20} 
+                color={disabled ? "#666" : "#fff"} 
+              />
+            </TouchableOpacity>
+          ) : (
+            // Custom : saisie libre du temps
+            <View style={styles.inputBox}>
+              <InputField
+                style={styles.input}
+                placeholder="Temps (s)"
+                keyboardType="number-pad"
+                value={temps?.toString() || ''}
+                onChangeText={onTempsChange}
+                editable={!disabled}
+              />
+            </View>
+          )}
+        </>
       )}
     </View>
   )
