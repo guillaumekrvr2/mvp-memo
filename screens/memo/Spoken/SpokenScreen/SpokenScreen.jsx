@@ -50,7 +50,7 @@ export default function SpokenScreen() {
           <PlayButton
             style={styles.playButton}
             onPress={() =>
-              navigation.navigate('Decompte', {
+              navigation.navigate('SpokenDecompte', {
                 objectif: parseInt(objectif, 10),
                 temps: playTime,
                 mode,

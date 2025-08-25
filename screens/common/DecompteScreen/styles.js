@@ -32,7 +32,11 @@ export const CountdownCircle = styled.View`
 
 export const CounterText = styled.Text`
   color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.typography.size.xxxl || 96}px;
+  font-size: ${({ theme, isReady }) => 
+    isReady 
+      ? theme.typography.size.xl || 32
+      : theme.typography.size.xxxl || 96
+  }px;
   font-weight: ${({ theme }) => theme.typography.weight.bold};
   text-align: center;
   ${({ isAnimating }) =>
