@@ -30,7 +30,7 @@ export default function SpokenDecompteScreen({ route, navigation }) {
 
   // Fonction appelée à la fin du décompte
   const handleCountdownComplete = () => {
-    navigation.replace('Memorisation', { 
+    navigation.replace('SpokenMemo', { 
       objectif, 
       temps, 
       variant, 
@@ -42,7 +42,7 @@ export default function SpokenDecompteScreen({ route, navigation }) {
 
   // Fonction pour passer directement au prochain écran
   const handleSkipCountdown = () => {
-    navigation.replace('Memorisation', { 
+    navigation.replace('SpokenMemo', { 
       objectif, 
       temps, 
       variant, 

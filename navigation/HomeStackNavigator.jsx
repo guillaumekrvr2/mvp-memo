@@ -8,6 +8,7 @@ import CardsSettingsScreen from '../screens/memo/Cards/CardsSettingsScreen'
 import SpokenScreen from '../screens/memo/Spoken/SpokenScreen/SpokenScreen'
 import DecompteScreen from '../screens/common/DecompteScreen/DecompteScreen'
 import SpokenDecompteScreen from '../screens/memo/Spoken/SpokenDecompteScreen/SpokenDecompteScreen'
+import SpokenMemoScreen from '../screens/memo/Spoken/SpokenMemoScreen/SpokenMemoScreen'
 import MemoScreen from '../screens/memo/Numbers/MemoScreen'
 import RecallScreen from '../screens/memo/Numbers/RecallScreen'
 import CardsRecallScreen from '../screens/memo/Cards/CardsRecallScreen'
@@ -39,6 +40,11 @@ export default function HomeStackNavigator() {
       <Stack.Screen 
         name="SpokenDecompte" 
         component={SpokenDecompteScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="SpokenMemo" 
+        component={SpokenMemoScreen} 
         options={{ headerShown: false }}
       />
       <Stack.Screen 
