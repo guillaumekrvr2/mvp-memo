@@ -179,23 +179,21 @@ export default function CommunityScreen() {
         options={gameModesOptions}
       />
 
-      {/* Gestion des états de chargement et d'erreur */}
-      {(loading || variantsLoading) && <Text>Chargement…</Text>}
+      {/* Gestion des erreurs */}
       {(error || variantsError) && (
         <Text>Erreur : {error?.message || variantsError?.message}</Text>
       )}
 
       {/* Liste du leaderboard */}
-      {!loading && !error && !variantsLoading && !variantsError && (
-        <LeaderboardList
-          data={sorted}
-          variantId={variantId}
-          discipline={selectedDiscipline}
-          mode={leaderboardMode}
-          disciplines={DISCIPLINES}
-          currentUserId={current?.id || null}
-        />
-      )}
+      <LeaderboardList
+        data={sorted}
+        variantId={variantId}
+        discipline={selectedDiscipline}
+        mode={leaderboardMode}
+        disciplines={DISCIPLINES}
+        currentUserId={current?.id || null}
+        loading={loading || variantsLoading}
+      />
     </View>
   );
 }

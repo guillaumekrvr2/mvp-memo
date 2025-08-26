@@ -1,8 +1,9 @@
 // src/components/organisms/LeaderboardList/LeaderboardList.jsx
 import React from 'react';
-import { FlatList, Text } from 'react-native';
+import { FlatList, Text, ActivityIndicator, View } from 'react-native';
 import styles from './styles';
 import { LeaderboardItem } from '../../molecules/LeaderboardItem/LeaderboardItem';
+import { theme } from '../../../theme';
 
 /**
  * LeaderboardList
@@ -16,6 +17,7 @@ import { LeaderboardItem } from '../../molecules/LeaderboardItem/LeaderboardItem
  *  - variantId : ID du variant pour cas IAM
  *  - currentUserId : ID de l'utilisateur connecté pour le highlight
  *  - emptyText : texte à afficher si la liste est vide (défaut « Aucun participant »)
+ *  - loading : boolean pour afficher le loader
  */
 export function LeaderboardList({
   data,
@@ -25,6 +27,7 @@ export function LeaderboardList({
   variantId,
   currentUserId,
   emptyText = 'Aucun participant',
+  loading = false,
 }) {
   console.log('[LeaderboardList] Rendering with data:', { 
     dataCount: data ? data.length : 0,
@@ -32,8 +35,19 @@ export function LeaderboardList({
     mode,
     variantId,
     firstItem: data?.[0],
-    isEmpty: !data || data.length === 0
+    isEmpty: !data || data.length === 0,
+    loading
   });
+  
+  // Affichage du loader pendant le chargement
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <Text style={styles.loadingText}>Chargement du classement...</Text>
+      </View>
+    );
+  }
   
   return (
     <FlatList
