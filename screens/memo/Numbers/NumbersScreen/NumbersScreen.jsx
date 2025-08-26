@@ -17,6 +17,8 @@ import RecordDisplay from '../../../../components/molecules/Commons/RecordDispla
 import ObjectiveTimePicker from '../../../../components/molecules/Commons/ObjectiveTimePicker/ObjectiveTimePicker';
 import HighlightBoxSetter from '../../../../components/atoms/Commons/HighlightBoxSetter/HighlightBoxSetter';
 import IAMVariantPickerModal from '../../../../components/molecules/Commons/IAMVariantPickerModal/IAMVariantPickerModal';
+import SpecificRevisionsSelector from '../../../../components/atoms/Commons/SpecificRevisionsSelector/SpecificRevisionsSelector';
+import SpecificRevisionsModal from '../../../../components/molecules/Commons/SpecificRevisionsModal/SpecificRevisionsModal';
 
 import useMode from '../../../../hooks/useMode';
 import { modeOptions } from '../../../../config/gameConfig';
@@ -29,6 +31,9 @@ import { useModeVariants } from '../../../../hooks/useModeVariants';
 export default function NumbersScreen() {
   const navigation = useNavigation();
   const [iamVariantModalVisible, setIamVariantModalVisible] = useState(false);
+  const [specificRevisionsModalVisible, setSpecificRevisionsModalVisible] = useState(false);
+  const [fromValue, setFromValue] = useState(0);
+  const [toValue, setToValue] = useState(0);
 
   // Digit picker pour le nombre de chiffres
   const {
@@ -85,6 +90,15 @@ export default function NumbersScreen() {
     setSelectedVariant(variant);
   };
 
+  // Gestion du modal SpecificRevisions
+  const openSpecificRevisionsModal = () => {
+    setSpecificRevisionsModalVisible(true);
+  };
+
+  const closeSpecificRevisionsModal = () => {
+    setSpecificRevisionsModalVisible(false);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={[
@@ -127,6 +141,10 @@ export default function NumbersScreen() {
                 enabled={autoAdvance} 
                 onToggle={toggleAutoAdvance} 
               />
+              <SpecificRevisionsSelector
+                style={styles.specificRevisionsSelector}
+                onPress={openSpecificRevisionsModal}
+              />
             </>
           ) : (
             <ObjectiveTimePicker
@@ -163,7 +181,11 @@ export default function NumbersScreen() {
                 variant: selectedVariant?.id,
                 digitCount,
                 autoAdvance,
-                discipline: 'numbers' // 🎯 AJOUTÉ : Indique la discipline numbers
+                discipline: 'numbers', // 🎯 AJOUTÉ : Indique la discipline numbers
+                // Paramètres pour révisions spécifiques
+                fromValue: mode === 'custom' ? fromValue : undefined,
+                toValue: mode === 'custom' ? toValue : undefined,
+                useSpecificRange: mode === 'custom' && fromValue > 0 && toValue > 0 && fromValue <= toValue
               })
             }
           />
@@ -191,6 +213,15 @@ export default function NumbersScreen() {
           selectedVariant={selectedVariant}
           onSelect={handleIamVariantSelect}
           onClose={closeIamVariantModal}
+        />
+
+        <SpecificRevisionsModal
+          visible={specificRevisionsModalVisible}
+          fromValue={fromValue}
+          toValue={toValue}
+          onFromValueChange={setFromValue}
+          onToValueChange={setToValue}
+          onClose={closeSpecificRevisionsModal}
         />
       </View>
     </SafeAreaView>

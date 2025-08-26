@@ -17,7 +17,10 @@ export default function DecompteScreen({ route, navigation }) {
     cardsCount, 
     autoAdvance,
     mode,
-    discipline // 🎯 Nouveau paramètre pour déterminer la discipline
+    discipline, // 🎯 Nouveau paramètre pour déterminer la discipline
+    fromValue,
+    toValue,
+    useSpecificRange
   } = route.params
 
   const [counter, setCounter] = useState(3)
@@ -75,7 +78,10 @@ export default function DecompteScreen({ route, navigation }) {
         temps, 
         variant, 
         digitCount, 
-        autoAdvance 
+        autoAdvance,
+        fromValue,
+        toValue,
+        useSpecificRange
       })
     }
   }
@@ -110,7 +116,10 @@ export default function DecompteScreen({ route, navigation }) {
           temps, 
           variant, 
           digitCount, 
-          autoAdvance 
+          autoAdvance,
+          fromValue,
+          toValue,
+          useSpecificRange
         })
       }
       return
