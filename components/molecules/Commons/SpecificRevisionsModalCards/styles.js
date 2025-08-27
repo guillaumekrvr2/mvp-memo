@@ -48,6 +48,7 @@ export default StyleSheet.create({
   fieldGroup: {
     flex: 1,
     alignItems: 'center',
+    position: 'relative',
   },
   
   fieldLabel: {
@@ -58,7 +59,7 @@ export default StyleSheet.create({
     textAlign: 'center',
   },
   
-  textInput: {
+  dropdown: {
     width: '100%',
     height: 56,
     backgroundColor: '#2a2a3e',
@@ -67,17 +68,75 @@ export default StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 16,
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
-    letterSpacing: 0.5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+  },
+  
+  dropdownText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '600',
+    textAlign: 'center',
+    letterSpacing: 0.5,
+  },
+  
+  dropdownArrow: {
+    color: '#a0a9c0',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  
+  dropdownList: {
+    position: 'absolute',
+    top: 64,
+    left: 0,
+    right: 0,
+    backgroundColor: '#2a2a3e',
+    borderWidth: 1,
+    borderColor: '#3a3a4e',
+    borderRadius: 12,
+    maxHeight: 200,
+    zIndex: 1000,
+    
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  
+  scrollView: {
+    maxHeight: 200,
+  },
+  
+  dropdownItem: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3a3a4e',
+  },
+  
+  dropdownItemSelected: {
+    backgroundColor: '#667eea',
+  },
+  
+  dropdownItemText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  
+  dropdownItemTextSelected: {
+    color: '#ffffff',
+    fontWeight: '600',
   },
   
   suitsContainer: {

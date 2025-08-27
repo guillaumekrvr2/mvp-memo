@@ -18,7 +18,8 @@ export default function CardsScreen({ route, navigation }) {
     mode,
     variant,
     autoAdvance,
-    discipline 
+    discipline,
+    cardFilters // 🎯 Nouveaux filtres de cartes
   } = route.params || {}
   
   // État local pour l'index du groupe actuel
@@ -28,7 +29,7 @@ export default function CardsScreen({ route, navigation }) {
     deck,
     totalCards,
     isComplete
-  } = useCardDeck(objectif, 1) // 🃏 Le hook génère le deck complet
+  } = useCardDeck(objectif, 1, cardFilters) // 🃏 Le hook génère le deck complet avec filtres
 
   // 🃏 Preload fait maintenant dans DecompteScreen pendant les 3 secondes
 

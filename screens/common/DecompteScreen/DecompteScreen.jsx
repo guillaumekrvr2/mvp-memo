@@ -20,7 +20,8 @@ export default function DecompteScreen({ route, navigation }) {
     discipline, // 🎯 Nouveau paramètre pour déterminer la discipline
     fromValue,
     toValue,
-    useSpecificRange
+    useSpecificRange,
+    cardFilters = null // 🎯 Filtres pour les cartes (avec valeur par défaut)
   } = route.params
 
   const [counter, setCounter] = useState(3)
@@ -62,7 +63,8 @@ export default function DecompteScreen({ route, navigation }) {
         cardsCount, 
         autoAdvance,
         mode,
-        discipline
+        discipline,
+        cardFilters // 🎯 Transmet les filtres de cartes
       })
     } else if (discipline === 'binaries') {
       navigation.replace('BinaryMemo', { 
@@ -98,7 +100,8 @@ export default function DecompteScreen({ route, navigation }) {
           cardsCount, 
           autoAdvance,
           mode,
-          discipline
+          discipline,
+          cardFilters // 🎯 Transmet les filtres de cartes
         })
       } else if (discipline === 'binaries') {
         // 🔢 Navigation vers 'BinaryMemo' pour les binaires

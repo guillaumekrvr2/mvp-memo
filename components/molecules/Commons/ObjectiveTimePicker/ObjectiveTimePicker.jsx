@@ -70,7 +70,7 @@ export default function ObjectiveTimePicker({
             style={styles.input}
             placeholder="Temps (s)"
             keyboardType="number-pad"
-            value={temps?.toString() || ''}
+            value={temps?.toString() || '60'}
             onChangeText={onTempsChange}
             editable={!disabled}
           />

@@ -35,8 +35,9 @@ export default function CardsSettingsScreen() {
   const navigation = useNavigation();
   const [iamVariantModalVisible, setIamVariantModalVisible] = useState(false);
   const [specificRevisionsModalVisible, setSpecificRevisionsModalVisible] = useState(false);
-  const [fromValue, setFromValue] = useState(0);
-  const [toValue, setToValue] = useState(0);
+  const [fromValue, setFromValue] = useState(2);
+  const [toValue, setToValue] = useState(14);
+  const [cardFilters, setCardFilters] = useState(null);
 
   // 🃏 Digit picker pour le nombre de cartes simultanées
   const {
@@ -102,6 +103,11 @@ export default function CardsSettingsScreen() {
     setSpecificRevisionsModalVisible(false);
   };
 
+  const handleSpecificRevisionsConfirm = (filterParams) => {
+    setCardFilters(filterParams);
+    console.log('🎴 Card filters set:', filterParams);
+  };
+
   // 🃏 Fonction pour générer l'affichage des cartes dans le HighlightBoxSetter
   const getCardsPreview = () => {
     const cardSymbols = ['🃏', '🃏', '🃏', '🃏']; // Exemples de cartes Unicode
@@ -119,7 +125,8 @@ export default function CardsSettingsScreen() {
       variant: selectedVariant?.id,
       cardsCount, // 🃏 CLEF : Paramètre spécifique aux cartes
       autoAdvance,
-      discipline: 'cards' // 🃏 CLEF : Indique la discipline
+      discipline: 'cards', // 🃏 CLEF : Indique la discipline
+      cardFilters // 🎯 NOUVEAU : Filtres de cartes pour la mémorisation
     }
     
     console.log('🃏 CardsSettingsScreen - Navigation params:', navigationParams)
@@ -240,6 +247,7 @@ export default function CardsSettingsScreen() {
           onFromValueChange={setFromValue}
           onToValueChange={setToValue}
           onClose={closeSpecificRevisionsModal}
+          onConfirm={handleSpecificRevisionsConfirm}
         />
       </View>
     </SafeAreaView>
