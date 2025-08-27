@@ -17,6 +17,7 @@ import RecordDisplay from '../../../../components/molecules/Commons/RecordDispla
 import ObjectiveTimePicker from '../../../../components/molecules/Commons/ObjectiveTimePicker/ObjectiveTimePicker';
 import HighlightBoxSetter from '../../../../components/atoms/Commons/HighlightBoxSetter/HighlightBoxSetter';
 import IAMVariantPickerModal from '../../../../components/molecules/Commons/IAMVariantPickerModal/IAMVariantPickerModal';
+import DisciplineHeader from '../../../../components/molecules/Commons/DisciplineHeader/DisciplineHeader';
 
 import useMode from '../../../../hooks/useMode';
 import { modeOptions } from '../../../../config/gameConfig';
@@ -91,6 +92,7 @@ export default function BinariesScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <DisciplineHeader disciplineName="Binaries" />
       <View style={[
         styles.content, 
         mode === 'custom' && { justifyContent: 'flex-start' }

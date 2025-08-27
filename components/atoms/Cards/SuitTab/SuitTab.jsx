@@ -28,7 +28,6 @@ export function SuitTab({
       ]}>
         {suitSymbol}
       </Text>
-      {/* Initiales supprimées */}
     </TouchableOpacity>
   )
 }

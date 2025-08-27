@@ -18,6 +18,9 @@ import RecordDisplay from '../../../../components/molecules/Commons/RecordDispla
 import ObjectiveTimePicker from '../../../../components/molecules/Commons/ObjectiveTimePicker/ObjectiveTimePicker';
 import HighlightBoxSetter from '../../../../components/atoms/Commons/HighlightBoxSetter/HighlightBoxSetter';
 import IAMVariantPickerModal from '../../../../components/molecules/Commons/IAMVariantPickerModal/IAMVariantPickerModal';
+import DisciplineHeader from '../../../../components/molecules/Commons/DisciplineHeader/DisciplineHeader';
+import SpecificRevisionsSelector from '../../../../components/atoms/Commons/SpecificRevisionsSelector/SpecificRevisionsSelector';
+import SpecificRevisionsModalCards from '../../../../components/molecules/Commons/SpecificRevisionsModalCards/SpecificRevisionsModalCards';
 
 // 🎯 Imports des hooks - chemins corrects
 import useMode from '../../../../hooks/useMode';
@@ -31,6 +34,9 @@ import { useModeVariants } from '../../../../hooks/useModeVariants';
 export default function CardsSettingsScreen() {
   const navigation = useNavigation();
   const [iamVariantModalVisible, setIamVariantModalVisible] = useState(false);
+  const [specificRevisionsModalVisible, setSpecificRevisionsModalVisible] = useState(false);
+  const [fromValue, setFromValue] = useState(0);
+  const [toValue, setToValue] = useState(0);
 
   // 🃏 Digit picker pour le nombre de cartes simultanées
   const {
@@ -87,6 +93,15 @@ export default function CardsSettingsScreen() {
     setSelectedVariant(variant);
   };
 
+  // Gestion du modal SpecificRevisions
+  const openSpecificRevisionsModal = () => {
+    setSpecificRevisionsModalVisible(true);
+  };
+
+  const closeSpecificRevisionsModal = () => {
+    setSpecificRevisionsModalVisible(false);
+  };
+
   // 🃏 Fonction pour générer l'affichage des cartes dans le HighlightBoxSetter
   const getCardsPreview = () => {
     const cardSymbols = ['🃏', '🃏', '🃏', '🃏']; // Exemples de cartes Unicode
@@ -114,6 +129,7 @@ export default function CardsSettingsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <DisciplineHeader disciplineName="Cards" />
       <View style={[
         styles.content, 
         mode === 'custom' && { justifyContent: 'flex-start' }
@@ -154,6 +170,10 @@ export default function CardsSettingsScreen() {
                 enabled={autoAdvance} 
                 onToggle={toggleAutoAdvance} 
               />
+              <SpecificRevisionsSelector
+                style={styles.specificRevisionsSelector}
+                onPress={openSpecificRevisionsModal}
+              />
             </>
           ) : (
             <ObjectiveTimePicker
@@ -188,7 +208,7 @@ export default function CardsSettingsScreen() {
           <SecondaryButton 
             style={styles.secondaryButton}
             variant="secondary"
-            onPress={() => {/* action */}}
+            onPress={() => navigation.navigate('Article', { articleId: '4' })}
           >
             Learn more
           </SecondaryButton>
@@ -211,6 +231,15 @@ export default function CardsSettingsScreen() {
           selectedVariant={selectedVariant}
           onSelect={handleIamVariantSelect}
           onClose={closeIamVariantModal}
+        />
+
+        <SpecificRevisionsModalCards
+          visible={specificRevisionsModalVisible}
+          fromValue={fromValue}
+          toValue={toValue}
+          onFromValueChange={setFromValue}
+          onToValueChange={setToValue}
+          onClose={closeSpecificRevisionsModal}
         />
       </View>
     </SafeAreaView>

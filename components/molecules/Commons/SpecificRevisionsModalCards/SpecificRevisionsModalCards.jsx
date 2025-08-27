@@ -1,4 +1,4 @@
-// components/molecules/Commons/SpecificRevisionsModal/SpecificRevisionsModal.jsx
+// components/molecules/Commons/SpecificRevisionsModalCards/SpecificRevisionsModalCards.jsx
 import React, { useState, useEffect } from 'react';
 import {
   Modal,
@@ -10,7 +10,21 @@ import {
 import PropTypes from 'prop-types';
 import styles from './styles';
 
-export default function SpecificRevisionsModal({
+const suitSymbols = {
+  spades: '♠',
+  hearts: '♥', 
+  diamonds: '♦',
+  clubs: '♣'
+};
+
+const suitColors = {
+  spades: '#000',
+  hearts: '#ff4757',
+  diamonds: '#ff6348',
+  clubs: '#000'
+};
+
+export default function SpecificRevisionsModalCards({
   visible,
   fromValue,
   toValue,
@@ -21,12 +35,14 @@ export default function SpecificRevisionsModal({
 }) {
   const [tempFromValue, setTempFromValue] = useState(fromValue?.toString() || '');
   const [tempToValue, setTempToValue] = useState(toValue?.toString() || '');
+  const [selectedSuits, setSelectedSuits] = useState([]);
 
   // Synchroniser les valeurs temporaires quand la modal s'ouvre
   useEffect(() => {
     if (visible) {
       setTempFromValue(fromValue?.toString() || '');
       setTempToValue(toValue?.toString() || '');
+      setSelectedSuits([]);
     }
   }, [visible, fromValue, toValue]);
 
@@ -52,6 +68,16 @@ export default function SpecificRevisionsModal({
     setTempToValue(numericValue);
   };
 
+  const handleSuitToggle = (suit) => {
+    setSelectedSuits(prev => {
+      if (prev.includes(suit)) {
+        return prev.filter(s => s !== suit);
+      } else {
+        return [...prev, suit];
+      }
+    });
+  };
+
   return (
     <Modal
       visible={visible}
@@ -71,7 +97,7 @@ export default function SpecificRevisionsModal({
                 value={tempFromValue}
                 onChangeText={handleFromChange}
                 keyboardType="numeric"
-                placeholder="0"
+                placeholder="2"
                 placeholderTextColor="#666666"
                 maxLength={6}
               />
@@ -84,11 +110,32 @@ export default function SpecificRevisionsModal({
                 value={tempToValue}
                 onChangeText={handleToChange}
                 keyboardType="numeric"
-                placeholder="0"
+                placeholder="As"
                 placeholderTextColor="#666666"
                 maxLength={6}
               />
             </View>
+          </View>
+
+          <View style={styles.suitsContainer}>
+            {Object.keys(suitSymbols).map((suit) => (
+              <TouchableOpacity
+                key={suit}
+                style={[
+                  styles.suitButton,
+                  selectedSuits.includes(suit) && styles.suitButtonSelected
+                ]}
+                onPress={() => handleSuitToggle(suit)}
+              >
+                <Text style={[
+                  styles.suitSymbol,
+                  { color: suitColors[suit] },
+                  selectedSuits.includes(suit) && styles.suitSymbolSelected
+                ]}>
+                  {suitSymbols[suit]}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
           <TouchableOpacity style={styles.okButton} onPress={handleOk}>
@@ -100,7 +147,7 @@ export default function SpecificRevisionsModal({
   );
 }
 
-SpecificRevisionsModal.propTypes = {
+SpecificRevisionsModalCards.propTypes = {
   visible: PropTypes.bool.isRequired,
   fromValue: PropTypes.number,
   toValue: PropTypes.number,

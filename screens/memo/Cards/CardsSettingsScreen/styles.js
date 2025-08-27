@@ -2,62 +2,71 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0a0a0a',
+  container: { 
+    flex: 1, 
+    backgroundColor: '#000' 
   },
   
-  content: {
-    flex: 1,
+  content: { 
+    flex: 1, 
     paddingHorizontal: 20,
-    justifyContent: 'space-between',
+    paddingTop: 20,      // 🎯 ALIGNÉ avec NumbersScreen
+    paddingBottom: 130,  // 🎯 ALIGNÉ avec NumbersScreen
+    justifyContent: 'space-between', // 🎯 Distribution équilibrée
   },
-
-  // 🎯 SECTION DU HAUT - Configuration
+  
+  // Section du haut - groupement logique
   topSection: {
-    paddingTop: 40,
-    gap: 24,
+    gap: 16,  // 🎯 Spacing uniforme aligné avec NumbersScreen
   },
-
-  highlightBoxSetter: {
-    marginBottom: 8,
-  },
-
-  modePicker: {
-    marginBottom: 8,
-  },
-
-  // 🎯 SECTION DU MILIEU - Paramètres du jeu
+  
+  // Section du milieu - formulaires
   middleSection: {
-    flex: 1,
-    justifyContent: 'center',
-    gap: 24,
-    paddingVertical: 20,
+    gap: 16,  // 🎯 Spacing aligné avec NumbersScreen
   },
-
-  objectiveTimePicker: {
-    marginBottom: 16,
-  },
-
-  autoAdvanceSwitch: {
-    marginBottom: 16,
-  },
-
-  recordDisplay: {
-    marginTop: 8,
-  },
-
-  // 🎯 SECTION DU BAS - Actions principales
+  
+  // Section du bas - actions
   bottomSection: {
-    gap: 16,
-    paddingBottom: 40,
+    gap: 16,  // 🎯 Spacing aligné avec NumbersScreen
+    alignItems: 'center',
+    paddingTop: 8,
   },
-
+  
+  // Override pour les margins des composants modernisés
+  highlightBoxSetter: {
+    marginTop: 0,      // 🎯 Reset margin pour contrôler via gap
+    marginBottom: 0,
+  },
+  
+  modePicker: {
+    marginVertical: 0,  // 🎯 Reset margin pour contrôler via gap
+  },
+  
+  recordDisplay: {
+    marginVertical: 0,  // 🎯 Reset margin pour contrôler via gap
+  },
+  
   playButton: {
-    marginBottom: 8,
+    marginBottom: 0,    // 🎯 Reset margin pour contrôler via gap
   },
-
+  
   secondaryButton: {
-    marginBottom: 8,
+    marginTop: 0,       // 🎯 Reset margin pour contrôler via gap
+    marginBottom: 0,
+  },
+  
+  // Style pour ObjectiveTimePicker spacing
+  objectiveTimePicker: {
+    marginVertical: 0,  // 🎯 Reset margin pour contrôler via gap
+  },
+  
+  // Style pour AutoAdvanceSwitch
+  autoAdvanceSwitch: {
+    marginVertical: 0,  // 🎯 Reset margin pour contrôler via gap
+  },
+  
+  // Style pour SpecificRevisionsSelector
+  specificRevisionsSelector: {
+    marginVertical: 0,  // 🎯 Reset margin pour contrôler via gap
   },
 });

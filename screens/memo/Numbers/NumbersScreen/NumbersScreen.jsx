@@ -18,7 +18,8 @@ import ObjectiveTimePicker from '../../../../components/molecules/Commons/Object
 import HighlightBoxSetter from '../../../../components/atoms/Commons/HighlightBoxSetter/HighlightBoxSetter';
 import IAMVariantPickerModal from '../../../../components/molecules/Commons/IAMVariantPickerModal/IAMVariantPickerModal';
 import SpecificRevisionsSelector from '../../../../components/atoms/Commons/SpecificRevisionsSelector/SpecificRevisionsSelector';
-import SpecificRevisionsModal from '../../../../components/molecules/Commons/SpecificRevisionsModal/SpecificRevisionsModal';
+import SpecificRevisionsModalNumbers from '../../../../components/molecules/Commons/SpecificRevisionsModalNumbers/SpecificRevisionsModalNumbers';
+import DisciplineHeader from '../../../../components/molecules/Commons/DisciplineHeader/DisciplineHeader';
 
 import useMode from '../../../../hooks/useMode';
 import { modeOptions } from '../../../../config/gameConfig';
@@ -101,6 +102,7 @@ export default function NumbersScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <DisciplineHeader disciplineName="Numbers" />
       <View style={[
         styles.content, 
         mode === 'custom' && { justifyContent: 'flex-start' }
@@ -193,7 +195,7 @@ export default function NumbersScreen() {
           <SecondaryButton 
             style={styles.secondaryButton}
             variant="secondary"
-            onPress={() => {/* action */}}
+            onPress={() => navigation.navigate('Article', { articleId: '2' })}
           >
             Learn more
           </SecondaryButton>
@@ -215,7 +217,7 @@ export default function NumbersScreen() {
           onClose={closeIamVariantModal}
         />
 
-        <SpecificRevisionsModal
+        <SpecificRevisionsModalNumbers
           visible={specificRevisionsModalVisible}
           fromValue={fromValue}
           toValue={toValue}
