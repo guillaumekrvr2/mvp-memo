@@ -5,6 +5,7 @@ import HomeScreen from '../screens/home/HomeScreen'
 import NumbersScreen from '../screens/memo/Numbers/NumbersScreen/NumbersScreen'
 import CardsScreen from '../screens/memo/Cards/CardsScreen'
 import CardsSettingsScreen from '../screens/memo/Cards/CardsSettingsScreen'
+import WordsScreen from '../screens/memo/Words/WordsScreen'
 import BinariesScreen from '../screens/memo/Binaries/BinariesScreen/BinariesScreen'
 import DecompteScreen from '../screens/common/DecompteScreen/DecompteScreen'
 import MemoScreen from '../screens/memo/Numbers/MemoScreen'
@@ -30,6 +31,7 @@ export default function HomeStackNavigator() {
       <Stack.Screen name="HomeMain" component={HomeScreen} />
       <Stack.Screen name="Numbers" component={NumbersScreen} />
       <Stack.Screen name="Cards" component={CardsSettingsScreen} />
+      <Stack.Screen name="Words" component={WordsScreen} />
       <Stack.Screen name="Binaries" component={BinariesScreen} />
       <Stack.Screen name="CardsGame" component={CardsScreen} />
       <Stack.Screen 
