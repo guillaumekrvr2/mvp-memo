@@ -13,7 +13,7 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native'
 
 const Tab = createBottomTabNavigator()
 
-const hideOn = ['Memorisation', 'Decompte', 'Recall', 'Cards', 'CardsGame', 'CardsRecall', 'Words']
+const hideOn = ['Memorisation', 'Decompte', 'Recall', 'Cards', 'CardsGame', 'CardsRecall', 'Words', 'WordsMemo']
 
 export default function AppNavigator() {
   return (
@@ -83,7 +83,7 @@ export default function AppNavigator() {
         component={HomeStackNavigator}
         options={({ route }) => {
           const nested = getFocusedRouteNameFromRoute(route) ?? 'HomeMain'
-          const hideTabsOn = ['Memorisation', 'Decompte', 'Recall', 'Numbers', 'Cards', 'CardsGame', 'CardsRecall', 'BinaryMemo', 'BinaryRecall', 'Binaries', 'Words']
+          const hideTabsOn = ['Memorisation', 'Decompte', 'Recall', 'Numbers', 'Cards', 'CardsGame', 'CardsRecall', 'BinaryMemo', 'BinaryRecall', 'Binaries', 'Words', 'WordsMemo']
           if (hideTabsOn.includes(nested)) {
             return { 
               tabBarStyle: { display: 'none' },

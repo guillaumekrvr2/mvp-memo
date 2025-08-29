@@ -15,6 +15,7 @@ export default function DecompteScreen({ route, navigation }) {
     variant, 
     digitCount, 
     cardsCount, 
+    wordsCount = 1, // 📝 Nombre de mots simultanés (avec valeur par défaut)
     autoAdvance,
     mode,
     discipline, // 🎯 Nouveau paramètre pour déterminer la discipline
@@ -74,6 +75,16 @@ export default function DecompteScreen({ route, navigation }) {
         digitCount, 
         autoAdvance 
       })
+    } else if (discipline === 'words') {
+      navigation.replace('WordsMemo', { 
+        objectif, 
+        temps, 
+        variant, 
+        wordsCount, 
+        autoAdvance,
+        mode,
+        discipline
+      })
     } else {
       navigation.replace('Memorisation', { 
         objectif, 
@@ -111,6 +122,17 @@ export default function DecompteScreen({ route, navigation }) {
           variant, 
           digitCount, 
           autoAdvance 
+        })
+      } else if (discipline === 'words') {
+        // 📝 Navigation vers 'WordsMemo' pour les mots
+        navigation.replace('WordsMemo', { 
+          objectif, 
+          temps, 
+          variant, 
+          wordsCount, 
+          autoAdvance,
+          mode,
+          discipline
         })
       } else {
         // Par défaut, navigation vers MemoScreen pour les numbers

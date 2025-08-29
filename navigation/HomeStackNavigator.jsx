@@ -6,6 +6,7 @@ import NumbersScreen from '../screens/memo/Numbers/NumbersScreen/NumbersScreen'
 import CardsScreen from '../screens/memo/Cards/CardsScreen'
 import CardsSettingsScreen from '../screens/memo/Cards/CardsSettingsScreen'
 import WordsScreen from '../screens/memo/Words/WordsScreen'
+import WordsMemoScreen from '../screens/memo/Words/WordsMemoScreen'
 import BinariesScreen from '../screens/memo/Binaries/BinariesScreen/BinariesScreen'
 import DecompteScreen from '../screens/common/DecompteScreen/DecompteScreen'
 import MemoScreen from '../screens/memo/Numbers/MemoScreen'
@@ -47,6 +48,11 @@ export default function HomeStackNavigator() {
       <Stack.Screen 
         name="BinaryMemo" 
         component={BinaryMemoScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="WordsMemo" 
+        component={WordsMemoScreen} 
         options={{ headerShown: false }}
       />
       <Stack.Screen 

@@ -119,7 +119,7 @@ export default function WordsScreen() {
           <HighlightBoxSetterWords
             style={styles.highlightBoxSetter}
             wordsCount={wordsCount}
-            icon={<Ionicons name="library-outline" size={24} color="#f093fb" />}
+            icon={<Ionicons name="library-outline" size={24} color="#667eea" />}
             onPress={openModal}
           />
           

@@ -1,17 +1,17 @@
 // config/wordsConfig.js
 export const previewWords = [
   'rayon',
-  'semer', 
+  'saltimbanques', 
   'ville',
-  'voile',
+  'apmificatrice',
   'trésor',
-  'taupe',
+  'badbunny',
   'soldat',
-  'robot',
+  'saborderons',
   'nuage',
-  'prune',
+  'anticonstitutif',
   'queue',
-  'orque',
-  'nouer',
-  'métal'
+  'zoubizoubidou',
+  'turbofacétieuse',
+  'affaiblissement'
 ];

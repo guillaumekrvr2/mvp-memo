@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     top: '50%',
     width: 40,
-    height: 40,
+    height: 30,
     borderRadius: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.7)', // Fond sombre pour contraste
     justifyContent: 'center',

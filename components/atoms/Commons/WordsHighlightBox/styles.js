@@ -1,14 +1,15 @@
-// components/atoms/HighlightBox/styles.js
+// components/atoms/Commons/WordsHighlightBox/styles.js
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
     alignSelf: 'center',
+    width: 340, // Largeur fixe pour contenir 2x "affaiblissement" + séparateur
     backgroundColor: 'rgba(102, 126, 234, 0.12)', // Fond primary un peu plus visible
     borderWidth: 2, // Bordure plus épaisse pour plus de présence
     borderColor: '#667eea', // theme.colors.primary
     borderRadius: 16,
-    paddingHorizontal: 20, // Réduit de 28 à 20
+    paddingHorizontal: 4, // Réduit de 28 à 20
     paddingVertical: 14, // Réduit de 20 à 14
     marginVertical: 12, // Réduit de 16 à 12
     
@@ -70,9 +71,8 @@ export const styles = StyleSheet.create({
   
   highlightText: {
     color: '#ffffff', // theme.colors.textOnDark
-    fontSize: 24, // Réduit de 28 à 24
-    fontWeight: '700', // Plus bold pour plus de présence
-    letterSpacing: 1.5,
+    fontSize: 18, // Réduit de 28 à 24
+    fontWeight: '600', // Plus bold pour plus de présence
     textAlign: 'center',
     
     // Text shadow sophistiquée pour s'harmoniser avec le glow
@@ -82,5 +82,35 @@ export const styles = StyleSheet.create({
     
     // Position relative pour être au-dessus des couches de glow
     zIndex: 10,
+  },
+  
+  // Row container pour les mots avec séparateur
+  wordsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    zIndex: 10,
+  },
+  
+  // Mot de gauche - centré dans sa zone
+  leftWord: {
+    flex: 1,
+    textAlign: 'center',
+    paddingRight: 6, // Un peu d'espace par rapport au séparateur
+  },
+  
+  // Séparateur centré
+  separator: {
+    width: 20,
+    textAlign: 'center',
+    fontSize: 20, // Un peu plus gros pour le séparateur
+  },
+  
+  // Mot de droite - centré dans sa zone
+  rightWord: {
+    flex: 1,
+    textAlign: 'center',
+    paddingLeft: 6, // Un peu d'espace par rapport au séparateur
   },
 });

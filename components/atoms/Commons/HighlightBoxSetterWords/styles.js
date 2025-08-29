@@ -48,14 +48,14 @@ export const IconContainer = styled.View`
   width: 40px;
   height: 40px;
   border-radius: 20px;
-  background-color: #f093fb20; /* Fond rose/violet transparent pour Words */
+  background-color: #667eea20; /* Fond bleu transparent pour Words */
   border-width: 1px;
-  border-color: #f093fb; /* Bordure rose/violet accent pour Words */
+  border-color: #667eea; /* Bordure bleue accent pour Words */
   justify-content: center;
   align-items: center;
   
   /* Glow effect pour l'icône */
-  shadow-color: #f093fb;
+  shadow-color: #667eea;
   shadow-offset: 0px 0px;
   shadow-opacity: 0.3;
   shadow-radius: 6px;
