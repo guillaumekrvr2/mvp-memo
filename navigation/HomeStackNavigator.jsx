@@ -7,6 +7,8 @@ import CardsScreen from '../screens/memo/Cards/CardsScreen'
 import CardsSettingsScreen from '../screens/memo/Cards/CardsSettingsScreen'
 import WordsScreen from '../screens/memo/Words/WordsScreen'
 import WordsMemoScreen from '../screens/memo/Words/WordsMemoScreen'
+import WordsRecallScreen from '../screens/memo/Words/WordsRecallScreen'
+import WordsCorrectionScreen from '../screens/memo/Words/WordsCorrectionScreen'
 import BinariesScreen from '../screens/memo/Binaries/BinariesScreen/BinariesScreen'
 import DecompteScreen from '../screens/common/DecompteScreen/DecompteScreen'
 import MemoScreen from '../screens/memo/Numbers/MemoScreen'
@@ -53,6 +55,16 @@ export default function HomeStackNavigator() {
       <Stack.Screen 
         name="WordsMemo" 
         component={WordsMemoScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="WordsRecall" 
+        component={WordsRecallScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="WordsCorrection" 
+        component={WordsCorrectionScreen} 
         options={{ headerShown: false }}
       />
       <Stack.Screen 
