@@ -51,6 +51,12 @@ export default function CommunityScreen() {
         if (cardsVariants.length > 0 && (selectedMode === 'memory-league' || selectedMode === 'iam')) {
           setSelectedMode(cardsVariants[0].id.toString());
         }
+      } else if (selectedDiscipline === 'binary') {
+        // Chercher les variants binary (disciplineId 10, variants 15,16,17)
+        const binaryVariants = byDiscipline['binary'] || byDiscipline[10] || [];
+        if (binaryVariants.length > 0 && selectedMode === 'memory-league') {
+          setSelectedMode(binaryVariants[0].id.toString());
+        }
       }
     }
   }, [byDiscipline, variantsLoading, selectedDiscipline, selectedMode]);
@@ -77,6 +83,16 @@ export default function CommunityScreen() {
         }));
         return options;
       }
+    } else if (selectedDiscipline === 'binary') {
+      const binaryVariants = byDiscipline['binary'] || byDiscipline[10] || [];
+      
+      if (binaryVariants.length > 0) {
+        const options = binaryVariants.map(variant => ({
+          label: variant.label,
+          value: variant.id.toString(),
+        }));
+        return options;
+      }
     }
     
     return BASE_GAME_MODES;
@@ -88,6 +104,9 @@ export default function CommunityScreen() {
       const parsed = parseInt(selectedMode, 10);
       return isNaN(parsed) ? null : parsed;
     } else if (selectedDiscipline === 'cards') {
+      const parsed = parseInt(selectedMode, 10);
+      return isNaN(parsed) ? null : parsed;
+    } else if (selectedDiscipline === 'binary') {
       const parsed = parseInt(selectedMode, 10);
       return isNaN(parsed) ? null : parsed;
     }
@@ -110,6 +129,11 @@ export default function CommunityScreen() {
       if (cardsVariants.length > 0) {
         setSelectedMode(cardsVariants[0].id.toString());
       }
+    } else if (newDiscipline === 'binary') {
+      const binaryVariants = byDiscipline['binary'] || byDiscipline[10] || [];
+      if (binaryVariants.length > 0) {
+        setSelectedMode(binaryVariants[0].id.toString());
+      }
     } else {
       setSelectedMode('memory-league');
     }
@@ -122,6 +146,9 @@ export default function CommunityScreen() {
     } else if (selectedDiscipline === 'cards') {
       // Cards variants: 14=memory-league, 11/12/13=iam
       return variantId === 14 ? 'memory-league' : 'iam';
+    } else if (selectedDiscipline === 'binary') {
+      // Binary variants: 15/16/17=iam (pas de memory-league pour binaires)
+      return 'iam';
     }
     return selectedMode;
   }, [selectedDiscipline, variantId, selectedMode]);
@@ -152,23 +179,21 @@ export default function CommunityScreen() {
         options={gameModesOptions}
       />
 
-      {/* Gestion des états de chargement et d'erreur */}
-      {(loading || variantsLoading) && <Text>Chargement…</Text>}
+      {/* Gestion des erreurs */}
       {(error || variantsError) && (
         <Text>Erreur : {error?.message || variantsError?.message}</Text>
       )}
 
       {/* Liste du leaderboard */}
-      {!loading && !error && !variantsLoading && !variantsError && (
-        <LeaderboardList
-          data={sorted}
-          variantId={variantId}
-          discipline={selectedDiscipline}
-          mode={leaderboardMode}
-          disciplines={DISCIPLINES}
-          currentUserId={current?.id || null}
-        />
-      )}
+      <LeaderboardList
+        data={sorted}
+        variantId={variantId}
+        discipline={selectedDiscipline}
+        mode={leaderboardMode}
+        disciplines={DISCIPLINES}
+        currentUserId={current?.id || null}
+        loading={loading || variantsLoading}
+      />
     </View>
   );
 }

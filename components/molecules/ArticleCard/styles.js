@@ -52,6 +52,13 @@ export default StyleSheet.create({
     lineHeight: 20,                               // 🎯 Hauteur de ligne proportionnelle
   },
   
+  // 🎯 Sous-titre
+  subtitle: {
+    color: '#a0a9c0',                             // 🎯 Texte secondaire (même que description)
+    fontSize: 13,                                 // 🎯 Police légèrement plus petite que title
+    lineHeight: 18,                               // 🎯 Ligne proportionnelle                               // 🎯 Petit espace avec title
+  },
+  
   // 🎯 Description optionnelle
   description: {
     color: '#a0a9c0',                             // 🎯 Texte secondaire

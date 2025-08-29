@@ -13,4 +13,18 @@ export default StyleSheet.create({
     paddingBottom: 80,
     flexGrow: 1,
   },
+  // Container pour le loader
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  // Texte du loader
+  loadingText: {
+    marginTop: 15,
+    color: theme.colors.textPrimary,
+    fontSize: 16,
+    textAlign: 'center',
+  },
 });

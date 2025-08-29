@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     width: 36,                                   // 🎯 Zone de touch plus définie
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // 🎯 Fond subtil pour visibilité
+    backgroundColor: 'rgba(0, 0, 0, 0)', // 🎯 Fond subtil pour visibilité
     justifyContent: 'center',
     alignItems: 'center',
   },

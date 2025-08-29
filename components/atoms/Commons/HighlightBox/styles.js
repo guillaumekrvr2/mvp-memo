@@ -8,9 +8,9 @@ export const styles = StyleSheet.create({
     borderWidth: 2, // Bordure plus épaisse pour plus de présence
     borderColor: '#667eea', // theme.colors.primary
     borderRadius: 16,
-    paddingHorizontal: 28,
-    paddingVertical: 20,
-    marginVertical: 16,
+    paddingHorizontal: 20, // Réduit de 28 à 20
+    paddingVertical: 14, // Réduit de 20 à 14
+    marginVertical: 12, // Réduit de 16 à 12
     
     // Shadow iOS (subtile)
     shadowColor: '#667eea',
@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
   
   highlightText: {
     color: '#ffffff', // theme.colors.textOnDark
-    fontSize: 28,
+    fontSize: 24, // Réduit de 28 à 24
     fontWeight: '700', // Plus bold pour plus de présence
     letterSpacing: 1.5,
     textAlign: 'center',

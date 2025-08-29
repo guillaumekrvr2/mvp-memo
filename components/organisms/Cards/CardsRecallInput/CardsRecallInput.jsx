@@ -10,7 +10,7 @@ export function CardsRecallInput({
   onSuitSelect,
   onCardSelect,
 }) {
-  const suits = ['spades', 'hearts', 'diamonds', 'clubs']
+  const suits = ['diamonds', 'spades', 'hearts', 'clubs']
   const selectedCards = cardsBySuit[selectedSuit] || []
 
   return (

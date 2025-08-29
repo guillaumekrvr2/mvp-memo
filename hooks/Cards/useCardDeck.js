@@ -113,11 +113,58 @@ const shuffleArray = (array) => {
   return shuffled
 }
 
+// 🎯 Fonction pour appliquer les filtres de cartes
+const applyCardFilters = (deck, filters) => {
+  if (!filters) return deck
+  
+  const { fromValue, toValue, selectedSuits } = filters
+  
+  // Mapping des valeurs pour le filtrage
+  const valueToNumber = {
+    '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10,
+    'jack': 11, 'queen': 12, 'king': 13, 'ace': 14
+  }
+  
+  // Mapping des couleurs pour le filtrage
+  const suitMapping = {
+    'spades': 'spades',
+    'hearts': 'hearts', 
+    'diamonds': 'diamonds',
+    'clubs': 'clubs'
+  }
+  
+  return deck.filter(card => {
+    const cardValue = valueToNumber[card.rank]
+    const cardSuit = suitMapping[card.suit]
+    
+    // Vérifier la range de valeurs
+    const valueInRange = cardValue >= fromValue && cardValue <= toValue
+    
+    // Vérifier les couleurs sélectionnées
+    const suitSelected = selectedSuits.includes(cardSuit)
+    
+    return valueInRange && suitSelected
+  })
+}
+
 // 🃏 Génère le deck selon l'objectif avec des IDs uniques
-const generateDeckForObjective = (objectif) => {
-  const fullDeck = generateFullDeck() // 52 cartes
-  const fullDecks = Math.floor(objectif / 52) // Nombre de paquets complets
-  const remainder = objectif % 52 // Cartes supplémentaires
+const generateDeckForObjective = (objectif, cardFilters = null) => {
+  let fullDeck = generateFullDeck() // 52 cartes
+  
+  // Appliquer les filtres si présents
+  if (cardFilters) {
+    fullDeck = applyCardFilters(fullDeck, cardFilters)
+    console.log('🎯 Filtered deck size:', fullDeck.length, 'cards')
+  }
+  
+  // Si pas assez de cartes après filtrage, répéter le deck filtré
+  if (fullDeck.length === 0) {
+    console.warn('🚨 No cards match the filters!')
+    return []
+  }
+  
+  const fullDecks = Math.floor(objectif / fullDeck.length) // Nombre de paquets complets
+  const remainder = objectif % fullDeck.length // Cartes supplémentaires
   
   let finalDeck = []
   let cardIndex = 0 // Compteur pour les IDs uniques
@@ -147,17 +194,20 @@ const generateDeckForObjective = (objectif) => {
   return shuffleArray(finalDeck)
 }
 
-export function useCardDeck(objectif = 52, displayCount = 1) { // renommé pour clarifier
+export function useCardDeck(objectif = 52, displayCount = 1, cardFilters = null) { // renommé pour clarifier
   const [deck, setDeck] = useState([])
   const [removedCards, setRemovedCards] = useState(new Set())
   
-  // 🃏 Génération du deck au changement d'objectif
+  // 🃏 Génération du deck au changement d'objectif ou de filtres
   useEffect(() => {
-    const initialDeck = generateDeckForObjective(objectif)
+    const initialDeck = generateDeckForObjective(objectif, cardFilters)
     setDeck(initialDeck)
     setRemovedCards(new Set())
-
-  }, [objectif])
+    
+    if (cardFilters) {
+      console.log('🎯 Using card filters:', cardFilters)
+    }
+  }, [objectif, cardFilters])
   
   const handleCardSwipe = useCallback((originalIndex) => {
     if (removedCards.has(originalIndex)) return
@@ -170,13 +220,13 @@ export function useCardDeck(objectif = 52, displayCount = 1) { // renommé pour 
         console.log('🎯 Toutes les cartes mémorisées!')
         setTimeout(() => {
           setRemovedCards(new Set())
-          setDeck(generateDeckForObjective(objectif))
+          setDeck(generateDeckForObjective(objectif, cardFilters))
         }, 1500)
       }
       
       return newSet
     })
-  }, [deck.length, removedCards, objectif])
+  }, [deck.length, removedCards, objectif, cardFilters])
 
   const handleCardRestore = useCallback((index) => {
     if (removedCards.has(index)) {

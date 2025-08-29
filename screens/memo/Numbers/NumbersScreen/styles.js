@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
   content: { 
     flex: 1, 
     paddingHorizontal: 20,
-    paddingTop: 100,       // 🎯 AUGMENTÉ pour éviter le header
+    paddingTop: 20,      // 🎯 AUGMENTÉ pour éviter le header
     paddingBottom: 130,    // 🎯 AUGMENTÉ pour éviter que le bouton soit rogné (nav bar + marge)
     justifyContent: 'space-between', // 🎯 Distribution équilibrée
   },

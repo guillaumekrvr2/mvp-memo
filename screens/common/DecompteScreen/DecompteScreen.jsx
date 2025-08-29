@@ -15,9 +15,14 @@ export default function DecompteScreen({ route, navigation }) {
     variant, 
     digitCount, 
     cardsCount, 
+    wordsCount = 1, // 📝 Nombre de mots simultanés (avec valeur par défaut)
     autoAdvance,
     mode,
-    discipline // 🎯 Nouveau paramètre pour déterminer la discipline
+    discipline, // 🎯 Nouveau paramètre pour déterminer la discipline
+    fromValue,
+    toValue,
+    useSpecificRange,
+    cardFilters = null // 🎯 Filtres pour les cartes (avec valeur par défaut)
   } = route.params
 
   const [counter, setCounter] = useState(3)
@@ -59,6 +64,25 @@ export default function DecompteScreen({ route, navigation }) {
         cardsCount, 
         autoAdvance,
         mode,
+        discipline,
+        cardFilters // 🎯 Transmet les filtres de cartes
+      })
+    } else if (discipline === 'binaries') {
+      navigation.replace('BinaryMemo', { 
+        objectif, 
+        temps, 
+        variant, 
+        digitCount, 
+        autoAdvance 
+      })
+    } else if (discipline === 'words') {
+      navigation.replace('WordsMemo', { 
+        objectif, 
+        temps, 
+        variant, 
+        wordsCount, 
+        autoAdvance,
+        mode,
         discipline
       })
     } else {
@@ -67,7 +91,10 @@ export default function DecompteScreen({ route, navigation }) {
         temps, 
         variant, 
         digitCount, 
-        autoAdvance 
+        autoAdvance,
+        fromValue,
+        toValue,
+        useSpecificRange
       })
     }
   }
@@ -84,6 +111,27 @@ export default function DecompteScreen({ route, navigation }) {
           cardsCount, 
           autoAdvance,
           mode,
+          discipline,
+          cardFilters // 🎯 Transmet les filtres de cartes
+        })
+      } else if (discipline === 'binaries') {
+        // 🔢 Navigation vers 'BinaryMemo' pour les binaires
+        navigation.replace('BinaryMemo', { 
+          objectif, 
+          temps, 
+          variant, 
+          digitCount, 
+          autoAdvance 
+        })
+      } else if (discipline === 'words') {
+        // 📝 Navigation vers 'WordsMemo' pour les mots
+        navigation.replace('WordsMemo', { 
+          objectif, 
+          temps, 
+          variant, 
+          wordsCount, 
+          autoAdvance,
+          mode,
           discipline
         })
       } else {
@@ -93,7 +141,10 @@ export default function DecompteScreen({ route, navigation }) {
           temps, 
           variant, 
           digitCount, 
-          autoAdvance 
+          autoAdvance,
+          fromValue,
+          toValue,
+          useSpecificRange
         })
       }
       return
@@ -116,7 +167,9 @@ export default function DecompteScreen({ route, navigation }) {
 
   // 🎯 Affichage conditionnel des détails selon la discipline
   const getObjectifLabel = () => {
-    return discipline === 'cards' ? 'Cartes' : 'Objectif'
+    if (discipline === 'cards') return 'Cartes'
+    if (discipline === 'binaries') return 'Objectif (bits)'
+    return 'Objectif'
   }
 
   const getObjectifValue = () => {

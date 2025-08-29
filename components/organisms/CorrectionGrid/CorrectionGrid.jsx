@@ -5,9 +5,12 @@ import useCorrectionGrid from '../../../hooks/useCorrectionGrid';
 import { CorrectionCell } from '../../atoms/Numbers/CorrectionCell/CorrectionCell';
 import styles from './styles';
 
-export default function CorrectionGrid({ inputs, numbers, cols }) {
+export default function CorrectionGrid({ inputs, numbers, binaries, cols }) {
   const rows = useCorrectionGrid(inputs, cols);
   const [revealed, setRevealed] = useState(new Set());
+
+  // Utilise soit numbers soit binaries selon ce qui est fourni
+  const correctAnswers = numbers || binaries;
 
   return (
     <View style={styles.container}>
@@ -17,7 +20,7 @@ export default function CorrectionGrid({ inputs, numbers, cols }) {
             {row.map((val, cIdx) => {
               const idx = rIdx * cols + cIdx;
               const userValue = val || ''; // Valeur saisie par l'utilisateur
-              const correctValue = String(numbers[idx]);
+              const correctValue = String(correctAnswers[idx]);
               const isEmpty = !userValue; // Cellule vide si pas de saisie
               
               return (

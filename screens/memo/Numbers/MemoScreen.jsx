@@ -14,8 +14,16 @@ import useAutoScroll    from '../../../hooks/useAutoScroll.js'
 import { cellStyles } from '../../../components/atoms/Numbers/Grid/styles.js';
 
 export default function MemoScreen({ route, navigation }) {
-  const { objectif, temps, variant, digitCount, autoAdvance } = route.params // routes
-  const numbers = useNumbers(objectif) // Génération des chiffres
+  const { objectif, temps, variant, digitCount, autoAdvance, fromValue, toValue, useSpecificRange } = route.params // routes
+  
+  // Options pour les révisions spécifiques
+  const numbersOptions = {
+    fromValue,
+    toValue,
+    useSpecificRange
+  };
+  
+  const numbers = useNumbers(objectif, numbersOptions) // Génération des chiffres ou nombres
   const totalTime     = parseInt(temps, 10) || 0 // Chrono
   const [timeLeft]    = useTimer(totalTime) 
   const cols = 6 //génération de la grille 
@@ -32,7 +40,15 @@ export default function MemoScreen({ route, navigation }) {
     {/* HEADER */}
     <MemorizationHeader
       onBack={() => navigation.goBack()}
-      onDone={() => navigation.replace('Recall', { objectif, temps, numbers, variant })}
+      onDone={() => navigation.replace('Recall', { 
+        objectif, 
+        temps, 
+        numbers, 
+        variant,
+        fromValue,
+        toValue,
+        useSpecificRange
+      })}
       duration={totalTime}
     />
 
