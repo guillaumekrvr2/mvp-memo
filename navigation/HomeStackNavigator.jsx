@@ -14,6 +14,7 @@ import BinariesScreen from '../screens/memo/Binaries/BinariesScreen/BinariesScre
 import DecompteScreen from '../screens/common/DecompteScreen/DecompteScreen'
 import SpokenDecompteScreen from '../screens/memo/Spoken/SpokenDecompteScreen/SpokenDecompteScreen'
 import SpokenMemoScreen from '../screens/memo/Spoken/SpokenMemoScreen/SpokenMemoScreen'
+import SpokenRecallScreen from '../screens/memo/Spoken/SpokenRecallScreen/SpokenRecallScreen'
 import MemoScreen from '../screens/memo/Numbers/MemoScreen'
 import BinaryMemoScreen from '../screens/memo/Binaries/MemoScreen'
 import RecallScreen from '../screens/memo/Numbers/RecallScreen'
@@ -54,6 +55,11 @@ export default function HomeStackNavigator() {
       <Stack.Screen 
         name="SpokenMemo" 
         component={SpokenMemoScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="SpokenRecall" 
+        component={SpokenRecallScreen} 
         options={{ headerShown: false }}
       />
       <Stack.Screen 

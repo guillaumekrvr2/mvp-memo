@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 // Import des styles depuis le fichier séparé
 import { styles } from './styles';
 
+import DisciplineHeader from '../../../../components/molecules/Commons/DisciplineHeader/DisciplineHeader';
 import PlayButton from '../../../../components/atoms/Commons/PlayButton/PlayButton';
 import { SecondaryButton } from '../../../../components/atoms/Commons/SecondaryButton/SecondaryButton';
 import ObjectiveTimePicker from '../../../../components/molecules/Commons/ObjectiveTimePicker/ObjectiveTimePicker';
@@ -27,6 +28,8 @@ export default function SpokenScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <DisciplineHeader disciplineName="Spokens 🎤" />
+      
       <View style={[
         styles.content, 
         mode === 'custom' && { justifyContent: 'flex-start' }

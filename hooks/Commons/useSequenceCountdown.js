@@ -1,17 +1,7 @@
 // hooks/Commons/useSequenceCountdown.js
 import { useState, useEffect, useRef } from 'react'
 import * as Haptics from 'expo-haptics'
-import { useAudioPlayer } from 'expo-audio'
-
-// Mapping des éléments vers les fichiers audio MP3
-const audioFiles = {
-  'A': require('../../assets/audio/mp3/a.mp3'),
-  'B': require('../../assets/audio/mp3/b.mp3'),
-  'C': require('../../assets/audio/mp3/c.mp3'),
-  '3': require('../../assets/audio/mp3/3.mp3'),
-  '2': require('../../assets/audio/mp3/2.mp3'),
-  '1': require('../../assets/audio/mp3/1.mp3'),
-}
+import * as Speech from 'expo-speech'
 
 /**
  * Hook pour gérer les séquences de décompte personnalisées
@@ -24,53 +14,33 @@ export const useSequenceCountdown = (sequences = [], onComplete, hapticConfig = 
   const [currentItemIndex, setCurrentItemIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
   const [showReady, setShowReady] = useState(true) // État initial "Prêt"
-  const lastPlayedRef = useRef(null) // Tracker du dernier audio joué pour éviter les doublons
+  const lastPlayedRef = useRef(null) // Tracker du dernier élément prononcé pour éviter les doublons
   
-  // Création des players audio pour chaque élément
-  const audioPlayers = {
-    'A': useAudioPlayer(audioFiles['A']),
-    'B': useAudioPlayer(audioFiles['B']),
-    'C': useAudioPlayer(audioFiles['C']),
-    '3': useAudioPlayer(audioFiles['3']),
-    '2': useAudioPlayer(audioFiles['2']),
-    '1': useAudioPlayer(audioFiles['1']),
+  // Fonction pour arrêter la synthèse vocale
+  const stopSpeaking = () => {
+    console.log('🛑 Arrêt de la synthèse vocale')
+    Speech.stop()
   }
   
-  // Fonction pour arrêter tous les players audio
-  const stopAllAudio = () => {
-    console.log('🛑 stopAllAudio() appelé')
-    Object.entries(audioPlayers).forEach(([key, player]) => {
-      try {
-        if (player.playing) {
-          console.log(`🛑 Arrêt de l'audio '${key}' (était en cours de lecture)`)
-          player.pause()
-          player.seekTo(0)
-        }
-      } catch (error) {
-        // Ignore les erreurs de pause
+  // Fonction pour prononcer un élément avec expo-speech
+  const speakItem = (item) => {
+    console.log(`🎵 Prononciation de '${item}'`)
+    
+    // Arrêter d'abord toute synthèse en cours
+    stopSpeaking()
+    
+    Speech.speak(item, {
+      language: 'fr-FR',
+      rate: 0.8, // Vitesse de parole
+      pitch: 1.0, // Ton de la voix 
+      volume: 1.0, // Volume
+      onDone: () => {
+        console.log(`✅ Synthèse de '${item}' terminée`)
+      },
+      onError: (error) => {
+        console.error(`❌ Erreur synthèse '${item}':`, error)
       }
     })
-  }
-  
-  // Fonction pour jouer l'audio d'un élément
-  const playAudio = (item) => {
-    console.log(`🎵 TENTATIVE de lecture audio pour '${item}'`)
-    try {
-      // Arrêter tous les autres audios d'abord
-      stopAllAudio()
-      
-      const player = audioPlayers[item]
-      if (player) {
-        console.log(`🎵 Player trouvé pour '${item}' - seekTo(0) puis play()`)
-        player.seekTo(0)
-        player.play()
-        console.log(`✅ Audio '${item}' lancé avec succès`)
-      } else {
-        console.warn(`❌ Aucun player trouvé pour '${item}'`)
-      }
-    } catch (error) {
-      console.warn(`❌ Erreur lecture audio pour '${item}':`, error)
-    }
   }
   
   // Phase actuelle basée sur l'index
@@ -94,23 +64,23 @@ export const useSequenceCountdown = (sequences = [], onComplete, hapticConfig = 
     } else if (currentPhaseIndex >= sequences.length) {
       // Si on a dépassé toutes les séquences, on termine
       setTimeout(() => {
-        stopAllAudio()
+        stopSpeaking()
         onComplete?.()
       }, 500)
       return
     } else {
-      // Jouer l'audio pour l'élément actuel
+      // Prononcer l'élément actuel avec expo-speech
       if (currentItem !== 'Prêt') {
         console.log(`🎯 useEffect déclenché - currentItem: '${currentItem}' (phase: ${currentPhaseIndex}, index: ${currentItemIndex})`)
         
-        // Éviter de rejouer le même audio si c'est un double trigger
+        // Éviter de repronocer le même élément si c'est un double trigger
         const currentKey = `${currentPhaseIndex}-${currentItemIndex}-${currentItem}`
         if (lastPlayedRef.current !== currentKey) {
-          console.log(`🆕 Nouveau élément détecté, lancement audio`)
+          console.log(`🆕 Nouveau élément détecté, lancement synthèse`)
           lastPlayedRef.current = currentKey
-          playAudio(currentItem)
+          speakItem(currentItem)
         } else {
-          console.log(`⏭️ Même élément déjà joué, skip`)
+          console.log(`⏭️ Même élément déjà prononcé, skip`)
         }
       }
       
@@ -141,7 +111,7 @@ export const useSequenceCountdown = (sequences = [], onComplete, hapticConfig = 
         } else {
           // Toutes les séquences terminées
           setTimeout(() => {
-            stopAllAudio()
+            stopSpeaking()
             onComplete?.()
           }, 1000)
         }

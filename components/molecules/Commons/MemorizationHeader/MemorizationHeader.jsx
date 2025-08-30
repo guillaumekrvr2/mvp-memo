@@ -1,6 +1,6 @@
 // components/molecules/MemorizationHeader/MemorizationHeader.jsx
-import React, { useRef } from 'react'
-import { View, StyleSheet, Animated } from 'react-native'
+import React, { useRef, useEffect } from 'react'
+import { View, StyleSheet, Animated, Easing } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import BackButton from '../../../atoms/Commons/BackButton/BackButton'
 import DoneButton from '../../../atoms/Commons/DoneButton/DoneButton'
@@ -10,18 +10,52 @@ import useProgressWithCallback from '../../../../hooks/useProgressWithCallback'
 export default function MemorizationHeader({ 
   onBack, 
   onDone, 
-  duration
+  duration,
+  // Props spécifiques aux spokens
+  isSpoken = false,
+  currentDigitIndex = -1,
+  totalDigits = 0
 }) {
   // Récupère les insets de la safe area
   const insets = useSafeAreaInsets()
   
-  // Crée une Animated.Value statique pour le cas sans timer
+  // Animated.Value pour le progress (utilisé différemment selon le type)
   const staticProgress = useRef(new Animated.Value(0)).current
+  const spokenProgress = useRef(new Animated.Value(0)).current
 
-  // N'utilise le hook de progress QUE si duration est un nombre > 0
-  const progress = (duration && duration > 0) 
-    ? useProgressWithCallback(duration, onDone) 
-    : staticProgress
+  // Logique différente selon le type de discipline
+  let progress;
+  
+  if (isSpoken) {
+    // Pour les spokens : progress basé sur le nombre de chiffres
+    progress = spokenProgress;
+    
+    useEffect(() => {
+      if (totalDigits > 0 && currentDigitIndex >= 0) {
+        // Calculer le progrès en temps réel pendant la lecture de chaque chiffre
+        const baseProgress = currentDigitIndex / totalDigits;
+        const nextProgress = (currentDigitIndex + 1) / totalDigits;
+        
+        // Animation fluide de 1.8 seconde (speech + pause) pour chaque chiffre
+        Animated.timing(progress, {
+          toValue: nextProgress,
+          duration: 1800, // Durée totale par chiffre (speech + pause entre chiffres)
+          easing: Easing.linear,
+          useNativeDriver: false,
+        }).start(({ finished }) => {
+          // Quand la progress bar est complète (dernière animation), déclencher onDone
+          if (finished && nextProgress >= 1.0) {
+            onDone?.();
+          }
+        });
+      }
+    }, [currentDigitIndex, totalDigits, progress, onDone]);
+  } else {
+    // Pour les autres disciplines : progress basé sur le temps
+    progress = (duration && duration > 0) 
+      ? useProgressWithCallback(duration, onDone) 
+      : staticProgress;
+  }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + 5 }]}>

@@ -25,11 +25,6 @@ export const MicrophoneContainer = styled.View`
   align-items: center;
   margin-bottom: ${({ theme }) => theme.spacing.xl}px;
   background-color: rgba(255, 255, 255, 0.05);
-  shadow-color: ${({ theme }) => theme.colors.primary};
-  shadow-offset: 0px 0px;
-  shadow-opacity: 0.3;
-  shadow-radius: 20px;
-  elevation: 8;
 `
 
 export const MicrophoneIcon = styled.Text`
