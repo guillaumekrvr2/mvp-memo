@@ -4,7 +4,7 @@ import { View, Text } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import styles from './styles'
 
-export default function RecordDisplay({ score, time, hidden = false }) {
+export default function RecordDisplay({ score, time, hidden = false, hideTime = false }) {
   if (hidden) {
     return <View style={styles.hiddenContainer} />
   }
@@ -21,7 +21,7 @@ export default function RecordDisplay({ score, time, hidden = false }) {
       <View style={styles.textContainer}>
         <Text style={styles.label}>Mon meilleur score</Text>
         <Text style={styles.score}>
-          {score} en {time}s
+          {hideTime ? score : `${score} en ${time}s`}
         </Text>
       </View>
     </View>

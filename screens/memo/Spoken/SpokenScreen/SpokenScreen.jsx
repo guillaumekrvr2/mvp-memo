@@ -11,20 +11,37 @@ import DisciplineHeader from '../../../../components/molecules/Commons/Disciplin
 import PlayButton from '../../../../components/atoms/Commons/PlayButton/PlayButton';
 import { SecondaryButton } from '../../../../components/atoms/Commons/SecondaryButton/SecondaryButton';
 import ObjectiveTimePicker from '../../../../components/molecules/Commons/ObjectiveTimePicker/ObjectiveTimePicker';
+import RecordDisplay from '../../../../components/molecules/Commons/RecordDisplay/RecordDisplay';
 
 import useObjective from '../../../../hooks/useObjective';
+import useFetchBestScore from '../../../../hooks/useFetchBestScore';
+import { useModeVariants } from '../../../../hooks/useModeVariants';
 
 export default function SpokenScreen() {
   const navigation = useNavigation();
 
-  // Mode fixe pour spokens - toujours custom 
-  const mode = 'custom';
+  // Mode fixe pour spokens - mode IAM (mode_id = 2 dans Supabase)
+  const mode = 'iam';
 
   // Objectif (nombre d'items) persistant
   const { objectif, setObjectif } = useObjective('spoken:objectif', '10');
 
-  // Pas de variants ni de scores pour spokens en mode custom
-  const playTime = 0;
+  // Récupération des variants spokens depuis Supabase
+  const {
+    variants,
+    loading: variantsLoading,
+    selectedVariant,
+    setSelectedVariant,
+  } = useModeVariants('spokens', mode);
+
+  // Dernier meilleur score pour le variant sélectionné
+  const variantId = selectedVariant?.id;
+  const lastScore = useFetchBestScore(variantId);
+
+  // Temps de jeu : soit saisi en custom, soit variant choisi
+  const playTime = mode === 'custom'
+    ? 0 // Pas de temps pour spokens en custom
+    : selectedVariant?.duration_seconds ?? 0;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -35,9 +52,7 @@ export default function SpokenScreen() {
         mode === 'custom' && { justifyContent: 'flex-start' }
       ]}>
         
-        {/* SECTION DU HAUT - Plus de configuration nécessaire */}
-
-        {/* SECTION DU MILIEU - Paramètres du jeu */}
+        {/* SECTION DU HAUT - Paramètres du jeu */}
         <View style={styles.middleSection}>
           <ObjectiveTimePicker
             style={styles.objectiveTimePicker}
@@ -47,6 +62,14 @@ export default function SpokenScreen() {
             hideTime={true}
           />
         </View>
+
+        {/* SECTION DU MILIEU - Record Display */}
+        <RecordDisplay 
+          score={lastScore} 
+          time={playTime} 
+          hidden={mode === 'custom' || variantId == null}
+          hideTime={true}
+        />
 
         {/* SECTION DU BAS - Actions principales */}
         <View style={styles.bottomSection}>

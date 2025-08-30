@@ -15,6 +15,7 @@ const DISCIPLINES = [
   { key: 'numbers', label: 'Numbers', emoji: '🔢', color: '#667eea' },
   { key: 'cards', label: 'Cards', emoji: '🃏', color: '#764ba2' },
   { key: 'words', label: 'Words', emoji: '📝', color: '#f093fb' },
+  { key: 'spokens', label: 'Spokens', emoji: '🎤', color: '#ff7b7b' },
   { key: 'binary', label: 'Binary', emoji: '💻', color: '#4facfe' },
   { key: 'names', label: 'Names', emoji: '👥', color: '#43e97b' },
   { key: 'images', label: 'Images', emoji: '🖼️', color: '#fa709a' },
@@ -57,6 +58,15 @@ export default function CommunityScreen() {
         if (binaryVariants.length > 0 && selectedMode === 'memory-league') {
           setSelectedMode(binaryVariants[0].id.toString());
         }
+      } else if (selectedDiscipline === 'words') {
+        // Chercher les variants words (disciplineId 9, variants 19,20,21,22)
+        const wordsVariants = byDiscipline['words'] || byDiscipline[9] || [];
+        if (wordsVariants.length > 0 && (selectedMode === 'memory-league' || selectedMode === 'iam')) {
+          setSelectedMode(wordsVariants[0].id.toString());
+        }
+      } else if (selectedDiscipline === 'spokens') {
+        // Spokens a un seul variant fixe (disciplineId 13, variant 18)
+        setSelectedMode('18');
       }
     }
   }, [byDiscipline, variantsLoading, selectedDiscipline, selectedMode]);
@@ -93,6 +103,21 @@ export default function CommunityScreen() {
         }));
         return options;
       }
+    } else if (selectedDiscipline === 'words') {
+      const wordsVariants = byDiscipline['words'] || byDiscipline[9] || [];
+      
+      if (wordsVariants.length > 0) {
+        const options = wordsVariants.map(variant => ({
+          label: variant.label,
+          value: variant.id.toString(),
+        }));
+        return options;
+      }
+    } else if (selectedDiscipline === 'spokens') {
+      // Spokens a un seul mode fixe
+      return [
+        { label: 'IAM Spokens', value: '18' }
+      ];
     }
     
     return BASE_GAME_MODES;
@@ -109,6 +134,12 @@ export default function CommunityScreen() {
     } else if (selectedDiscipline === 'binary') {
       const parsed = parseInt(selectedMode, 10);
       return isNaN(parsed) ? null : parsed;
+    } else if (selectedDiscipline === 'words') {
+      const parsed = parseInt(selectedMode, 10);
+      return isNaN(parsed) ? null : parsed;
+    } else if (selectedDiscipline === 'spokens') {
+      // Spokens utilise toujours le variant 18
+      return 18;
     }
     
     const result = selectedMode === 'iam' ? 7 : 10;
@@ -134,6 +165,14 @@ export default function CommunityScreen() {
       if (binaryVariants.length > 0) {
         setSelectedMode(binaryVariants[0].id.toString());
       }
+    } else if (newDiscipline === 'words') {
+      const wordsVariants = byDiscipline['words'] || byDiscipline[9] || [];
+      if (wordsVariants.length > 0) {
+        setSelectedMode(wordsVariants[0].id.toString());
+      }
+    } else if (newDiscipline === 'spokens') {
+      // Spokens a un seul variant fixe
+      setSelectedMode('18');
     } else {
       setSelectedMode('memory-league');
     }
@@ -148,6 +187,12 @@ export default function CommunityScreen() {
       return variantId === 14 ? 'memory-league' : 'iam';
     } else if (selectedDiscipline === 'binary') {
       // Binary variants: 15/16/17=iam (pas de memory-league pour binaires)
+      return 'iam';
+    } else if (selectedDiscipline === 'words') {
+      // Words variants: 19/20/21/22=iam (mode_id 9)
+      return 'iam';
+    } else if (selectedDiscipline === 'spokens') {
+      // Spokens variant: 18=iam (mode_id 2, discipline_id 13)
       return 'iam';
     }
     return selectedMode;

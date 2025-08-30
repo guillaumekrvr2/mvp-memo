@@ -93,8 +93,15 @@ export default function SpokenMemoScreen({ route, navigation }) {
   }
 
   const handleValidate = () => {
-    // Arrêter la synthèse vocale si elle est en cours
+    console.log('🛑 Validation clicked - stopping speech immediately')
+    
+    // Arrêter IMMÉDIATEMENT la synthèse vocale
     stopSpeaking()
+    
+    // Réinitialiser les états
+    setIsPlaying(false)
+    setCurrentDigitIndex(-1)
+    setShowCurrentDigit(false)
     
     // Navigation vers l'écran de recall
     navigation.navigate('SpokenRecall', {
@@ -125,6 +132,32 @@ export default function SpokenMemoScreen({ route, navigation }) {
       stopSpeaking()
     }
   }, [])
+
+  // Arrêter la synthèse vocale quand on quitte l'écran
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      console.log('🛑 beforeRemove triggered - stopping speech')
+      stopSpeaking()
+      setIsPlaying(false)
+      setCurrentDigitIndex(-1)
+      setShowCurrentDigit(false)
+    })
+
+    return unsubscribe
+  }, [navigation])
+
+  // Arrêter la synthèse vocale quand le composant est sur le point d'être démonté
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      console.log('🛑 Screen blur - stopping speech')
+      stopSpeaking()
+      setIsPlaying(false)
+      setCurrentDigitIndex(-1)
+      setShowCurrentDigit(false)
+    })
+
+    return unsubscribe
+  }, [navigation])
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
