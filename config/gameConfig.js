@@ -15,7 +15,7 @@ export const modeOptions = [
 export const defaultTimes = {
   'memory-league': 60,
   iam: 300,
-  custom: 0,
+  custom: 60,
 };
 
 /**

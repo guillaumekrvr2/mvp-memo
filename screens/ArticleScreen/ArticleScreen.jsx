@@ -6,6 +6,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import articles from '../../data/repositories/ArticlesRepository.json';
+import { PrimaryButton } from '../../components/atoms/Commons/PrimaryButton/PrimaryButton';
 import { 
   Container, 
   BackButton,
@@ -49,6 +50,40 @@ export default function ArticleScreen() {
 
   const handleBack = () => {
     navigation.goBack();
+  };
+
+  const handleNumbersAction = () => {
+    navigation.navigate('Tabs', {
+      screen: 'Home',
+      params: { screen: 'Numbers' }
+    });
+  };
+
+  const handleCardsAction = () => {
+    navigation.navigate('Tabs', {
+      screen: 'Home', 
+      params: { screen: 'Cards' }
+    });
+  };
+
+  // Détermine si l'article doit avoir un bouton d'action
+  const shouldShowActionButton = () => {
+    return article.id === '2' || article.id === '4';
+  };
+
+  const getActionButtonProps = () => {
+    if (article.id === '2') {
+      return {
+        onPress: handleNumbersAction,
+        text: 'Commencer l\'entraînement Numbers'
+      };
+    } else if (article.id === '4') {
+      return {
+        onPress: handleCardsAction,
+        text: 'Commencer l\'entraînement Cartes'
+      };
+    }
+    return null;
   };
 
   return (
@@ -186,6 +221,24 @@ export default function ArticleScreen() {
               );
             })}
           </BodyContainer>
+
+          {/* Bouton d'action pour les articles Numbers et Cards */}
+          {shouldShowActionButton() && (
+            <View style={{ 
+              marginTop: 32, 
+              marginBottom: 16,
+              paddingHorizontal: 8
+            }}>
+              <PrimaryButton
+                onPress={getActionButtonProps().onPress}
+                style={{
+                  backgroundColor: '#667eea',
+                }}
+              >
+                {getActionButtonProps().text}
+              </PrimaryButton>
+            </View>
+          )}
         </ContentContainer>
 
         {/* Espace pour éviter le chevauchement avec la navigation */}
