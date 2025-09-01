@@ -1,5 +1,5 @@
 // screens/memo/CorrectionScreen/CorrectionScreen.jsx
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useCallback, useState } from 'react'
 import {
   SafeAreaView,
   View,
@@ -12,6 +12,7 @@ import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButto
 import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
 import CorrectionGrid from '../../../../components/organisms/CorrectionGrid/CorrectionGrid'
 import useSaveBestScore from '../../../../hooks/useSaveBestScore'
+import NewRecordModal from '../../../../components/molecules/Commons/NewRecordModal/NewRecordModal'
 import styles from './styles'
 
 export default function CorrectionScreen({ route, navigation }) {
@@ -19,6 +20,10 @@ export default function CorrectionScreen({ route, navigation }) {
   console.log('CorrectionScreen route.params:', route.params)
 
   const { inputs, numbers, temps, variant, mode } = route.params
+
+  // État pour la modal du nouveau record
+  const [showNewRecordModal, setShowNewRecordModal] = useState(false)
+  const [previousScore, setPreviousScore] = useState(null)
 
   // Protection contre les paramètres manquants - AMÉLIORE
   if (!inputs || !numbers) {
@@ -59,18 +64,34 @@ export default function CorrectionScreen({ route, navigation }) {
     accuracy 
   })
 
-  // Sauvegarde automatique du score à l'affichage
+  // Flag pour éviter les sauvegardes multiples
+  const hasSavedRef = useRef(false)
+
+  // Sauvegarde automatique du score à l'affichage - une seule fois
   useEffect(() => {
-    const saveScoreOnMount = async () => {
+    const saveScore = async () => {
+      // Ne s'exécuter que si on n'a pas encore sauvegardé et que les données sont prêtes
+      if (hasSavedRef.current) {
+        console.log('Score already saved, skipping...')
+        return
+      }
+      
+      if (!modeVariantId || typeof modeVariantId !== 'number') {
+        console.log('No valid modeVariantId to save score for:', modeVariantId)
+        return
+      }
+
+      // Marquer immédiatement pour éviter les race conditions
+      hasSavedRef.current = true
+
       try {
         console.log('Auto-saving score on screen mount...')
+        const result = await saveBestScore(modeVariantId, score)
+        console.log('Score auto-saved successfully!', result)
         
-        // Sauvegarde conditionnelle du score s'il est meilleur
-        if (modeVariantId && typeof modeVariantId === 'number') {
-          await saveBestScore(modeVariantId, score)
-          console.log('Score auto-saved successfully!')
-        } else {
-          console.log('No modeVariantId to save score for:', modeVariantId)
+        // Si un nouveau record a été établi, afficher la modal
+        if (result.updated) {
+          setShowNewRecordModal(true)
         }
       } catch (error) {
         // Si l'utilisateur n'est pas connecté, afficher popup de connexion
@@ -96,8 +117,8 @@ export default function CorrectionScreen({ route, navigation }) {
       }
     }
 
-    saveScoreOnMount()
-  }, [modeVariantId, score, saveBestScore, navigation])
+    saveScore()
+  }, [modeVariantId, score, saveBestScore, navigation]) // Toutes les dépendances nécessaires
 
   const handleRetry = () => {
     navigation.navigate('Numbers')
@@ -150,6 +171,15 @@ export default function CorrectionScreen({ route, navigation }) {
           {loading ? 'Saving...' : 'Retry'}
         </PrimaryButton>
       </ScrollView>
+
+      {/* Modal nouveau record */}
+      <NewRecordModal
+        visible={showNewRecordModal}
+        onClose={() => setShowNewRecordModal(false)}
+        score={score}
+        previousScore={previousScore}
+        discipline="Numbers"
+      />
     </SafeAreaView>
   )
 }
