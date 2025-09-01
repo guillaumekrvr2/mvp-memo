@@ -13,6 +13,7 @@ export default function SpokenDecompteScreen({ route, navigation }) {
     variant, 
     autoAdvance,
     mode,
+    speechSpeed = 1.0,
     discipline = 'spokens'
   } = route.params
 
@@ -36,6 +37,7 @@ export default function SpokenDecompteScreen({ route, navigation }) {
       variant, 
       autoAdvance,
       mode,
+      speechSpeed,
       discipline
     })
   }
@@ -48,6 +50,7 @@ export default function SpokenDecompteScreen({ route, navigation }) {
       variant, 
       autoAdvance,
       mode,
+      speechSpeed,
       discipline
     })
   }

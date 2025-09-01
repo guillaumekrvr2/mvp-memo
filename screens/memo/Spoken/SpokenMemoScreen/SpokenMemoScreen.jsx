@@ -13,8 +13,12 @@ export default function SpokenMemoScreen({ route, navigation }) {
     variant, 
     autoAdvance,
     mode,
+    speechSpeed = 1.0,
     discipline = 'spokens'
   } = route.params
+
+  // Debug : vérifier que speechSpeed arrive bien
+  console.log('🎤 SpokenMemoScreen - speechSpeed reçu:', speechSpeed)
 
   const [digitSequence, setDigitSequence] = useState([])
   const [currentDigitIndex, setCurrentDigitIndex] = useState(-1)
@@ -34,19 +38,24 @@ export default function SpokenMemoScreen({ route, navigation }) {
 
   // Fonction pour prononcer un chiffre avec expo-speech
   const speakDigit = async (digit) => {
+    const startTime = Date.now();
+    console.log(`🗣️ Speaking "${digit}" - Start time: ${startTime}`);
+    
     return new Promise((resolve) => {
-      
       Speech.speak(digit, {
         language: 'fr-FR',
-        rate: 0.8, // Vitesse de parole (0.1 à 2.0)
+        rate: 1.2, // Vitesse plus rapide pour libérer du temps pour les délais
         pitch: 1.0, // Ton de la voix (0.5 à 2.0) 
         volume: 1.0, // Volume (0.0 à 1.0)
         onDone: () => {
-          resolve()
+          const endTime = Date.now();
+          const actualDuration = endTime - startTime;
+          console.log(`✅ "${digit}" finished - Actual duration: ${actualDuration}ms`);
+          resolve(actualDuration)
         },
         onError: (error) => {
           console.error(`❌ Erreur speech '${digit}':`, error)
-          resolve() // Continue même en cas d'erreur
+          resolve(0) // Continue même en cas d'erreur
         }
       })
     })
@@ -73,12 +82,19 @@ export default function SpokenMemoScreen({ route, navigation }) {
       setCurrentDigitIndex(i)
       setShowCurrentDigit(true)
       
-      // Prononcer le chiffre avec expo-speech
-      await speakDigit(digit)
+      // Prononcer le chiffre avec expo-speech et récupérer la durée réelle
+      const actualSpeechDuration = await speakDigit(digit)
       
-      // Attendre exactement 1 seconde entre les chiffres
+      // Calculer le délai restant pour atteindre l'intervalle souhaité
       if (i < sequence.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        const targetIntervalMs = speechSpeed * 1000;
+        const remainingDelay = Math.max(0, targetIntervalMs - actualSpeechDuration);
+        
+        console.log(`⏱️ Target interval: ${targetIntervalMs}ms, Speech took: ${actualSpeechDuration}ms, Remaining delay: ${remainingDelay}ms`);
+        
+        if (remainingDelay > 0) {
+          await new Promise(resolve => setTimeout(resolve, remainingDelay))
+        }
       }
     }
     

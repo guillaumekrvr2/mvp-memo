@@ -83,7 +83,7 @@ export default function SpeedSlider({
         <Text style={[
           styles.labelText,
           value === 0.5 && { color: '#667eea' } // Violet si curseur sur 0.5
-        ]}>{min}s (Lent)</Text>
+        ]}>{min}s (Rapide)</Text>
         <Text style={[
           styles.labelText, // Utiliser labelText comme base
           value === 1.0 && { color: '#667eea' } // Violet si curseur sur 1.0
@@ -91,7 +91,7 @@ export default function SpeedSlider({
         <Text style={[
           styles.labelText,
           value === 2.0 && { color: '#667eea' } // Violet si curseur sur 2.0
-        ]}>{max}s (Rapide)</Text>
+        ]}>{max}s (Lent)</Text>
       </View>
 
       {/* Slider avec la librairie community */}
