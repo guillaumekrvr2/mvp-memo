@@ -102,7 +102,7 @@ export default function NumbersScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <DisciplineHeader disciplineName="Numbers" />
+      <DisciplineHeader disciplineName="Numbers 🔢" />
       <View style={[
         styles.content, 
         mode === 'custom' && { justifyContent: 'flex-start' }

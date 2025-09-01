@@ -136,7 +136,7 @@ export default function CardsSettingsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <DisciplineHeader disciplineName="Cards" />
+      <DisciplineHeader disciplineName="Cards 🃏" />
       <View style={[
         styles.content, 
         mode === 'custom' && { justifyContent: 'flex-start' }

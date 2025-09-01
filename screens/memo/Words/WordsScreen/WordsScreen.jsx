@@ -108,7 +108,7 @@ export default function WordsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <DisciplineHeader disciplineName="Words" />
+      <DisciplineHeader disciplineName="Words 📝" />
       <View style={[
         styles.content, 
         mode === 'custom' && { justifyContent: 'flex-start' }

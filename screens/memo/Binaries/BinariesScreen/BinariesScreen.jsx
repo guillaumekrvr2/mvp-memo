@@ -92,7 +92,7 @@ export default function BinariesScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <DisciplineHeader disciplineName="Binaries" />
+      <DisciplineHeader disciplineName="Binaries 💻" />
       <View style={[
         styles.content, 
         mode === 'custom' && { justifyContent: 'flex-start' }
@@ -169,7 +169,7 @@ export default function BinariesScreen() {
                 variant: selectedVariant?.id,
                 digitCount,
                 autoAdvance,
-                discipline: 'binaries' // 🎯 AJOUTÉ : Indique la discipline binaries
+                discipline: 'binaries 💻' // 🎯 AJOUTÉ : Indique la discipline binaries
               })
             }
           />
