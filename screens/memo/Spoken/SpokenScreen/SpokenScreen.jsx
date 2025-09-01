@@ -12,6 +12,7 @@ import PlayButton from '../../../../components/atoms/Commons/PlayButton/PlayButt
 import { SecondaryButton } from '../../../../components/atoms/Commons/SecondaryButton/SecondaryButton';
 import ObjectiveTimePicker from '../../../../components/molecules/Commons/ObjectiveTimePicker/ObjectiveTimePicker';
 import RecordDisplay from '../../../../components/molecules/Commons/RecordDisplay/RecordDisplay';
+import SpeedSlider from '../../../../components/molecules/Commons/SpeedSlider/SpeedSliderCommunity';
 
 import useObjective from '../../../../hooks/useObjective';
 import useFetchBestScore from '../../../../hooks/useFetchBestScore';
@@ -25,6 +26,9 @@ export default function SpokenScreen() {
 
   // Objectif (nombre d'items) persistant
   const { objectif, setObjectif } = useObjective('spoken:objectif', '10');
+  
+  // Vitesse de lecture (en secondes par item)
+  const [speechSpeed, setSpeechSpeed] = useState(1.0);
 
   // Récupération des variants spokens depuis Supabase
   const {
@@ -54,6 +58,17 @@ export default function SpokenScreen() {
         
         {/* SECTION DU HAUT - Paramètres du jeu */}
         <View style={styles.middleSection}>
+          
+          {/* Curseur de vitesse */}
+          <SpeedSlider
+            value={speechSpeed}
+            onValueChange={setSpeechSpeed}
+            min={0.5}
+            max={2.0}
+            step={0.1}
+          />
+        </View>
+
           <ObjectiveTimePicker
             style={styles.objectiveTimePicker}
             mode={mode}
@@ -61,7 +76,6 @@ export default function SpokenScreen() {
             onObjectifChange={setObjectif}
             hideTime={true}
           />
-        </View>
 
         {/* SECTION DU MILIEU - Record Display */}
         <RecordDisplay 
@@ -80,6 +94,7 @@ export default function SpokenScreen() {
                 objectif: parseInt(objectif, 10),
                 temps: playTime,
                 mode,
+                speechSpeed, // Ajout de la vitesse de lecture
                 discipline: 'spokens' // Discipline spokens
               })
             }

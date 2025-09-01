@@ -154,7 +154,7 @@ const generateDeckForObjective = (objectif, cardFilters = null) => {
   // Appliquer les filtres si présents
   if (cardFilters) {
     fullDeck = applyCardFilters(fullDeck, cardFilters)
-    console.log('🎯 Filtered deck size:', fullDeck.length, 'cards')
+
   }
   
   // Si pas assez de cartes après filtrage, répéter le deck filtré
@@ -205,7 +205,6 @@ export function useCardDeck(objectif = 52, displayCount = 1, cardFilters = null)
     setRemovedCards(new Set())
     
     if (cardFilters) {
-      console.log('🎯 Using card filters:', cardFilters)
     }
   }, [objectif, cardFilters])
   
@@ -217,7 +216,6 @@ export function useCardDeck(objectif = 52, displayCount = 1, cardFilters = null)
       
       // Auto-reset si toutes les cartes sont supprimées (pour mode démo)
       if (newSet.size >= deck.length) {
-        console.log('🎯 Toutes les cartes mémorisées!')
         setTimeout(() => {
           setRemovedCards(new Set())
           setDeck(generateDeckForObjective(objectif, cardFilters))

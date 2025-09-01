@@ -27,18 +27,12 @@ export default function useLeaderboard(discipline, mode, disciplines, variantId 
 
     async function fetchLeaderboard() {
       try {
-        console.log('[useLeaderboard] Starting fetch with:', { discipline, mode, variantId });
 
         // 1) Récupère les comptes via le use-case GetUsers
         const userRepo = new SupabaseUserRepository();
         const getUsers = new GetUsers(userRepo);
         const accounts = await getUsers.execute({ mode, discipline });
         
-        console.log('[useLeaderboard] Accounts received from GetUsers:', { 
-          accountsCount: accounts ? accounts.length : 0,
-          firstAccount: accounts?.[0]
-        });
-
         // Cas des modes basés sur variant : IAM et Memory League avec variantId
         if ((mode === 'iam' || mode === 'memory-league') && variantId != null) {
           const recordRepo = new SupabaseRecordRepository();
@@ -66,10 +60,6 @@ export default function useLeaderboard(discipline, mode, disciplines, variantId 
               (a.records[variantId]?.score || 0)
           );
 
-          console.log('[useLeaderboard] Sorted list with records:', { 
-            sortedCount: sortedList.length,
-            firstSorted: sortedList[0]
-          });
 
           if (isMounted) setSorted(sortedList);
         } else {
@@ -101,11 +91,6 @@ export default function useLeaderboard(discipline, mode, disciplines, variantId 
             return (typeof rec === 'number' ? rec : 0) > 0;
           });
           
-          console.log('[useLeaderboard] Filtered list (default case):', { 
-            originalCount: sortedList.length,
-            filteredCount: filteredList.length,
-            firstFiltered: filteredList[0]
-          });
           
           if (isMounted) setSorted(filteredList);
         }

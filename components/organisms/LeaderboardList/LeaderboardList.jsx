@@ -29,15 +29,6 @@ export function LeaderboardList({
   emptyText = 'Aucun participant',
   loading = false,
 }) {
-  console.log('[LeaderboardList] Rendering with data:', { 
-    dataCount: data ? data.length : 0,
-    discipline,
-    mode,
-    variantId,
-    firstItem: data?.[0],
-    isEmpty: !data || data.length === 0,
-    loading
-  });
   
   // Affichage du loader pendant le chargement
   if (loading) {
