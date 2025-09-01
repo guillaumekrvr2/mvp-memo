@@ -6,23 +6,21 @@ import MemorizationHeader from '../../../components/molecules/Commons/Memorizati
 import WordsHighlightBox from '../../../components/atoms/Commons/WordsHighlightBox/WordsHighlightBox.jsx'
 import ChevronButton from '../../../components/atoms/Commons/ChevronButton/ChevronButton.jsx'
 import WordsGrid from '../../../components/atoms/Words/WordsGrid/WordsGrid.jsx'
-import { previewWords } from '../../../config/wordsConfig'
+import wordsRandomizer from '../../../usecases/WordsRandomizer.js'
 
 export default function WordsMemoScreen({ route, navigation }) {
   const { objectif, temps, variant, wordsCount, autoAdvance, mode, discipline } = route.params // routes
   
-  // 📝 Génération des mots depuis la config (pour test)
+  // 📝 Génération des mots aléatoires depuis la base de données complète
   const words = useMemo(() => {
     const totalWords = parseInt(objectif, 10) || 10;
-    const generatedWords = [];
-    
-    for (let i = 0; i < totalWords; i++) {
-      // Prendre un mot aléatoire de la config
-      const randomWord = previewWords[Math.floor(Math.random() * previewWords.length)];
-      generatedWords.push(randomWord);
+    try {
+      return wordsRandomizer.getRandomWords(totalWords);
+    } catch (error) {
+      console.error('Erreur lors de la sélection des mots:', error);
+      // Fallback en cas d'erreur
+      return [];
     }
-    
-    return generatedWords;
   }, [objectif]);
   
   // 📝 Gestion de l'affichage des mots avec groupes
