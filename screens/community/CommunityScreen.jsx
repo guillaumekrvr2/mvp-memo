@@ -18,7 +18,6 @@ const DISCIPLINES = [
   { key: 'spokens', label: 'Spokens', emoji: '🎤', color: '#ff7b7b' },
   { key: 'binary', label: 'Binary', emoji: '💻', color: '#4facfe' },
   { key: 'names', label: 'Names', emoji: '👥', color: '#43e97b' },
-  { key: 'images', label: 'Images', emoji: '🖼️', color: '#fa709a' },
 ];
 
 // Modes de base - seront étendus dynamiquement pour la discipline numbers

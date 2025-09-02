@@ -6,6 +6,8 @@ import { theme } from '../../../theme'
 import * as S from './styles'
 import { useCardDeck } from '../../../hooks/Cards/useCardDeck'
 import { useFirstCards } from '../../../hooks/Cards/useFirstCards'
+import { useNamesData } from '../../../hooks/Names/useNamesData'
+import { useNamesImagePreloader } from '../../../hooks/Names/useNamesImagePreloader'
 
 export default function DecompteScreen({ route, navigation }) {
   // 🎯 Récupération de tous les paramètres incluant la discipline
@@ -31,6 +33,15 @@ export default function DecompteScreen({ route, navigation }) {
   // 🃏 Hook léger pour preload rapide des 6 premières cartes seulement
   const shouldPreloadCards = discipline === 'cards'
   const firstCards = shouldPreloadCards ? useFirstCards(6) : []
+
+  // 👤 Hook pour précharger les images Names pendant le décompte
+  const shouldPreloadNames = discipline === 'names'
+  const { profiles: namesToPreload } = shouldPreloadNames ? useNamesData(objectif) : { profiles: [] }
+  const { 
+    preloadProgress, 
+    isPreloading, 
+    totalImages 
+  } = useNamesImagePreloader(namesToPreload, shouldPreloadNames)
 
   // 🃏 Preload RAPIDE des 6 premières cartes dès qu'elles sont prêtes
   useEffect(() => {
@@ -85,6 +96,19 @@ export default function DecompteScreen({ route, navigation }) {
         mode,
         discipline
       })
+    } else if (discipline === 'names') {
+      // 👤 Navigation vers 'NamesMemo' pour les noms
+      navigation.replace('NamesMemo', { 
+        objectif, 
+        temps, 
+        variant, 
+        autoAdvance,
+        mode,
+        discipline,
+        fromValue,
+        toValue,
+        useSpecificRange
+      })
     } else {
       navigation.replace('Memorisation', { 
         objectif, 
@@ -134,6 +158,19 @@ export default function DecompteScreen({ route, navigation }) {
           mode,
           discipline
         })
+      } else if (discipline === 'names') {
+        // 👤 Navigation vers 'NamesMemo' pour les noms
+        navigation.replace('NamesMemo', { 
+          objectif, 
+          temps, 
+          variant, 
+          autoAdvance,
+          mode,
+          discipline,
+          fromValue,
+          toValue,
+          useSpecificRange
+        })
       } else {
         // Par défaut, navigation vers MemoScreen pour les numbers
         navigation.replace('Memorisation', { 
@@ -169,12 +206,16 @@ export default function DecompteScreen({ route, navigation }) {
   const getObjectifLabel = () => {
     if (discipline === 'cards') return 'Cartes'
     if (discipline === 'binaries') return 'Objectif (bits)'
+    if (discipline === 'names') return 'Noms'
     return 'Objectif'
   }
 
   const getObjectifValue = () => {
     if (discipline === 'cards') {
       return `${objectif} cartes (${cardsCount} simultanées)`
+    }
+    if (discipline === 'names' && isPreloading) {
+      return `${objectif} (Chargement ${preloadProgress}/${totalImages})`
     }
     return objectif
   }

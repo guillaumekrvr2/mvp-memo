@@ -28,7 +28,7 @@ export default function HomeScreen() {
     { label: 'Words', screen: 'Words', emoji: '📝', color: '#f093fb', description: 'Mots et vocabulaire' },
     { label: 'Binary', screen: 'Binaries', emoji: '💻', color: '#4facfe', description: 'Code binaire' },
     { label: 'Spoken', screen: 'Spoken', emoji: '🎤', color: '#43e97b', description: 'Mémorisation orale' },
-    { label: 'Images', screen: 'Images', emoji: '🖼️', color: '#fa709a', description: 'Mémorisation visuelle' },
+    { label: 'Names', screen: 'Names', emoji: '👤', color: '#fa709a', description: 'Noms et prénoms' },
   ]
 
   // Salutation dynamique selon l'heure

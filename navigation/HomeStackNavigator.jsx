@@ -11,6 +11,8 @@ import WordsMemoScreen from '../screens/memo/Words/WordsMemoScreen'
 import WordsRecallScreen from '../screens/memo/Words/WordsRecallScreen'
 import WordsCorrectionScreen from '../screens/memo/Words/WordsCorrectionScreen'
 import BinariesScreen from '../screens/memo/Binaries/BinariesScreen/BinariesScreen'
+import NamesScreen from '../screens/memo/Names/NamesScreen/NamesScreen'
+import NamesMemoScreen from '../screens/memo/Names/NamesMemoScreen/NamesMemoScreen'
 import DecompteScreen from '../screens/common/DecompteScreen/DecompteScreen'
 import SpokenDecompteScreen from '../screens/memo/Spoken/SpokenDecompteScreen/SpokenDecompteScreen'
 import SpokenMemoScreen from '../screens/memo/Spoken/SpokenMemoScreen/SpokenMemoScreen'
@@ -42,6 +44,7 @@ export default function HomeStackNavigator() {
       <Stack.Screen name="Spoken" component={SpokenScreen} />
       <Stack.Screen name="Words" component={WordsScreen} />
       <Stack.Screen name="Binaries" component={BinariesScreen} />
+      <Stack.Screen name="Names" component={NamesScreen} />
       <Stack.Screen name="CardsGame" component={CardsScreen} />
       <Stack.Screen 
         name="Decompte" 
@@ -113,6 +116,11 @@ export default function HomeStackNavigator() {
       <Stack.Screen 
         name="CardsCorrection" 
         component={CardsCorrectionScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="NamesMemo" 
+        component={NamesMemoScreen} 
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
