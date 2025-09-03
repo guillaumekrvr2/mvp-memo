@@ -41,7 +41,7 @@ export function useNamesSwipeGesture({ isTopProfile, onSwipeStart, onSwipe }) {
         // Animation de sortie identique aux cartes
         translateX.value = withTiming(direction * screenWidth * 1.5, { duration: 400 }, () => {
           console.log('🏁 [SwipeGesture] Animation terminée, déclenchement onSwipe')
-          isAnimating.value = false // MARQUER: Animation terminée
+          isAnimating.value = false // ROLLBACK: Animation terminée
           runOnJS(onSwipe)()
         })
         translateY.value = withTiming(translateY.value + direction * 150, { duration: 400 })

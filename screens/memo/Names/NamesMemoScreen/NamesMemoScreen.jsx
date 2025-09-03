@@ -28,6 +28,8 @@ export default function NamesMemoScreen({ route, navigation }) {
   const [currentProfileIndex, setCurrentProfileIndex] = useState(0)
   // NOUVEAU: État séparé pour les profils à afficher (découplé de currentProfileIndex)
   const [displayProfileIndex, setDisplayProfileIndex] = useState(0)
+  // NOUVEAU: État de transition pour contrôler l'apparition séquentielle des cartes
+  const [isTransitioning, setIsTransitioning] = useState(false)
   
   // Génération des données de noms avec le hook personnalisé
   const { profiles, totalProfiles } = useNamesData(objectif)
@@ -62,7 +64,7 @@ export default function NamesMemoScreen({ route, navigation }) {
     navigation.goBack()
   }, [navigation, profiles])
 
-  // Gestion du swipe de profil avec états découplés
+  // Gestion du swipe de profil avec transition séquentielle
   const handleProfileSwipe = () => {
     console.log('🎬 [ProfileSwipe] DÉBUT handleProfileSwipe - currentIndex:', currentProfileIndex)
     if (isLastProfile) {
@@ -75,10 +77,17 @@ export default function NamesMemoScreen({ route, navigation }) {
       const nextIndex = currentProfileIndex + 1
       setCurrentProfileIndex(nextIndex)
       
-      // Étape 2: Mise à jour RETARDÉE de displayProfileIndex (pour l'affichage)
+      // Étape 2: Transition séquentielle
       setTimeout(() => {
-        console.log('🎬 [ProfileSwipe] Changement displayIndex RETARDÉ:', displayProfileIndex, '->', nextIndex)
-        setDisplayProfileIndex(nextIndex)
+        console.log('🎬 [ProfileSwipe] DÉBUT transition - B passe à index 0')
+        setIsTransitioning(true) // Marquer début de transition
+        setDisplayProfileIndex(nextIndex) // B devient index 0
+        
+        // Étape 3: Permettre à C d'apparaître après stabilisation de B
+        setTimeout(() => {
+          console.log('🎯 [ProfileSwipe] FIN transition - C peut apparaître à index 1')
+          setIsTransitioning(false) // C peut maintenant apparaître
+        }, 200) // 200ms pour que B se stabilise
       }, 450) // Après l'animation complète
     }
   }
@@ -160,6 +169,7 @@ export default function NamesMemoScreen({ route, navigation }) {
         <NamesStack
           profilesToDisplay={profilesToDisplay}
           currentProfile={currentProfile}
+          isTransitioning={isTransitioning}
           onProfileSwipe={handleProfileSwipe}
         />
       </View>

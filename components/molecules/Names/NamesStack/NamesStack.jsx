@@ -13,6 +13,7 @@ const { width } = Dimensions.get('window')
 export function NamesStack({ 
   profilesToDisplay, 
   currentProfile,
+  isTransitioning,
   onProfileSwipe 
 }) {
   // SharedValue pour l'état d'animation partagé entre les cartes
@@ -36,12 +37,13 @@ export function NamesStack({
         
         return (
           <ProfileCardWithGesture
-            key={profile.id}
+            key={`${profile.id}-${index}`}
             profile={profile}
             index={index}
             isTopProfile={isTopProfile}
             zIndex={zIndex}
             topCardIsAnimating={topCardIsAnimating}
+            isTransitioning={isTransitioning}
             onSwipeStart={handleSwipeStart}
             onSwipeComplete={handleSwipeComplete}
           />
@@ -58,6 +60,7 @@ const ProfileCardWithGesture = React.memo(({
   isTopProfile, 
   zIndex,
   topCardIsAnimating,
+  isTransitioning,
   onSwipeStart,
   onSwipeComplete
 }) => {
@@ -84,10 +87,10 @@ const ProfileCardWithGesture = React.memo(({
   const translateYOffset = index * 6 // Décalage vertical plus subtil
 
   const animatedStyle = useAnimatedStyle(() => {
-    // SOLUTION: Masquer carte B (index 1) tant que carte A (index 0) s'anime
+    // CORRECTION LOGIQUE: Masquer carte C (index 2) pendant la transition
     let cardOpacity = 1
-    if (index === 1 && topCardIsAnimating.value) {
-      cardOpacity = 0 // Masquer la carte B pendant l'animation de A
+    if (index === 2 && isTransitioning) {
+      cardOpacity = 0 // Masquer C (index 2) pour que B (index 1) reste visible
     }
 
     return {
@@ -129,7 +132,7 @@ const ProfileCardWithGesture = React.memo(({
           source={typeof profile.imageUri === 'string' ? { uri: profile.imageUri } : profile.imageUri}
           style={styles.profileImage}
           profileId={profile.id}
-          isVisible={index <= 1} // Précharger cartes A et B dès le début 
+          isVisible={true} // CORRECTION FINALE: Toujours charger (pas de rechargement inutile) 
           resizeMode="cover"
           onLoad={() => console.log(`📷 [LazyImage] Image chargée: ${profile.firstName} (index=${index}, zIndex=${zIndex})`)}
           onError={(error) => console.log(`❌ [LazyImage] Erreur image: ${profile.firstName} (index=${index})`, error.nativeEvent)}
