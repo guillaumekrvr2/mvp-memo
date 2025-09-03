@@ -7,6 +7,7 @@ import NamesThumbnailRow from '../../../../components/molecules/Names/NamesThumb
 import { ChevronButton } from '../../../../components/atoms/Cards/ChevronButton/ChevronButton'
 import { useNamesData } from '../../../../hooks/Names/useNamesData'
 import useAutoAdvance from '../../../../hooks/useAutoAdvance'
+import { useMemoryMonitor } from '../../../../hooks/useMemoryMonitor'
 import { styles } from './styles'
 
 export default function NamesMemoScreen({ route, navigation }) {
@@ -28,22 +29,27 @@ export default function NamesMemoScreen({ route, navigation }) {
   
   // Génération des données de noms avec le hook personnalisé
   const { profiles, totalProfiles } = useNamesData(objectif)
+  
+  // Surveillance de la mémoire pour éviter les crashes
+  const { emergencyCleanup } = useMemoryMonitor()
 
   // Profils à afficher : profil actuel + quelques suivants pour l'effet de pile
-  const getProfilesToDisplay = () => {
+  const profilesToDisplay = useMemo(() => {
     const maxProfilesToShow = 4
     const profilesToDisplay = []
+    
+    console.log(`🔍 [Display] currentProfileIndex=${currentProfileIndex}, totalProfiles=${totalProfiles}`)
     
     for (let i = currentProfileIndex; i < Math.min(currentProfileIndex + maxProfilesToShow, profiles.length); i++) {
       if (profiles[i]) {
         profilesToDisplay.push(profiles[i])
+        console.log(`📷 [Display] Profil ${i+1}: ${profiles[i].firstName} ${profiles[i].lastName} (${profiles[i].gender}${profiles[i].imageNumber})`)
       }
     }
     
+    console.log(`👀 [Display] ${profilesToDisplay.length} profils à afficher`)
     return profilesToDisplay
-  }
-
-  const profilesToDisplay = getProfilesToDisplay()
+  }, [currentProfileIndex, profiles, totalProfiles])
   const currentProfile = profiles[currentProfileIndex] || null
   const isLastProfile = currentProfileIndex >= totalProfiles - 1
 
@@ -78,14 +84,18 @@ export default function NamesMemoScreen({ route, navigation }) {
 
   // Navigation entre les profils avec les chevrons
   const handlePreviousProfile = useCallback(() => {
+    console.log(`⬅️ [Nav] Previous: ${currentProfileIndex} -> ${currentProfileIndex - 1}`)
     if (currentProfileIndex > 0) {
       setCurrentProfileIndex(prev => prev - 1)
     }
   }, [currentProfileIndex])
 
   const handleNextProfile = useCallback(() => {
+    console.log(`➡️ [Nav] Next: ${currentProfileIndex} -> ${currentProfileIndex + 1} (max: ${totalProfiles - 1})`)
     if (currentProfileIndex < totalProfiles - 1) {
       setCurrentProfileIndex(prev => prev + 1)
+    } else {
+      console.log(`🚫 [Nav] Fin atteinte, index ${currentProfileIndex} >= ${totalProfiles - 1}`)
     }
   }, [currentProfileIndex, totalProfiles])
 

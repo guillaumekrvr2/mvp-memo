@@ -1,6 +1,7 @@
 // components/molecules/Names/NamesThumbnailRow/NamesThumbnailRow.jsx
-import React, { useRef, useEffect } from 'react'
-import { View, ScrollView, Image, Text, TouchableOpacity } from 'react-native'
+import React, { useRef, useEffect, useState } from 'react'
+import { View, ScrollView, Text, TouchableOpacity } from 'react-native'
+import LazyImage from '../../../atoms/Commons/LazyImage/LazyImage'
 import { styles } from './styles'
 
 export function NamesThumbnailRow({ 
@@ -36,6 +37,10 @@ export function NamesThumbnailRow({
           const isActive = index === currentProfileIndex
           const isPassed = index < currentProfileIndex
           
+          // Ne charger que les thumbnails proches du profil actuel (fenêtre de ±5)
+          const distanceFromCurrent = Math.abs(index - currentProfileIndex)
+          const shouldLoadThumbnail = distanceFromCurrent <= 5
+          
           return (
             <TouchableOpacity
               key={profile.id}
@@ -47,12 +52,14 @@ export function NamesThumbnailRow({
               onPress={() => onProfileSelect(index)}
               activeOpacity={0.8}
             >
-              <Image
+              <LazyImage
                 source={typeof profile.imageUri === 'string' ? { uri: profile.imageUri } : profile.imageUri}
                 style={[
                   styles.thumbnailImage,
                   isPassed && styles.passedImage
                 ]}
+                profileId={`thumb-${profile.id}`} // ID unique pour les thumbnails
+                isVisible={shouldLoadThumbnail}
                 resizeMode="cover"
               />
               

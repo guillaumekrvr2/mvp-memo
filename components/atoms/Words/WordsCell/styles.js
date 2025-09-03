@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12, // Augmenté de 8 à 12
     paddingVertical: 12,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(26, 26, 46, 0.95)', // Fond plus opaque pour masquer les textes derrière
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',

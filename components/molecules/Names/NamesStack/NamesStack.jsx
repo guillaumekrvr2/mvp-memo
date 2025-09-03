@@ -1,9 +1,10 @@
 // components/molecules/Names/NamesStack/NamesStack.jsx
 import React from 'react'
-import { View, Image, Dimensions } from 'react-native'
+import { View, Dimensions } from 'react-native'
 import Animated, { useAnimatedStyle } from 'react-native-reanimated'
 import { GestureDetector } from 'react-native-gesture-handler'
 import WordsCell from '../../../atoms/Words/WordsCell/WordsCell'
+import LazyImage from '../../../atoms/Commons/LazyImage/LazyImage'
 import { useNamesSwipeGesture } from '../../../../hooks/Names/useNamesSwipeGesture'
 import { styles } from './styles'
 
@@ -54,10 +55,6 @@ function ProfileCardWithGesture({
   const translateYOffset = index * 6 // Décalage vertical plus subtil
 
   const animatedStyle = useAnimatedStyle(() => {
-    const opacity = isTopProfile 
-      ? Math.max(0.3, 1 - Math.abs(translateX.value) / (width * 0.8))
-      : 1
-
     return {
       transform: [
         { scale: isTopProfile ? scale.value * scaleOffset : scaleOffset },
@@ -65,19 +62,24 @@ function ProfileCardWithGesture({
         { translateX: isTopProfile ? translateX.value : 0 },
         { rotateZ: isTopProfile ? `${rotateZ.value}deg` : '0deg' },
       ],
-      opacity,
+      opacity: 1, // Garde l'opacité fixe à 1 pour éviter de voir les cartes en dessous
       zIndex,
     }
   })
 
   const CardContent = (
     <Animated.View style={[styles.profileCard, animatedStyle]}>
-      {/* Image principale */}
+      {/* Image principale avec LazyImage */}
       <View style={styles.imageContainer}>
-        <Image
+        <LazyImage
           source={typeof profile.imageUri === 'string' ? { uri: profile.imageUri } : profile.imageUri}
           style={styles.profileImage}
+          profileId={profile.id}
+          isVisible={index < 2} // Seules les 2 premières cartes chargent leur image
           resizeMode="cover"
+          onLoad={() => console.log(`📷 [LazyImage] Image chargée: ${profile.firstName} ${profile.lastName} (${profile.gender}${profile.imageNumber})`)}
+          onError={(error) => console.log(`❌ [LazyImage] Erreur image: ${profile.firstName} ${profile.lastName}`, error.nativeEvent)}
+          onLoadStart={() => console.log(`🔄 [LazyImage] Début chargement: ${profile.firstName} ${profile.lastName} (${profile.gender}${profile.imageNumber})`)}
         />
       </View>
 

@@ -62,12 +62,9 @@ const hommeImages = {
 // Fonction pour obtenir une image
 export const getNameImage = (gender, imageNumber) => {
   const images = gender === 'F' ? femmeImages : hommeImages
-  const image = images[imageNumber]
+  const imageType = gender === 'F' ? 'femme' : 'homme'
   
-  if (!image) {
-    console.log(`⚠️ Image non trouvée: ${gender === 'F' ? 'femme' : 'homme'}${imageNumber}`)
-    return null
-  }
+  const image = images[imageNumber]
   
   return image
 }
