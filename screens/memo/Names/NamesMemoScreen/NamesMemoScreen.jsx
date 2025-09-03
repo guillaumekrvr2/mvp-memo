@@ -26,6 +26,8 @@ export default function NamesMemoScreen({ route, navigation }) {
   
   // État local pour l'index du profil actuel
   const [currentProfileIndex, setCurrentProfileIndex] = useState(0)
+  // NOUVEAU: État séparé pour les profils à afficher (découplé de currentProfileIndex)
+  const [displayProfileIndex, setDisplayProfileIndex] = useState(0)
   
   // Génération des données de noms avec le hook personnalisé
   const { profiles, totalProfiles } = useNamesData(objectif)
@@ -33,23 +35,19 @@ export default function NamesMemoScreen({ route, navigation }) {
   // Surveillance de la mémoire pour éviter les crashes
   const { emergencyCleanup } = useMemoryMonitor()
 
-  // Profils à afficher : profil actuel + quelques suivants pour l'effet de pile
+  // Profils à afficher : basé sur displayProfileIndex (pas currentProfileIndex)
   const profilesToDisplay = useMemo(() => {
-    const maxProfilesToShow = 4
+    const maxProfilesToShow = 3 // Réduire à 3 pour éviter le problème
     const profilesToDisplay = []
     
-    console.log(`🔍 [Display] currentProfileIndex=${currentProfileIndex}, totalProfiles=${totalProfiles}`)
-    
-    for (let i = currentProfileIndex; i < Math.min(currentProfileIndex + maxProfilesToShow, profiles.length); i++) {
+    for (let i = displayProfileIndex; i < Math.min(displayProfileIndex + maxProfilesToShow, profiles.length); i++) {
       if (profiles[i]) {
         profilesToDisplay.push(profiles[i])
-        console.log(`📷 [Display] Profil ${i+1}: ${profiles[i].firstName} ${profiles[i].lastName} (${profiles[i].gender}${profiles[i].imageNumber})`)
       }
     }
     
-    console.log(`👀 [Display] ${profilesToDisplay.length} profils à afficher`)
     return profilesToDisplay
-  }, [currentProfileIndex, profiles, totalProfiles])
+  }, [displayProfileIndex, profiles, totalProfiles])
   const currentProfile = profiles[currentProfileIndex] || null
   const isLastProfile = currentProfileIndex >= totalProfiles - 1
 
@@ -64,16 +62,24 @@ export default function NamesMemoScreen({ route, navigation }) {
     navigation.goBack()
   }, [navigation, profiles])
 
-  // Gestion du swipe de profil
+  // Gestion du swipe de profil avec états découplés
   const handleProfileSwipe = () => {
+    console.log('🎬 [ProfileSwipe] DÉBUT handleProfileSwipe - currentIndex:', currentProfileIndex)
     if (isLastProfile) {
       // Dernier profil → navigation vers NamesRecall
       setTimeout(() => {
         navigateToRecall()
       }, 1000)
     } else {
-      // Passer au profil suivant
-      setCurrentProfileIndex(prev => prev + 1)
+      // Étape 1: Mise à jour immédiate de currentProfileIndex (pour la logique)
+      const nextIndex = currentProfileIndex + 1
+      setCurrentProfileIndex(nextIndex)
+      
+      // Étape 2: Mise à jour RETARDÉE de displayProfileIndex (pour l'affichage)
+      setTimeout(() => {
+        console.log('🎬 [ProfileSwipe] Changement displayIndex RETARDÉ:', displayProfileIndex, '->', nextIndex)
+        setDisplayProfileIndex(nextIndex)
+      }, 450) // Après l'animation complète
     }
   }
 
@@ -86,14 +92,18 @@ export default function NamesMemoScreen({ route, navigation }) {
   const handlePreviousProfile = useCallback(() => {
     console.log(`⬅️ [Nav] Previous: ${currentProfileIndex} -> ${currentProfileIndex - 1}`)
     if (currentProfileIndex > 0) {
-      setCurrentProfileIndex(prev => prev - 1)
+      const newIndex = currentProfileIndex - 1
+      setCurrentProfileIndex(newIndex)
+      setDisplayProfileIndex(newIndex) // Synchronisation immédiate pour navigation manuelle
     }
   }, [currentProfileIndex])
 
   const handleNextProfile = useCallback(() => {
     console.log(`➡️ [Nav] Next: ${currentProfileIndex} -> ${currentProfileIndex + 1} (max: ${totalProfiles - 1})`)
     if (currentProfileIndex < totalProfiles - 1) {
-      setCurrentProfileIndex(prev => prev + 1)
+      const newIndex = currentProfileIndex + 1
+      setCurrentProfileIndex(newIndex)
+      setDisplayProfileIndex(newIndex) // Synchronisation immédiate pour navigation manuelle
     } else {
       console.log(`🚫 [Nav] Fin atteinte, index ${currentProfileIndex} >= ${totalProfiles - 1}`)
     }
@@ -103,6 +113,7 @@ export default function NamesMemoScreen({ route, navigation }) {
   const handleProfileSelect = useCallback((index) => {
     if (index >= 0 && index < totalProfiles) {
       setCurrentProfileIndex(index)
+      setDisplayProfileIndex(index) // Synchronisation immédiate pour sélection directe
     }
   }, [totalProfiles])
 

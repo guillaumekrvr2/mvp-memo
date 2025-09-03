@@ -48,7 +48,6 @@ const LazyImage = memo(({
   const handleError = useCallback((error) => {
     // En cas d'erreur de mémoire, nettoyage du cache
     if (error.nativeEvent?.error?.includes?.('Pool hard cap')) {
-      console.log('🚨 [LazyImage] Pool hard cap détecté, nettoyage cache')
       try {
         if (Image.queryCache?.clear) {
           Image.queryCache.clear()
@@ -57,7 +56,6 @@ const LazyImage = memo(({
           global.gc()
         }
       } catch (cleanError) {
-        console.warn('⚠️ Erreur nettoyage cache:', cleanError)
       }
     }
     

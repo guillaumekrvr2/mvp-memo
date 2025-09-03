@@ -1,7 +1,7 @@
 // components/molecules/Names/NamesStack/NamesStack.jsx
-import React from 'react'
-import { View, Dimensions } from 'react-native'
-import Animated, { useAnimatedStyle } from 'react-native-reanimated'
+import React, { useState } from 'react'
+import { View, Text, Dimensions } from 'react-native'
+import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
 import { GestureDetector } from 'react-native-gesture-handler'
 import WordsCell from '../../../atoms/Words/WordsCell/WordsCell'
 import LazyImage from '../../../atoms/Commons/LazyImage/LazyImage'
@@ -15,6 +15,17 @@ export function NamesStack({
   currentProfile,
   onProfileSwipe 
 }) {
+  // SharedValue pour l'état d'animation partagé entre les cartes
+  const topCardIsAnimating = useSharedValue(false)
+
+  const handleSwipeStart = () => {
+    console.log('🚀 [NamesStack] Swipe détecté')
+  }
+
+  const handleSwipeComplete = () => {
+    console.log('✅ [NamesStack] Swipe terminé, déclenchement callback parent')
+    onProfileSwipe()
+  }
 
   return (
     <View style={styles.container}>
@@ -30,7 +41,9 @@ export function NamesStack({
             index={index}
             isTopProfile={isTopProfile}
             zIndex={zIndex}
-            onProfileSwipe={onProfileSwipe}
+            topCardIsAnimating={topCardIsAnimating}
+            onSwipeStart={handleSwipeStart}
+            onSwipeComplete={handleSwipeComplete}
           />
         )
       })}
@@ -39,22 +52,44 @@ export function NamesStack({
 }
 
 // Composant pour gérer les profils individuels avec gestes optimisés
-function ProfileCardWithGesture({ 
+const ProfileCardWithGesture = React.memo(({ 
   profile, 
   index, 
   isTopProfile, 
   zIndex,
-  onProfileSwipe
-}) {
-  const { panGesture, translateX, translateY, rotateZ, scale } = useNamesSwipeGesture({
+  topCardIsAnimating,
+  onSwipeStart,
+  onSwipeComplete
+}) => {
+  // Debug: Log des re-renders pour traquer le flash
+  console.log(`🎭 [ProfileCard] Render ${profile.firstName} index=${index} isTop=${isTopProfile} zIndex=${zIndex}`)
+  const { panGesture, translateX, translateY, rotateZ, scale, isAnimating } = useNamesSwipeGesture({
     isTopProfile,
-    onSwipe: onProfileSwipe
+    onSwipeStart,
+    onSwipe: onSwipeComplete
   })
+
+  // Synchroniser l'état d'animation local avec l'état partagé (seulement pour la carte du dessus)
+  React.useEffect(() => {
+    if (isTopProfile) {
+      // Synchronisation continue entre l'état local et partagé
+      const syncAnimation = () => {
+        topCardIsAnimating.value = isAnimating.value
+      }
+      syncAnimation()
+    }
+  }, [isTopProfile, isAnimating, topCardIsAnimating])
 
   const scaleOffset = 1 - (index * 0.03) // Légère réduction de taille pour les cartes derrière
   const translateYOffset = index * 6 // Décalage vertical plus subtil
 
   const animatedStyle = useAnimatedStyle(() => {
+    // SOLUTION: Masquer carte B (index 1) tant que carte A (index 0) s'anime
+    let cardOpacity = 1
+    if (index === 1 && topCardIsAnimating.value) {
+      cardOpacity = 0 // Masquer la carte B pendant l'animation de A
+    }
+
     return {
       transform: [
         { scale: isTopProfile ? scale.value * scaleOffset : scaleOffset },
@@ -62,24 +97,43 @@ function ProfileCardWithGesture({
         { translateX: isTopProfile ? translateX.value : 0 },
         { rotateZ: isTopProfile ? `${rotateZ.value}deg` : '0deg' },
       ],
-      opacity: 1, // Garde l'opacité fixe à 1 pour éviter de voir les cartes en dessous
+      opacity: cardOpacity,
       zIndex,
     }
   })
 
+  // DEBUG: Couleurs pour identifier les cartes
+  const debugColors = ['#ff000040', '#00ff0040', '#0000ff40', '#ffff0040']
+  const debugColor = debugColors[index] || '#ffffff20'
+  
   const CardContent = (
-    <Animated.View style={[styles.profileCard, animatedStyle]}>
+    <Animated.View style={[styles.profileCard, animatedStyle, { backgroundColor: debugColor }]}>
+      {/* DEBUG: Indicateur visuel */}
+      <View style={{
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        padding: 4,
+        borderRadius: 4,
+        zIndex: 1000
+      }}>
+        <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>
+          {index}:{profile.firstName}
+        </Text>
+      </View>
+      
       {/* Image principale avec LazyImage */}
       <View style={styles.imageContainer}>
         <LazyImage
           source={typeof profile.imageUri === 'string' ? { uri: profile.imageUri } : profile.imageUri}
           style={styles.profileImage}
           profileId={profile.id}
-          isVisible={index < 2} // Seules les 2 premières cartes chargent leur image
+          isVisible={index <= 1} // Précharger cartes A et B dès le début 
           resizeMode="cover"
-          onLoad={() => console.log(`📷 [LazyImage] Image chargée: ${profile.firstName} ${profile.lastName} (${profile.gender}${profile.imageNumber})`)}
-          onError={(error) => console.log(`❌ [LazyImage] Erreur image: ${profile.firstName} ${profile.lastName}`, error.nativeEvent)}
-          onLoadStart={() => console.log(`🔄 [LazyImage] Début chargement: ${profile.firstName} ${profile.lastName} (${profile.gender}${profile.imageNumber})`)}
+          onLoad={() => console.log(`📷 [LazyImage] Image chargée: ${profile.firstName} (index=${index}, zIndex=${zIndex})`)}
+          onError={(error) => console.log(`❌ [LazyImage] Erreur image: ${profile.firstName} (index=${index})`, error.nativeEvent)}
+          onLoadStart={() => console.log(`🔄 [LazyImage] Début chargement: ${profile.firstName} (index=${index}, zIndex=${zIndex})`)}
         />
       </View>
 
@@ -107,6 +161,12 @@ function ProfileCardWithGesture({
   }
 
   return CardContent
-}
+}, (prevProps, nextProps) => {
+  // Ne re-render que si le profil change vraiment
+  return prevProps.profile.id === nextProps.profile.id && 
+         prevProps.index === nextProps.index &&
+         prevProps.isTopProfile === nextProps.isTopProfile &&
+         prevProps.zIndex === nextProps.zIndex
+})
 
 export default NamesStack

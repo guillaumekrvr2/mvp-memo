@@ -6,16 +6,22 @@ import { Dimensions } from 'react-native'
 
 const { width: screenWidth } = Dimensions.get('window')
 
-export function useNamesSwipeGesture({ isTopProfile, onSwipe }) {
+export function useNamesSwipeGesture({ isTopProfile, onSwipeStart, onSwipe }) {
   const translateX = useSharedValue(0)
   const translateY = useSharedValue(0)
   const rotateZ = useSharedValue(0)
   const scale = useSharedValue(1)
+  const isAnimating = useSharedValue(false) // NOUVEAU: État d'animation
   
   const panGesture = Gesture.Pan()
     .onBegin(() => {
       if (isTopProfile) {
+        isAnimating.value = true // MARQUER: Animation commencée
         scale.value = withSpring(1.05)
+        // Déclencher le préchargement dès le début du swipe
+        if (onSwipeStart) {
+          runOnJS(onSwipeStart)()
+        }
       }
     })
     .onUpdate((event) => {
@@ -33,19 +39,23 @@ export function useNamesSwipeGesture({ isTopProfile, onSwipe }) {
         const direction = event.translationX > 0 ? 1 : -1
         
         // Animation de sortie identique aux cartes
-        translateX.value = withTiming(direction * screenWidth * 1.5, { duration: 400 })
+        translateX.value = withTiming(direction * screenWidth * 1.5, { duration: 400 }, () => {
+          console.log('🏁 [SwipeGesture] Animation terminée, déclenchement onSwipe')
+          isAnimating.value = false // MARQUER: Animation terminée
+          runOnJS(onSwipe)()
+        })
         translateY.value = withTiming(translateY.value + direction * 150, { duration: 400 })
         rotateZ.value = withTiming(direction * 25, { duration: 400 })
         scale.value = withTiming(0.8, { duration: 400 })
         
-        // Déclencher le callback IMMÉDIATEMENT comme les cartes
-        runOnJS(onSwipe)()
+        console.log('🚀 [SwipeGesture] Animation démarrée, callback dans 400ms')
       } else {
         // Retour à la position initiale avec les mêmes paramètres que les cartes
         translateX.value = withSpring(0, { damping: 15, stiffness: 150 })
         translateY.value = withSpring(0, { damping: 15, stiffness: 150 })
         rotateZ.value = withSpring(0, { damping: 15 })
         scale.value = withSpring(1, { damping: 15, stiffness: 150 })
+        isAnimating.value = false // MARQUER: Animation annulée/terminée
       }
     })
 
@@ -54,6 +64,7 @@ export function useNamesSwipeGesture({ isTopProfile, onSwipe }) {
     translateX,
     translateY,
     rotateZ,
-    scale
+    scale,
+    isAnimating // EXPOSER: L'état d'animation
   }
 }
