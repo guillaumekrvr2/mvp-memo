@@ -16,15 +16,13 @@ export function NamesStack({
   isTransitioning,
   onProfileSwipe 
 }) {
-  // SharedValue pour l'état d'animation partagé entre les cartes
-  const topCardIsAnimating = useSharedValue(false)
-
+  // Générer une clé unique pour forcer la réinitialisation du hook comme Cards
+  const topProfileKey = profilesToDisplay[0]?.id || 'empty'
   const handleSwipeStart = () => {
-    console.log('🚀 [NamesStack] Swipe détecté')
+    // Swipe détecté
   }
 
   const handleSwipeComplete = () => {
-    console.log('✅ [NamesStack] Swipe terminé, déclenchement callback parent')
     onProfileSwipe()
   }
 
@@ -37,12 +35,11 @@ export function NamesStack({
         
         return (
           <ProfileCardWithGesture
-            key={`${profile.id}-${index}`}
+            key={isTopProfile ? `top-${topProfileKey}` : `${profile.id}-${index}`} // CLÉ pour réinitialiser le hook
             profile={profile}
             index={index}
             isTopProfile={isTopProfile}
             zIndex={zIndex}
-            topCardIsAnimating={topCardIsAnimating}
             isTransitioning={isTransitioning}
             onSwipeStart={handleSwipeStart}
             onSwipeComplete={handleSwipeComplete}
@@ -59,40 +56,20 @@ const ProfileCardWithGesture = React.memo(({
   index, 
   isTopProfile, 
   zIndex,
-  topCardIsAnimating,
   isTransitioning,
   onSwipeStart,
   onSwipeComplete
 }) => {
-  // Debug: Log des re-renders pour traquer le flash
-  console.log(`🎭 [ProfileCard] Render ${profile.firstName} index=${index} isTop=${isTopProfile} zIndex=${zIndex}`)
-  const { panGesture, translateX, translateY, rotateZ, scale, isAnimating } = useNamesSwipeGesture({
+  const { panGesture, translateX, translateY, rotateZ, scale } = useNamesSwipeGesture({
     isTopProfile,
-    onSwipeStart,
-    onSwipe: onSwipeComplete
+    onSwipeStart: isTopProfile ? onSwipeStart : () => {}, // Hook actif seulement pour le top
+    onSwipe: isTopProfile ? onSwipeComplete : () => {} // Hook actif seulement pour le top
   })
-
-  // Synchroniser l'état d'animation local avec l'état partagé (seulement pour la carte du dessus)
-  React.useEffect(() => {
-    if (isTopProfile) {
-      // Synchronisation continue entre l'état local et partagé
-      const syncAnimation = () => {
-        topCardIsAnimating.value = isAnimating.value
-      }
-      syncAnimation()
-    }
-  }, [isTopProfile, isAnimating, topCardIsAnimating])
 
   const scaleOffset = 1 - (index * 0.03) // Légère réduction de taille pour les cartes derrière
   const translateYOffset = index * 6 // Décalage vertical plus subtil
 
   const animatedStyle = useAnimatedStyle(() => {
-    // CORRECTION LOGIQUE: Masquer carte C (index 2) pendant la transition
-    let cardOpacity = 1
-    if (index === 2 && isTransitioning) {
-      cardOpacity = 0 // Masquer C (index 2) pour que B (index 1) reste visible
-    }
-
     return {
       transform: [
         { scale: isTopProfile ? scale.value * scaleOffset : scaleOffset },
@@ -100,32 +77,15 @@ const ProfileCardWithGesture = React.memo(({
         { translateX: isTopProfile ? translateX.value : 0 },
         { rotateZ: isTopProfile ? `${rotateZ.value}deg` : '0deg' },
       ],
-      opacity: cardOpacity,
+      opacity: 1, // Simplifié : pas de gestion complexe d'opacité
       zIndex,
     }
   })
 
-  // DEBUG: Couleurs pour identifier les cartes
-  const debugColors = ['#ff000040', '#00ff0040', '#0000ff40', '#ffff0040']
-  const debugColor = debugColors[index] || '#ffffff20'
+  // Couleurs debug supprimées pour un design clean
   
   const CardContent = (
-    <Animated.View style={[styles.profileCard, animatedStyle, { backgroundColor: debugColor }]}>
-      {/* DEBUG: Indicateur visuel */}
-      <View style={{
-        position: 'absolute',
-        top: 10,
-        right: 10,
-        backgroundColor: 'rgba(0,0,0,0.7)',
-        padding: 4,
-        borderRadius: 4,
-        zIndex: 1000
-      }}>
-        <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>
-          {index}:{profile.firstName}
-        </Text>
-      </View>
-      
+    <Animated.View style={[styles.profileCard, animatedStyle]}>
       {/* Image principale avec LazyImage */}
       <View style={styles.imageContainer}>
         <LazyImage
@@ -134,9 +94,9 @@ const ProfileCardWithGesture = React.memo(({
           profileId={profile.id}
           isVisible={true} // CORRECTION FINALE: Toujours charger (pas de rechargement inutile) 
           resizeMode="cover"
-          onLoad={() => console.log(`📷 [LazyImage] Image chargée: ${profile.firstName} (index=${index}, zIndex=${zIndex})`)}
-          onError={(error) => console.log(`❌ [LazyImage] Erreur image: ${profile.firstName} (index=${index})`, error.nativeEvent)}
-          onLoadStart={() => console.log(`🔄 [LazyImage] Début chargement: ${profile.firstName} (index=${index}, zIndex=${zIndex})`)}
+          onLoad={() => {}}
+          onError={() => {}}
+          onLoadStart={() => {}}
         />
       </View>
 
@@ -165,11 +125,12 @@ const ProfileCardWithGesture = React.memo(({
 
   return CardContent
 }, (prevProps, nextProps) => {
-  // Ne re-render que si le profil change vraiment
+  // IMPORTANT: Re-render si isTopProfile change (pour activer/désactiver le hook)
   return prevProps.profile.id === nextProps.profile.id && 
          prevProps.index === nextProps.index &&
          prevProps.isTopProfile === nextProps.isTopProfile &&
-         prevProps.zIndex === nextProps.zIndex
+         prevProps.zIndex === nextProps.zIndex &&
+         prevProps.isTransitioning === nextProps.isTransitioning
 })
 
 export default NamesStack

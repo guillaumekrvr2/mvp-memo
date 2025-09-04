@@ -70,12 +70,7 @@ export function NamesThumbnailRow({
                 isPassed && styles.passedIndicator
               ]} />
               
-              {/* Nom sous la miniature pour les actifs */}
-              {isActive && (
-                <Text style={styles.thumbnailName}>
-                  {profile.firstName}
-                </Text>
-              )}
+              {/* Nom supprimé pour un design plus clean */}
             </TouchableOpacity>
           )
         })}

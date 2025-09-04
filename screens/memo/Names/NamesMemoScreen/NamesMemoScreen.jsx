@@ -24,11 +24,9 @@ export default function NamesMemoScreen({ route, navigation }) {
     useSpecificRange
   } = route.params || {}
   
-  // État local pour l'index du profil actuel
+  // État local pour l'index du profil actuel - SIMPLICITÉ CARDS
   const [currentProfileIndex, setCurrentProfileIndex] = useState(0)
-  // NOUVEAU: État séparé pour les profils à afficher (découplé de currentProfileIndex)
-  const [displayProfileIndex, setDisplayProfileIndex] = useState(0)
-  // NOUVEAU: État de transition pour contrôler l'apparition séquentielle des cartes
+  // État minimal pour éviter le clignotement de la carte C
   const [isTransitioning, setIsTransitioning] = useState(false)
   
   // Génération des données de noms avec le hook personnalisé
@@ -37,19 +35,19 @@ export default function NamesMemoScreen({ route, navigation }) {
   // Surveillance de la mémoire pour éviter les crashes
   const { emergencyCleanup } = useMemoryMonitor()
 
-  // Profils à afficher : basé sur displayProfileIndex (pas currentProfileIndex)
+  // Profils à afficher : SIMPLICITÉ CARDS - basé directement sur currentProfileIndex
   const profilesToDisplay = useMemo(() => {
-    const maxProfilesToShow = 3 // Réduire à 3 pour éviter le problème
+    const maxProfilesToShow = 3
     const profilesToDisplay = []
     
-    for (let i = displayProfileIndex; i < Math.min(displayProfileIndex + maxProfilesToShow, profiles.length); i++) {
+    for (let i = currentProfileIndex; i < Math.min(currentProfileIndex + maxProfilesToShow, profiles.length); i++) {
       if (profiles[i]) {
         profilesToDisplay.push(profiles[i])
       }
     }
     
     return profilesToDisplay
-  }, [displayProfileIndex, profiles, totalProfiles])
+  }, [currentProfileIndex, profiles, totalProfiles])
   const currentProfile = profiles[currentProfileIndex] || null
   const isLastProfile = currentProfileIndex >= totalProfiles - 1
 
@@ -60,35 +58,17 @@ export default function NamesMemoScreen({ route, navigation }) {
   const navigateToRecall = useCallback(() => {
     // Pour l'instant, on retourne à l'écran précédent
     // Plus tard : navigation.navigate('NamesRecall', { memorizedProfiles: profiles, ... })
-    console.log('Navigation vers NamesRecall - à implémenter')
     navigation.goBack()
   }, [navigation, profiles])
 
-  // Gestion du swipe de profil avec transition séquentielle
+  // Gestion du swipe de profil - SIMPLIFIÉE comme Cards
   const handleProfileSwipe = () => {
-    console.log('🎬 [ProfileSwipe] DÉBUT handleProfileSwipe - currentIndex:', currentProfileIndex)
     if (isLastProfile) {
       // Dernier profil → navigation vers NamesRecall
-      setTimeout(() => {
-        navigateToRecall()
-      }, 1000)
+      navigateToRecall()
     } else {
-      // Étape 1: Mise à jour immédiate de currentProfileIndex (pour la logique)
-      const nextIndex = currentProfileIndex + 1
-      setCurrentProfileIndex(nextIndex)
-      
-      // Étape 2: Transition séquentielle
-      setTimeout(() => {
-        console.log('🎬 [ProfileSwipe] DÉBUT transition - B passe à index 0')
-        setIsTransitioning(true) // Marquer début de transition
-        setDisplayProfileIndex(nextIndex) // B devient index 0
-        
-        // Étape 3: Permettre à C d'apparaître après stabilisation de B
-        setTimeout(() => {
-          console.log('🎯 [ProfileSwipe] FIN transition - C peut apparaître à index 1')
-          setIsTransitioning(false) // C peut maintenant apparaître
-        }, 200) // 200ms pour que B se stabilise
-      }, 450) // Après l'animation complète
+      // Mise à jour immédiate comme Cards (pas de délai)
+      setCurrentProfileIndex(prev => prev + 1)
     }
   }
 
@@ -97,32 +77,23 @@ export default function NamesMemoScreen({ route, navigation }) {
     navigateToRecall()
   }, [navigateToRecall])
 
-  // Navigation entre les profils avec les chevrons
+  // Navigation entre les profils avec les chevrons - SIMPLICITÉ CARDS
   const handlePreviousProfile = useCallback(() => {
-    console.log(`⬅️ [Nav] Previous: ${currentProfileIndex} -> ${currentProfileIndex - 1}`)
     if (currentProfileIndex > 0) {
-      const newIndex = currentProfileIndex - 1
-      setCurrentProfileIndex(newIndex)
-      setDisplayProfileIndex(newIndex) // Synchronisation immédiate pour navigation manuelle
+      setCurrentProfileIndex(prev => prev - 1)
     }
   }, [currentProfileIndex])
 
   const handleNextProfile = useCallback(() => {
-    console.log(`➡️ [Nav] Next: ${currentProfileIndex} -> ${currentProfileIndex + 1} (max: ${totalProfiles - 1})`)
     if (currentProfileIndex < totalProfiles - 1) {
-      const newIndex = currentProfileIndex + 1
-      setCurrentProfileIndex(newIndex)
-      setDisplayProfileIndex(newIndex) // Synchronisation immédiate pour navigation manuelle
-    } else {
-      console.log(`🚫 [Nav] Fin atteinte, index ${currentProfileIndex} >= ${totalProfiles - 1}`)
+      setCurrentProfileIndex(prev => prev + 1)
     }
   }, [currentProfileIndex, totalProfiles])
 
-  // Sélection directe d'un profil depuis le thumbnail
+  // Sélection directe d'un profil depuis le thumbnail - SIMPLICITÉ CARDS
   const handleProfileSelect = useCallback((index) => {
     if (index >= 0 && index < totalProfiles) {
       setCurrentProfileIndex(index)
-      setDisplayProfileIndex(index) // Synchronisation immédiate pour sélection directe
     }
   }, [totalProfiles])
 
@@ -135,7 +106,7 @@ export default function NamesMemoScreen({ route, navigation }) {
       />
 
       {/* Container pour les profils avec chevrons */}
-      <View style={{ flex: 1, position: 'relative' }}>
+      <View style={{ flex: 1, position: 'relative', marginTop: '15%' }}>
         {/* Chevron gauche */}
         <ChevronButton
           direction="left"
@@ -167,6 +138,7 @@ export default function NamesMemoScreen({ route, navigation }) {
         />
 
         <NamesStack
+          key={`stack-${currentProfileIndex}`} // CLÉ pour reset complet comme Cards
           profilesToDisplay={profilesToDisplay}
           currentProfile={currentProfile}
           isTransitioning={isTransitioning}

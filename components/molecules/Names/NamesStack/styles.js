@@ -16,35 +16,35 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     width: width * 0.75, // 75% de la largeur d'écran
     alignItems: 'center',
-    backgroundColor: 'rgba(10, 10, 10, 0.95)', // Fond sombre opaque pour masquer les cartes derrière
-    borderRadius: 24,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(20, 20, 30, 0.97)', // Fond légèrement bleué et plus moderne
+    borderRadius: 28,
+    padding: 24,
+    borderWidth: 0.5,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 8,
+      height: 12,
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 10,
+    shadowOpacity: 0.4,
+    shadowRadius: 20,
+    elevation: 12,
   },
 
   imageContainer: {
     width: width * 0.6, // 60% de la largeur d'écran
     height: width * 0.75, // Ratio 4:5 (portrait)
-    borderRadius: 20,
+    borderRadius: 18,
     overflow: 'hidden',
-    marginBottom: 20,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 6,
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 8,
   },
 
   profileImage: {
