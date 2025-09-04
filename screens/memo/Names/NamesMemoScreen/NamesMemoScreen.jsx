@@ -56,10 +56,15 @@ export default function NamesMemoScreen({ route, navigation }) {
 
   // Navigation vers NamesRecall (à créer plus tard)
   const navigateToRecall = useCallback(() => {
-    // Pour l'instant, on retourne à l'écran précédent
-    // Plus tard : navigation.navigate('NamesRecall', { memorizedProfiles: profiles, ... })
-    navigation.goBack()
-  }, [navigation, profiles])
+    navigation.navigate('NamesRecall', {
+      memorizedProfiles: profiles,
+      objectif,
+      temps,
+      mode,
+      variant,
+      discipline
+    })
+  }, [navigation, profiles, objectif, temps, mode, variant, discipline])
 
   // Gestion du swipe de profil - SIMPLIFIÉE comme Cards
   const handleProfileSwipe = () => {

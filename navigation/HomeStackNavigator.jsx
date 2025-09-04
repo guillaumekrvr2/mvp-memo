@@ -13,6 +13,7 @@ import WordsCorrectionScreen from '../screens/memo/Words/WordsCorrectionScreen'
 import BinariesScreen from '../screens/memo/Binaries/BinariesScreen/BinariesScreen'
 import NamesScreen from '../screens/memo/Names/NamesScreen/NamesScreen'
 import NamesMemoScreen from '../screens/memo/Names/NamesMemoScreen/NamesMemoScreen'
+import NamesRecallScreen from '../screens/memo/Names/NamesRecallScreen/NamesRecallScreen'
 import DecompteScreen from '../screens/common/DecompteScreen/DecompteScreen'
 import SpokenDecompteScreen from '../screens/memo/Spoken/SpokenDecompteScreen/SpokenDecompteScreen'
 import SpokenMemoScreen from '../screens/memo/Spoken/SpokenMemoScreen/SpokenMemoScreen'
@@ -121,6 +122,11 @@ export default function HomeStackNavigator() {
       <Stack.Screen 
         name="NamesMemo" 
         component={NamesMemoScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="NamesRecall" 
+        component={NamesRecallScreen} 
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
