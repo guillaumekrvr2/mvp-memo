@@ -127,7 +127,10 @@ export default function HomeStackNavigator() {
       <Stack.Screen 
         name="NamesRecall" 
         component={NamesRecallScreen} 
-        options={{ headerShown: false }}
+        options={{ 
+          headerShown: false,
+          contentStyle: { backgroundColor: 'transparent' } // Transparent pour éviter la barre noire clavier
+        }}
       />
     </Stack.Navigator>
   )
