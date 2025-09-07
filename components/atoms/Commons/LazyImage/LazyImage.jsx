@@ -62,7 +62,7 @@ const LazyImage = memo(({
     onError && onError(error)
   }, [onError])
   
-  // Image normale si visible
+  // Image normale si visible (ou mode debug correction)
   return (
     <Image
       source={source}

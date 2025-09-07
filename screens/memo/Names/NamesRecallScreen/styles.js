@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 12,
-    backgroundColor: 'transparent', // Transparent pour hériter du parent
+    backgroundColor: '#0a0a0a', // Fond noir pour le contenu principal
   },
 
   flatList: {
@@ -42,9 +42,8 @@ export const styles = StyleSheet.create({
     left: 24, // Margin left au lieu de paddingHorizontal
     right: 24, // Margin right au lieu de paddingHorizontal
     paddingVertical: 10,
-    backgroundColor: 'transparent', // Transparent maintenant
+    backgroundColor: 'rgba(255, 255, 255)', // Transparent maintenant
     borderTopWidth: 1,
     borderTopColor: 'rgba(255, 255, 255, 0.1)',
-    backgroundColor: 'transparent',
   },
 })

@@ -63,6 +63,12 @@ export default function CommunityScreen() {
         if (wordsVariants.length > 0 && (selectedMode === 'memory-league' || selectedMode === 'iam')) {
           setSelectedMode(wordsVariants[0].id.toString());
         }
+      } else if (selectedDiscipline === 'names') {
+        // Chercher les variants names (disciplineId 11, variants 23,24,25,26)
+        const namesVariants = byDiscipline['names'] || byDiscipline[11] || [];
+        if (namesVariants.length > 0 && (selectedMode === 'memory-league' || selectedMode === 'iam')) {
+          setSelectedMode(namesVariants[0].id.toString());
+        }
       } else if (selectedDiscipline === 'spokens') {
         // Spokens a un seul variant fixe (disciplineId 13, variant 18)
         setSelectedMode('18');
@@ -112,6 +118,16 @@ export default function CommunityScreen() {
         }));
         return options;
       }
+    } else if (selectedDiscipline === 'names') {
+      const namesVariants = byDiscipline['names'] || byDiscipline[11] || [];
+      
+      if (namesVariants.length > 0) {
+        const options = namesVariants.map(variant => ({
+          label: variant.label,
+          value: variant.id.toString(),
+        }));
+        return options;
+      }
     } else if (selectedDiscipline === 'spokens') {
       // Spokens a un seul mode fixe
       return [
@@ -134,6 +150,9 @@ export default function CommunityScreen() {
       const parsed = parseInt(selectedMode, 10);
       return isNaN(parsed) ? null : parsed;
     } else if (selectedDiscipline === 'words') {
+      const parsed = parseInt(selectedMode, 10);
+      return isNaN(parsed) ? null : parsed;
+    } else if (selectedDiscipline === 'names') {
       const parsed = parseInt(selectedMode, 10);
       return isNaN(parsed) ? null : parsed;
     } else if (selectedDiscipline === 'spokens') {
@@ -169,6 +188,11 @@ export default function CommunityScreen() {
       if (wordsVariants.length > 0) {
         setSelectedMode(wordsVariants[0].id.toString());
       }
+    } else if (newDiscipline === 'names') {
+      const namesVariants = byDiscipline['names'] || byDiscipline[11] || [];
+      if (namesVariants.length > 0) {
+        setSelectedMode(namesVariants[0].id.toString());
+      }
     } else if (newDiscipline === 'spokens') {
       // Spokens a un seul variant fixe
       setSelectedMode('18');
@@ -190,6 +214,9 @@ export default function CommunityScreen() {
     } else if (selectedDiscipline === 'words') {
       // Words variants: 19/20/21/22=iam (mode_id 9)
       return 'iam';
+    } else if (selectedDiscipline === 'names') {
+      // Names variants: 23=memory-league, 24/25/26=iam
+      return variantId === 23 ? 'memory-league' : 'iam';
     } else if (selectedDiscipline === 'spokens') {
       // Spokens variant: 18=iam (mode_id 2, discipline_id 13)
       return 'iam';

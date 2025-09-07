@@ -17,12 +17,34 @@ export default function ProfileScreen({ navigation }) {
     if (!current && !isLoggingOut) navigation.replace('Login')
   }, [current, isLoggingOut])
 
-  // === DEBUG : afficher les IDs et scores des variants "numbers" ===
+  // === DEBUG : afficher les IDs et scores des variants "numbers" et "names" ===
   useEffect(() => {
     if (!current || isLoggingOut) return // Évite l'exécution si déconnecté
+    
+    // Debug Numbers variants
     const nums = byDiscipline['numbers'] || byDiscipline[7] || []
-    const ids = nums.map(v => v.id)
-    const recs = ids.map(id => ({ id, score: current.records?.[id] ?? 0 }))
+    const numIds = nums.map(v => v.id)
+    const numRecs = numIds.map(id => ({ id, score: current.records?.[id] ?? 0 }))
+    
+    // Debug Names variants
+    const names = byDiscipline['names'] || byDiscipline[11] || []
+    const nameIds = names.map(v => v.id)
+    const nameRecs = nameIds.map(id => ({ id, score: current.records?.[id] ?? 0 }))
+    
+    if (names.length > 0) {
+      console.log('👥 [ProfileScreen] Names variants:', names.map(v => ({ id: v.id, label: v.label })))
+      console.log('👥 [ProfileScreen] Names records:', nameRecs)
+    }
+
+    // Debug Words variants
+    const words = byDiscipline['words'] || byDiscipline[9] || []
+    const wordIds = words.map(v => v.id)
+    const wordRecs = wordIds.map(id => ({ id, score: current.records?.[id] ?? 0 }))
+    
+    if (words.length > 0) {
+      console.log('📝 [ProfileScreen] Words variants:', words.map(v => ({ id: v.id, label: v.label })))
+      console.log('📝 [ProfileScreen] Words records:', wordRecs)
+    }
   }, [byDiscipline, current, isLoggingOut])
 
   // Fonction de déconnexion sécurisée
@@ -61,6 +83,22 @@ export default function ProfileScreen({ navigation }) {
   // Prépare la liste simple des variants "binary"
   const rawBinary = byDiscipline['binary'] || byDiscipline[10] || []
   const binaryVariants = rawBinary.map(({ id, label }) => ({
+    id,
+    label,
+    score: records[id] != null ? records[id] : 0,
+  }))
+
+  // Prépare la liste simple des variants "names"
+  const rawNames = byDiscipline['names'] || byDiscipline[11] || []
+  const namesVariants = rawNames.map(({ id, label }) => ({
+    id,
+    label,
+    score: records[id] != null ? records[id] : 0,
+  }))
+
+  // Prépare la liste simple des variants "words"
+  const rawWords = byDiscipline['words'] || byDiscipline[9] || []
+  const wordsVariants = rawWords.map(({ id, label }) => ({
     id,
     label,
     score: records[id] != null ? records[id] : 0,
@@ -183,8 +221,48 @@ export default function ProfileScreen({ navigation }) {
           )}
         </View>
 
+        {/* Names: liste détaillée */}
+        <View style={styles.disciplineCard}>
+          <View style={styles.disciplineHeader}>
+            <Text style={styles.disciplineTitle}>👥 Names</Text>
+            <Text style={styles.variantCount}>{namesVariants.length} variants</Text>
+          </View>
+          {namesVariants.length > 0 ? (
+            namesVariants.map(({ id, label, score }) => (
+              <View key={id} style={styles.variantRow}>
+                <Text style={styles.variantLabel}>{label}</Text>
+                <View style={styles.scoreChip}>
+                  <Text style={styles.scoreText}>{score}</Text>
+                </View>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.emptyText}>Aucun variant disponible</Text>
+          )}
+        </View>
+
+        {/* Words: liste détaillée */}
+        <View style={styles.disciplineCard}>
+          <View style={styles.disciplineHeader}>
+            <Text style={styles.disciplineTitle}>📝 Words</Text>
+            <Text style={styles.variantCount}>{wordsVariants.length} variants</Text>
+          </View>
+          {wordsVariants.length > 0 ? (
+            wordsVariants.map(({ id, label, score }) => (
+              <View key={id} style={styles.variantRow}>
+                <Text style={styles.variantLabel}>{label}</Text>
+                <View style={styles.scoreChip}>
+                  <Text style={styles.scoreText}>{score}</Text>
+                </View>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.emptyText}>Aucun variant disponible</Text>
+          )}
+        </View>
+
         {/* Autres disciplines */}
-        {DISCIPLINES.filter(d => d !== 'numbers' && d !== 'cards' && d !== 'binary').map(discipline => {
+        {DISCIPLINES.filter(d => d !== 'numbers' && d !== 'cards' && d !== 'binary' && d !== 'names' && d !== 'words').map(discipline => {
           const disciplineEmojis = {
             cards: '🃏',
             words: '📝',

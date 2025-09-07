@@ -14,6 +14,7 @@ import BinariesScreen from '../screens/memo/Binaries/BinariesScreen/BinariesScre
 import NamesScreen from '../screens/memo/Names/NamesScreen/NamesScreen'
 import NamesMemoScreen from '../screens/memo/Names/NamesMemoScreen/NamesMemoScreen'
 import NamesRecallScreen from '../screens/memo/Names/NamesRecallScreen/NamesRecallScreen'
+import NamesCorrectionScreen from '../screens/memo/Names/NamesCorrectionScreen/NamesCorrectionScreen'
 import DecompteScreen from '../screens/common/DecompteScreen/DecompteScreen'
 import SpokenDecompteScreen from '../screens/memo/Spoken/SpokenDecompteScreen/SpokenDecompteScreen'
 import SpokenMemoScreen from '../screens/memo/Spoken/SpokenMemoScreen/SpokenMemoScreen'
@@ -131,6 +132,11 @@ export default function HomeStackNavigator() {
           headerShown: false,
           contentStyle: { backgroundColor: 'transparent' } // Transparent pour éviter la barre noire clavier
         }}
+      />
+      <Stack.Screen 
+        name="NamesCorrection" 
+        component={NamesCorrectionScreen} 
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   )

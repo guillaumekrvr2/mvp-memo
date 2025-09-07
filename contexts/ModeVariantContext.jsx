@@ -39,6 +39,24 @@ export function ModeVariantProvider({ children }) {
     return acc;
   }, {});
 
+  // Add string keys for easier lookup
+  const disciplineMapping = {
+    7: 'numbers',
+    8: 'cards', 
+    9: 'words',
+    10: 'binary',
+    11: 'names',
+    13: 'spokens'
+  };
+
+  // Add variants with string keys as well
+  Object.keys(disciplineMapping).forEach(disciplineId => {
+    const stringKey = disciplineMapping[disciplineId];
+    if (byDiscipline[disciplineId]) {
+      byDiscipline[stringKey] = byDiscipline[disciplineId];
+    }
+  });
+
   return (
     <ModeVariantContext.Provider value={{ variants, map, byDiscipline, loading, error }}>
       {children}

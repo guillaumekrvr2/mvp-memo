@@ -1,11 +1,11 @@
 // components/molecules/Names/NamesRecallCard/NamesRecallCard.jsx
-import React, { useRef } from 'react'
+import React, { useRef, memo, useCallback } from 'react'
 import { View, TextInput } from 'react-native'
 import LazyImage from '../../../atoms/Commons/LazyImage/LazyImage'
 import { styles } from './styles'
 
-// Composant WordsCell réduit pour l'écran de recall
-const SmallWordsCell = ({ value, onTextChange, inputRef, onSubmitEditing, returnKeyType = "next" }) => {
+// Composant WordsCell réduit pour l'écran de recall - optimisé avec memo
+const SmallWordsCell = memo(({ value, onTextChange, inputRef, onSubmitEditing, returnKeyType = "next" }) => {
   return (
     <View style={styles.nameInput}>
       <TextInput
@@ -22,15 +22,16 @@ const SmallWordsCell = ({ value, onTextChange, inputRef, onSubmitEditing, return
       />
     </View>
   )
-}
+})
 
-export default function NamesRecallCard({ 
+const NamesRecallCard = memo(({ 
   profile, 
   userAnswer = {}, 
   onAnswerChange,
   inputRefs,
-  onNavigateNext
-}) {
+  onNavigateNext,
+  isVisible = true
+}) => {
   const firstNameRef = useRef(null)
   const lastNameRef = useRef(null)
   
@@ -42,31 +43,31 @@ export default function NamesRecallCard({
     }
   }, [profile.id, inputRefs])
 
-  const handleFirstNameChange = (value) => {
+  const handleFirstNameChange = useCallback((value) => {
     onAnswerChange(profile.id, 'firstName', value)
-  }
+  }, [onAnswerChange, profile.id])
 
-  const handleLastNameChange = (value) => {
+  const handleLastNameChange = useCallback((value) => {
     onAnswerChange(profile.id, 'lastName', value)
-  }
+  }, [onAnswerChange, profile.id])
 
-  const handleFirstNameSubmit = () => {
+  const handleFirstNameSubmit = useCallback(() => {
     // Navigation vers le champ nom de la même carte
     if (onNavigateNext) {
       onNavigateNext(profile.id, 'firstName')
     } else {
       lastNameRef.current?.focus()
     }
-  }
+  }, [onNavigateNext, profile.id])
 
-  const handleLastNameSubmit = () => {
+  const handleLastNameSubmit = useCallback(() => {
     // Navigation vers le prénom de la carte suivante ou fermeture
     if (onNavigateNext) {
       onNavigateNext(profile.id, 'lastName')
     } else {
       lastNameRef.current?.blur()
     }
-  }
+  }, [onNavigateNext, profile.id])
 
   return (
     <View style={styles.container}>
@@ -76,7 +77,7 @@ export default function NamesRecallCard({
           source={typeof profile.imageUri === 'string' ? { uri: profile.imageUri } : profile.imageUri}
           style={styles.profileImage}
           profileId={`recall-${profile.id}`}
-          isVisible={true}
+          isVisible={isVisible}
           resizeMode="cover"
         />
       </View>
@@ -100,4 +101,8 @@ export default function NamesRecallCard({
       </View>
     </View>
   )
-}
+})
+
+NamesRecallCard.displayName = 'NamesRecallCard'
+
+export default NamesRecallCard
