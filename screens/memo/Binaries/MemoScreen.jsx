@@ -14,7 +14,7 @@ import useAutoScroll    from '../../../hooks/useAutoScroll.js'
 import { cellStyles } from '../../../components/atoms/Numbers/Grid/styles.js';
 
 export default function BinaryMemoScreen({ route, navigation }) {
-  const { objectif, temps, variant, digitCount, autoAdvance } = route.params // routes
+  const { objectif, temps, variant, digitCount, autoAdvance, discipline } = route.params // routes
   const binaries = useBinaries(objectif) // Génération des chiffres binaires (0 et 1)
   const totalTime     = parseInt(temps, 10) || 0 // Chrono
   const [timeLeft]    = useTimer(totalTime) 
@@ -34,7 +34,7 @@ export default function BinaryMemoScreen({ route, navigation }) {
     {/* HEADER */}
     <MemorizationHeader
       onBack={() => navigation.goBack()}
-      onDone={() => navigation.replace('BinaryRecall', { objectif, temps, binaries, variant })}
+      onDone={() => navigation.replace('BinaryRecall', { objectif, temps, binaries, variant, discipline })}
       duration={totalTime}
     />
 

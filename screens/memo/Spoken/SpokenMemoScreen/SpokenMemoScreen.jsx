@@ -17,13 +17,12 @@ export default function SpokenMemoScreen({ route, navigation }) {
     discipline = 'spokens'
   } = route.params
 
-  // Debug : vérifier que speechSpeed arrive bien
-  console.log('🎤 SpokenMemoScreen - speechSpeed reçu:', speechSpeed)
 
   const [digitSequence, setDigitSequence] = useState([])
   const [currentDigitIndex, setCurrentDigitIndex] = useState(-1)
   const [isPlaying, setIsPlaying] = useState(false)
   const [showCurrentDigit, setShowCurrentDigit] = useState(false)
+  const [shouldStop, setShouldStop] = useState(false) // Flag pour arrêter la séquence
 
   // Génération d'une séquence aléatoire de chiffres
   const generateDigitSequence = () => {
@@ -39,7 +38,6 @@ export default function SpokenMemoScreen({ route, navigation }) {
   // Fonction pour prononcer un chiffre avec expo-speech
   const speakDigit = async (digit) => {
     const startTime = Date.now();
-    console.log(`🗣️ Speaking "${digit}" - Start time: ${startTime}`);
     
     return new Promise((resolve) => {
       Speech.speak(digit, {
@@ -50,7 +48,6 @@ export default function SpokenMemoScreen({ route, navigation }) {
         onDone: () => {
           const endTime = Date.now();
           const actualDuration = endTime - startTime;
-          console.log(`✅ "${digit}" finished - Actual duration: ${actualDuration}ms`);
           resolve(actualDuration)
         },
         onError: (error) => {
@@ -63,6 +60,7 @@ export default function SpokenMemoScreen({ route, navigation }) {
 
   // Fonction pour arrêter la synthèse vocale
   const stopSpeaking = () => {
+    setShouldStop(true) // Activer le flag d'arrêt
     Speech.stop()
   }
 
@@ -71,12 +69,17 @@ export default function SpokenMemoScreen({ route, navigation }) {
     
     setIsPlaying(true)
     setCurrentDigitIndex(0)
+    setShouldStop(false) // Réinitialiser le flag d'arrêt
     
     const sequenceStartTime = Date.now()
     
     for (let i = 0; i < sequence.length; i++) {
+      // Vérifier si on doit arrêter
+      if (shouldStop) {
+        break
+      }
+      
       const digit = sequence[i]
-    
       
       // Afficher le chiffre actuel
       setCurrentDigitIndex(i)
@@ -85,15 +88,30 @@ export default function SpokenMemoScreen({ route, navigation }) {
       // Prononcer le chiffre avec expo-speech et récupérer la durée réelle
       const actualSpeechDuration = await speakDigit(digit)
       
+      // Vérifier à nouveau après la synthèse
+      if (shouldStop) {
+        break
+      }
+      
       // Calculer le délai restant pour atteindre l'intervalle souhaité
       if (i < sequence.length - 1) {
         const targetIntervalMs = speechSpeed * 1000;
         const remainingDelay = Math.max(0, targetIntervalMs - actualSpeechDuration);
         
-        console.log(`⏱️ Target interval: ${targetIntervalMs}ms, Speech took: ${actualSpeechDuration}ms, Remaining delay: ${remainingDelay}ms`);
-        
         if (remainingDelay > 0) {
-          await new Promise(resolve => setTimeout(resolve, remainingDelay))
+          // Attendre en vérifiant périodiquement si on doit arrêter
+          const checkInterval = 100 // Vérifier toutes les 100ms
+          let remainingTime = remainingDelay
+          
+          while (remainingTime > 0 && !shouldStop) {
+            const waitTime = Math.min(checkInterval, remainingTime)
+            await new Promise(resolve => setTimeout(resolve, waitTime))
+            remainingTime -= waitTime
+          }
+          
+          if (shouldStop) {
+            break
+          }
         }
       }
     }
@@ -109,7 +127,6 @@ export default function SpokenMemoScreen({ route, navigation }) {
   }
 
   const handleValidate = () => {
-    console.log('🛑 Validation clicked - stopping speech immediately')
     
     // Arrêter IMMÉDIATEMENT la synthèse vocale
     stopSpeaking()
@@ -131,13 +148,14 @@ export default function SpokenMemoScreen({ route, navigation }) {
   }
 
   const handleStartMemorization = () => {
-    
+    setShouldStop(false) // Réinitialiser le flag d'arrêt
     const sequence = generateDigitSequence()
     playDigitSequence(sequence)
   }
 
   // Démarrer automatiquement la diction au montage du composant
   useEffect(() => {
+    setShouldStop(false) // Réinitialiser le flag d'arrêt
     const sequence = generateDigitSequence()
     playDigitSequence(sequence)
   }, [])
@@ -152,7 +170,6 @@ export default function SpokenMemoScreen({ route, navigation }) {
   // Arrêter la synthèse vocale quand on quitte l'écran
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-      console.log('🛑 beforeRemove triggered - stopping speech')
       stopSpeaking()
       setIsPlaying(false)
       setCurrentDigitIndex(-1)
@@ -165,7 +182,6 @@ export default function SpokenMemoScreen({ route, navigation }) {
   // Arrêter la synthèse vocale quand le composant est sur le point d'être démonté
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
-      console.log('🛑 Screen blur - stopping speech')
       stopSpeaking()
       setIsPlaying(false)
       setCurrentDigitIndex(-1)

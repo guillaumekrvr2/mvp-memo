@@ -84,7 +84,8 @@ export default function DecompteScreen({ route, navigation }) {
         temps, 
         variant, 
         digitCount, 
-        autoAdvance 
+        autoAdvance,
+        discipline
       })
     } else if (discipline === 'words') {
       navigation.replace('WordsMemo', { 

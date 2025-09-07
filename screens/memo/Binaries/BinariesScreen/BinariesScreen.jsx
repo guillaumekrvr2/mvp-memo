@@ -169,7 +169,7 @@ export default function BinariesScreen() {
                 variant: selectedVariant?.id,
                 digitCount,
                 autoAdvance,
-                discipline: 'binaries 💻' // 🎯 AJOUTÉ : Indique la discipline binaries
+                discipline: 'binaries' // 🎯 AJOUTÉ : Indique la discipline binaries
               })
             }
           />

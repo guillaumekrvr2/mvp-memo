@@ -1,5 +1,5 @@
 // screens/memo/Spoken/SpokenCorrectionScreen/SpokenCorrectionScreen.jsx
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   SafeAreaView,
   View,
@@ -11,11 +11,11 @@ import {
 import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton'
 import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
 import CorrectionGrid from '../../../../components/organisms/CorrectionGrid/CorrectionGrid'
+import NewRecordModal from '../../../../components/molecules/Commons/NewRecordModal/NewRecordModal'
 import useSaveBestScore from '../../../../hooks/useSaveBestScore'
 import styles from './styles'
 
 export default function SpokenCorrectionScreen({ route, navigation }) {
-  console.log('SpokenCorrectionScreen route.params:', route.params)
 
   const { inputs, digitSequence, temps, variant, mode, discipline = 'spokens', objectif } = route.params
 
@@ -33,10 +33,13 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
 
   // Protection contre mode undefined
   const safeMode = mode || 'custom'
-  console.log('Mode corrigé:', safeMode)
 
-  // Le variant contient l'ID du mode variant
-  const modeVariantId = variant || safeMode
+  // Pour Spokens, utiliser toujours le variant 18 (seul variant Spokens dans Supabase)
+  const modeVariantId = 18
+
+  // État pour la modal de nouveau record
+  const [showRecordModal, setShowRecordModal] = useState(false)
+  const [recordData, setRecordData] = useState(null)
 
   // Calcul du score
   const total = inputs.length
@@ -50,26 +53,23 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
   // Calcul de la précision
   const accuracy = Math.round((score / total) * 100)
 
-  console.log('SpokenCorrectionScreen rendering with:', { 
-    inputsLength: inputs.length, 
-    digitSequenceLength: digitSequence.length, 
-    score, 
-    total, 
-    accuracy 
-  })
 
   // Sauvegarde automatique du score à l'affichage
   useEffect(() => {
     const saveScoreOnMount = async () => {
       try {
-        console.log('Auto-saving spoken score on screen mount...')
         
-        // Sauvegarde conditionnelle du score s'il est meilleur
-        if (modeVariantId && typeof modeVariantId === 'number') {
-          await saveBestScore(modeVariantId, score)
-          console.log('Spoken score auto-saved successfully!')
-        } else {
-          console.log('No modeVariantId to save spoken score for:', modeVariantId)
+        // Sauvegarde du score avec le variant Spokens (18)
+        const result = await saveBestScore(modeVariantId, score)
+        
+        // Afficher modal si nouveau record
+        if (result.updated) {
+          setRecordData({
+            score: score,
+            previousScore: result.record.previousBestScore,
+            discipline: 'Spokens'
+          })
+          setShowRecordModal(true)
         }
       } catch (error) {
         // Si l'utilisateur n'est pas connecté, afficher popup de connexion
@@ -100,6 +100,10 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
 
   const handleRetry = () => {
     navigation.navigate('Spoken')
+  }
+
+  const closeRecordModal = () => {
+    setShowRecordModal(false)
   }
 
   return (
@@ -148,6 +152,15 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
           {loading ? 'Saving...' : 'Retry'}
         </PrimaryButton>
       </ScrollView>
+
+      {/* Modal de nouveau record */}
+      <NewRecordModal
+        visible={showRecordModal}
+        onClose={closeRecordModal}
+        score={recordData?.score || 0}
+        previousScore={recordData?.previousScore}
+        discipline={recordData?.discipline || 'Spokens'}
+      />
     </SafeAreaView>
   )
 }

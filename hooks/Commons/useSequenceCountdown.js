@@ -18,14 +18,11 @@ export const useSequenceCountdown = (sequences = [], onComplete, hapticConfig = 
   
   // Fonction pour arrêter la synthèse vocale
   const stopSpeaking = () => {
-    console.log('🛑 Arrêt de la synthèse vocale')
     Speech.stop()
   }
   
   // Fonction pour prononcer un élément avec expo-speech
   const speakItem = (item) => {
-    console.log(`🎵 Prononciation de '${item}'`)
-    
     // Arrêter d'abord toute synthèse en cours
     stopSpeaking()
     
@@ -35,10 +32,10 @@ export const useSequenceCountdown = (sequences = [], onComplete, hapticConfig = 
       pitch: 1.0, // Ton de la voix 
       volume: 1.0, // Volume
       onDone: () => {
-        console.log(`✅ Synthèse de '${item}' terminée`)
+        // Synthèse terminée
       },
       onError: (error) => {
-        console.error(`❌ Erreur synthèse '${item}':`, error)
+        // Erreur synthèse silencieuse
       }
     })
   }
@@ -71,16 +68,11 @@ export const useSequenceCountdown = (sequences = [], onComplete, hapticConfig = 
     } else {
       // Prononcer l'élément actuel avec expo-speech
       if (currentItem !== 'Prêt') {
-        console.log(`🎯 useEffect déclenché - currentItem: '${currentItem}' (phase: ${currentPhaseIndex}, index: ${currentItemIndex})`)
-        
         // Éviter de repronocer le même élément si c'est un double trigger
         const currentKey = `${currentPhaseIndex}-${currentItemIndex}-${currentItem}`
         if (lastPlayedRef.current !== currentKey) {
-          console.log(`🆕 Nouveau élément détecté, lancement synthèse`)
           lastPlayedRef.current = currentKey
           speakItem(currentItem)
-        } else {
-          console.log(`⏭️ Même élément déjà prononcé, skip`)
         }
       }
       

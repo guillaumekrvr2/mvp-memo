@@ -104,6 +104,14 @@ export default function ProfileScreen({ navigation }) {
     score: records[id] != null ? records[id] : 0,
   }))
 
+  // Prépare la liste simple des variants "spokens" (mode variant 18)
+  const rawSpokens = byDiscipline['spokens'] || byDiscipline[18] || []
+  const spokensVariants = rawSpokens.map(({ id, label }) => ({
+    id,
+    label,
+    score: records[id] != null ? records[id] : 0,
+  }))
+
   // Calculer le score total
   const totalScore = Object.values(records).reduce((sum, score) => sum + (score || 0), 0)
 
@@ -261,33 +269,25 @@ export default function ProfileScreen({ navigation }) {
           )}
         </View>
 
-        {/* Autres disciplines */}
-        {DISCIPLINES.filter(d => d !== 'numbers' && d !== 'cards' && d !== 'binary' && d !== 'names' && d !== 'words').map(discipline => {
-          const disciplineEmojis = {
-            cards: '🃏',
-            words: '📝',
-            binary: '💻',
-            names: '👥',
-            images: '🖼️'
-          }
-          
-          return (
-            <View key={discipline} style={styles.disciplineCard}>
-              <View style={styles.disciplineRow}>
-                <View style={styles.disciplineInfo}>
-                  <Text style={styles.disciplineTitle}>
-                    {disciplineEmojis[discipline]} {discipline.charAt(0).toUpperCase() + discipline.slice(1)}
-                  </Text>
-                </View>
+        {/* Spokens: liste détaillée */}
+        <View style={styles.disciplineCard}>
+          <View style={styles.disciplineHeader}>
+            <Text style={styles.disciplineTitle}>🗣️ Spokens</Text>
+            <Text style={styles.variantCount}>{spokensVariants.length} variants</Text>
+          </View>
+          {spokensVariants.length > 0 ? (
+            spokensVariants.map(({ id, label, score }) => (
+              <View key={id} style={styles.variantRow}>
+                <Text style={styles.variantLabel}>{label}</Text>
                 <View style={styles.scoreChip}>
-                  <Text style={styles.scoreText}>
-                    {records[discipline] || 0}
-                  </Text>
+                  <Text style={styles.scoreText}>{score}</Text>
                 </View>
               </View>
-            </View>
-          )
-        })}
+            ))
+          ) : (
+            <Text style={styles.emptyText}>Aucun variant disponible</Text>
+          )}
+        </View>
       </View>
 
       {/* Bouton déconnexion */}
