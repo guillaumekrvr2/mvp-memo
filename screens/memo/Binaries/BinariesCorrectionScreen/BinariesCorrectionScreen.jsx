@@ -1,5 +1,5 @@
-// screens/memo/Spoken/SpokenCorrectionScreen/SpokenCorrectionScreen.jsx
-import React, { useEffect, useState } from 'react'
+// screens/memo/Binaries/CorrectionScreen/CorrectionScreen.jsx
+import React, { useEffect } from 'react'
 import {
   SafeAreaView,
   View,
@@ -11,18 +11,17 @@ import {
 import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton'
 import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
 import CorrectionGrid from '../../../../components/organisms/CorrectionGrid/CorrectionGrid'
-import NewRecordModal from '../../../../components/molecules/Commons/NewRecordModal/NewRecordModal'
 import useSaveBestScore from '../../../../hooks/useSaveBestScore'
 import Header from '../../../../components/Header.jsx'
 import styles from './styles'
 
-export default function SpokenCorrectionScreen({ route, navigation }) {
+export default function BinaryCorrectionScreen({ route, navigation }) {
 
-  const { inputs, digitSequence, temps, variant, mode, discipline = 'spokens', objectif } = route.params
+  const { inputs, binaries, temps, variant, mode } = route.params
 
-  // Protection contre les paramètres manquants
-  if (!inputs || !digitSequence) {
-    console.error('SpokenCorrectionScreen: Paramètres manquants!', { inputs, digitSequence })
+  // Protection contre les paramètres manquants - AMÉLIORE
+  if (!inputs || !binaries) {
+    console.error('BinaryCorrectionScreen: Paramètres manquants!', { inputs, binaries })
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#000' }}>
         <Text style={{ color: 'red', fontSize: 18, textAlign: 'center', marginTop: 100 }}>
@@ -33,19 +32,15 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
   }
 
   // Protection contre mode undefined
-  const safeMode = mode || 'custom'
+  const safeMode = mode || 'custom' // fallback si mode est undefined
 
-  // Pour Spokens, utiliser toujours le variant 18 (seul variant Spokens dans Supabase)
-  const modeVariantId = 18
-
-  // État pour la modal de nouveau record
-  const [showRecordModal, setShowRecordModal] = useState(false)
-  const [recordData, setRecordData] = useState(null)
+  // Le variant contient l'ID du mode variant
+  const modeVariantId = variant || safeMode
 
   // Calcul du score
   const total = inputs.length
   const score = inputs.reduce((acc, v, i) => {
-    return acc + (v === String(digitSequence[i]) ? 1 : 0)
+    return acc + (v === String(binaries[i]) ? 1 : 0)
   }, 0)
 
   // Hook pour la sauvegarde du meilleur score
@@ -60,17 +55,10 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
     const saveScoreOnMount = async () => {
       try {
         
-        // Sauvegarde du score avec le variant Spokens (18)
-        const result = await saveBestScore(modeVariantId, score)
-        
-        // Afficher modal si nouveau record
-        if (result.updated) {
-          setRecordData({
-            score: score,
-            previousScore: result.record.previousBestScore,
-            discipline: 'Spokens'
-          })
-          setShowRecordModal(true)
+        // Sauvegarde conditionnelle du score s'il est meilleur
+        if (modeVariantId && typeof modeVariantId === 'number') {
+          await saveBestScore(modeVariantId, score)
+        } else {
         }
       } catch (error) {
         // Si l'utilisateur n'est pas connecté, afficher popup de connexion
@@ -91,7 +79,7 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
           )
         } else {
           // Autres erreurs : logguer
-          console.error('Erreur lors de la sauvegarde automatique spoken:', error)
+          console.error('Erreur lors de la sauvegarde automatique:', error)
         }
       }
     }
@@ -100,13 +88,10 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
   }, [modeVariantId, score, saveBestScore, navigation])
 
   const handleRetry = () => {
-    navigation.navigate('Spoken')
+    navigation.navigate('Binaries')
   }
 
-  const closeRecordModal = () => {
-    setShowRecordModal(false)
-  }
-
+  // VERSION FINALE AVEC TOUS LES COMPOSANTS ET STYLES + PADDING
   return (
     <SafeAreaView style={styles.container}>
       <Header />
@@ -117,7 +102,7 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
       >
         {/* RÉSULTATS */}
         <View style={styles.resultsContainer}>
-          <Text style={styles.resultsTitle}>Résultats Spokens 🎤</Text>
+          <Text style={styles.resultsTitle}>Résultats</Text>
           <Text style={styles.scoreText}>
             Score: {score} / {total}
           </Text>
@@ -130,7 +115,7 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
         <BorderedContainer style={styles.gridContainer}>
           <CorrectionGrid 
             inputs={inputs} 
-            numbers={digitSequence} 
+            binaries={binaries} 
             cols={6} 
           />
         </BorderedContainer>
@@ -138,10 +123,10 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
         {/* INSTRUCTIONS */}
         <View style={styles.instructionsContainer}>
           <Text style={styles.instructionsText}>
-            Cellules vertes = chiffres corrects
+            Cellules vertes = correctes
           </Text>
           <Text style={styles.instructionsText}>
-            Cellules rouges = chiffres incorrects (appuyez pour révéler)
+            Cellules rouges = incorrectes (appuyez pour révéler)
           </Text>
         </View>
 
@@ -149,20 +134,11 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
         <PrimaryButton
           style={styles.retryButton}
           onPress={handleRetry}
-          disabled={loading}
+          disabled={loading} // Désactive pendant la sauvegarde
         >
           {loading ? 'Saving...' : 'Retry'}
         </PrimaryButton>
       </ScrollView>
-
-      {/* Modal de nouveau record */}
-      <NewRecordModal
-        visible={showRecordModal}
-        onClose={closeRecordModal}
-        score={recordData?.score || 0}
-        previousScore={recordData?.previousScore}
-        discipline={recordData?.discipline || 'Spokens'}
-      />
     </SafeAreaView>
   )
 }

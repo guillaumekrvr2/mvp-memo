@@ -15,7 +15,7 @@ export default function DisciplineHeader({ disciplineName }) {
         {/* Chevron de gauche */}
         <S.BackButton
           onPress={() => {
-            navigation.goBack();
+            navigation.navigate('HomeMain');
           }}
           activeOpacity={0.7}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}

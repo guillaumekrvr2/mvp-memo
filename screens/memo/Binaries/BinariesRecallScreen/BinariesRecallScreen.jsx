@@ -1,4 +1,4 @@
-// screens/memo/Spoken/SpokenRecallScreen/SpokenRecallScreen.jsx
+// screens/memo/Binaries/RecallScreen.jsx - Version avec scroll dans BorderedContainer  
 import React, { useState, useRef, useCallback, useMemo } from 'react'
 import {
   SafeAreaView,
@@ -14,19 +14,29 @@ import {
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton'
 import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
+//import useAutoScrollCursor from '../../../../hooks/useAutoScrollCursor'
 
-export default function SpokenRecallScreen({ route, navigation }) {
-  const { objectif, digitSequence, temps, variant, mode, discipline = 'spokens' } = route.params
+export default function BinaryRecallScreen({ route, navigation }) {
+  // Debug: voir ce qui est reçu
+  
+  const { objectif, binaries, temps, variant, mode } = route.params
 
-  const totalTime = 4 * 60 // 4 minutes pour le recall
+  const totalTime = 4 * 60
   const [userInput, setUserInput] = useState('')
-  const [scrollH, setScrollH] = useState(0)
-  const [cursorPosition, setCursorPosition] = useState(0)
-  const scrollRef = useRef(null)
+  const [scrollH, setScrollH] = useState(0) // Hauteur du BorderedContainer
+  const [cursorPosition, setCursorPosition] = useState(0) // Position du curseur
+  const scrollRef = useRef(null) // Référence pour le scroll
+
+  // Configuration 12 colonnes
+  const cols = 12
+  const lineHeight = 36 // Hauteur de ligne du TextInput
+
+  // Hook d'autoscroll basé sur la position du curseur
+  //useAutoScrollCursor(scrollRef, scrollH, cursorPosition, cols, lineHeight)
 
   // Placeholder simple
   const createPlaceholder = () => {
-    return '123456789012...'
+    return '010101010101...'
   }
 
   // Calcul de la hauteur optimale du TextInput basé sur l'objectif
@@ -42,13 +52,13 @@ export default function SpokenRecallScreen({ route, navigation }) {
   const placeholder = useMemo(() => createPlaceholder(), [])
   const mainInputStyle = useMemo(() => ({
     ...styles.mainInput,
-    height: calculatedInputHeight,
+    height: calculatedInputHeight, // Hauteur calculée au lieu de fixe
   }), [calculatedInputHeight])
   const inputScrollContentStyle = useMemo(() => styles.inputScrollContent, [])
 
-  // Nettoie l'input utilisateur
+  // Nettoie l'input utilisateur - Memoized pour éviter re-renders - BINAIRES: accepte seulement 0 et 1
   const handleInputChange = useCallback((text) => {
-    const cleanText = text.replace(/[^0-9]/g, '').slice(0, objectif)
+    const cleanText = text.replace(/[^01]/g, '').slice(0, objectif)
     setUserInput(cleanText)
     setCursorPosition(cleanText.length)
   }, [objectif])
@@ -59,18 +69,16 @@ export default function SpokenRecallScreen({ route, navigation }) {
     return digits.concat(Array(objectif - digits.length).fill(''))
   }
 
-  // Navigation vers la correction
+  // Fonction pour naviguer vers la correction - Memoized
   const navigateToCorrection = useCallback(() => {
-    navigation.navigate('SpokenCorrection', {
+    navigation.navigate('BinaryCorrection', {
       inputs: getUserInputArray(),
-      digitSequence,
+      binaries,
       temps,
       mode,
       variant,
-      discipline,
-      objectif
     })
-  }, [navigation, userInput, digitSequence, temps, mode, variant, discipline, objectif])
+  }, [navigation, userInput, binaries, temps, mode, variant, objectif])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,21 +89,21 @@ export default function SpokenRecallScreen({ route, navigation }) {
         {/* HEADER */}
         <MemorizationHeader
           duration={totalTime}
-          onBack={() => navigation.navigate('Spoken')}
+          onBack={() => navigation.navigate('Binaries')}
           onDone={navigateToCorrection}
         />
 
-        {/* CONTENU PRINCIPAL */}
+        {/* CONTENU PRINCIPAL avec espacement équitable */}
         <View style={styles.mainContent}>
           {/* INSTRUCTIONS */}
           <View style={styles.instructionsContainer}>
-            <Text style={styles.instructionsTitle}>Saisissez votre séquence 🎤</Text>
+            <Text style={styles.instructionsTitle}>Saisissez votre séquence binaire</Text>
             <Text style={styles.instructionsText}>
-              Entrez les {objectif} chiffres que vous avez mémorisés
+              Entrez les {objectif} bits (0 et 1) dans la grille
             </Text>
           </View>
 
-          {/* CHAMP DE SAISIE DANS BORDERCONTAINER */}
+          {/* CHAMP DE SAISIE DANS BORDERCONTAINER AVEC MESURE */}
           <BorderedContainer onLayout={useCallback(e => setScrollH(e.nativeEvent.layout.height), [])}>
             <ScrollView
               ref={scrollRef}
@@ -103,6 +111,12 @@ export default function SpokenRecallScreen({ route, navigation }) {
               contentContainerStyle={inputScrollContentStyle}
               showsVerticalScrollIndicator={true}
               keyboardShouldPersistTaps="handled"
+              onScroll={(e) => {
+                const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent
+              }}
+              onLayout={(e) => {
+                const { width, height } = e.nativeEvent.layout
+              }}
               scrollEventThrottle={16}
             >
               <TextInput
@@ -120,14 +134,17 @@ export default function SpokenRecallScreen({ route, navigation }) {
                 selectTextOnFocus={false}
                 removeClippedSubviews={true}
                 maxLength={objectif}
+                onLayout={(e) => {
+                  const { width, height, x, y } = e.nativeEvent.layout
+                }}
               />
             </ScrollView>
           </BorderedContainer>
 
           {/* BOUTON VALIDER */}
-          <PrimaryButton onPress={navigateToCorrection}>
-            Valider
-          </PrimaryButton>
+            <PrimaryButton onPress={navigateToCorrection}>
+              Valider
+            </PrimaryButton>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -144,7 +161,7 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'space-between', // Espacement équitable comme MemoScreen
     alignItems: 'center',
     paddingVertical: 20,
   },
@@ -179,7 +196,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     textAlign: 'center',
     textAlignVertical: 'top',
-    letterSpacing: 30,
+    letterSpacing: 35,
     lineHeight: 36,
+    // Hauteur maintenant gérée dynamiquement dans mainInputStyle
   },
 })

@@ -103,7 +103,6 @@ export const useFirstCards = (count = 6) => {
   useEffect(() => {
     // Génération rapide et simple des premières cartes
     const generateFirstCards = () => {
-      console.log(`🃏 useFirstCards: Génération de ${count} premières cartes`)
       
       // Créer le deck standard (52 cartes)
       const suits = ['spades', 'hearts', 'diamonds', 'clubs']
@@ -129,7 +128,6 @@ export const useFirstCards = (count = 6) => {
       
       // Retourner seulement les N premières cartes
       const cards = shuffledDeck.slice(0, count)
-      console.log(`✅ useFirstCards: ${cards.length} cartes générées`)
       
       return cards
     }

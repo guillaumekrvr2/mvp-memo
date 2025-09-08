@@ -90,7 +90,7 @@ export default function NamesRecallScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <MemorizationHeader
-        onBack={() => navigation.goBack()}
+        onBack={() => navigation.navigate('Names')}
         onDone={handleValidate}
         duration={recallDuration}
         title="Rappel"

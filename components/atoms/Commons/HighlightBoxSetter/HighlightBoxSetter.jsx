@@ -13,7 +13,6 @@ export default function HighlightBoxSetter({
 }) {
   
   const handlePress = () => {
-    console.log('🎯 HighlightBoxSetter pressed with label:', label)
     if (onPress) {
       onPress()
     }

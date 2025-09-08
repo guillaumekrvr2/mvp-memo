@@ -129,7 +129,6 @@ export default function CardsSettingsScreen() {
       cardFilters // 🎯 NOUVEAU : Filtres de cartes pour la mémorisation
     }
     
-    console.log('🃏 CardsSettingsScreen - Navigation params:', navigationParams)
     
     navigation.navigate('Decompte', navigationParams)
   }

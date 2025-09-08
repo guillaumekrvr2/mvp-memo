@@ -105,7 +105,7 @@ export default function NamesMemoScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <MemorizationHeader
-        onBack={() => navigation.goBack()}
+        onBack={() => navigation.navigate('Names')}
         onDone={handleDone}
         duration={temps}
       />

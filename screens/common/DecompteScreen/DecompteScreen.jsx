@@ -46,7 +46,6 @@ export default function DecompteScreen({ route, navigation }) {
   // 🃏 Preload RAPIDE des 6 premières cartes dès qu'elles sont prêtes
   useEffect(() => {
     if (shouldPreloadCards && firstCards.length > 0) {
-      console.log('🚀 Démarrage preload des 6 premières cartes')
       
       firstCards.forEach((card, index) => {
         // Preload immédiat sans délai
@@ -55,7 +54,6 @@ export default function DecompteScreen({ route, navigation }) {
             const resolvedAsset = Image.resolveAssetSource(card.asset)
             if (resolvedAsset && resolvedAsset.uri) {
               Image.prefetch(resolvedAsset.uri)
-              console.log(`✅ Carte ${index + 1}/6 preloadée`)
             }
           } catch (error) {
             console.log(`❌ Erreur preload carte ${index + 1}:`, error)

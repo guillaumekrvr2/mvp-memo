@@ -14,7 +14,6 @@ export class SupabaseUserRepository extends UserRepository {
    * @override
    */
   async findAll({ mode, discipline }) {
-    console.log('[SupabaseUserRepository] findAll called with:', { mode, discipline });
     
     // Utilise la vue publique accessible aux utilisateurs anonymes
     const { data: rows, error } = await supabase
@@ -22,11 +21,6 @@ export class SupabaseUserRepository extends UserRepository {
       .select('*')
       .order('created_at', { ascending: false });
       
-    console.log('[SupabaseUserRepository] Supabase query result:', { 
-      rowsCount: rows ? rows.length : 0, 
-      error,
-      firstRow: rows?.[0]
-    });
       
     if (error) {
       console.error('Error fetching leaderboard profiles:', error);
@@ -38,10 +32,6 @@ export class SupabaseUserRepository extends UserRepository {
       new Account(mapUserRowToAccount(raw))
     );
     
-    console.log('[SupabaseUserRepository] Mapped accounts:', { 
-      accountsCount: accounts.length,
-      firstAccount: accounts[0]
-    });
     
     return accounts;
   }

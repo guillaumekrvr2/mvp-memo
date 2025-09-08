@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView, View, FlatList, Text } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
+import Header from '../../../../components/Header.jsx'
 import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton'
 import NamesCorrectionCard from '../../../../components/molecules/Names/NamesCorrectionCard/NamesCorrectionCard'
 import NewRecordModal from '../../../../components/molecules/Commons/NewRecordModal/NewRecordModal'
@@ -37,19 +37,10 @@ export default function NamesCorrectionScreen({ route, navigation }) {
   const { visibleItems, onViewableItemsChanged, viewabilityConfig, isItemVisible } = useNamesRecallVisibility(memorizedProfiles)
   
   // Debug logs pour l'initialisation
-  useEffect(() => {
-    console.log('🚀 [NamesCorrectionScreen] Component initialized')
-    console.log('🚀 [NamesCorrectionScreen] Total profiles received:', memorizedProfiles.length)
-    console.log('🚀 [NamesCorrectionScreen] Variant received:', variant, typeof variant)
-    console.log('🚀 [NamesCorrectionScreen] First 3 profiles:', memorizedProfiles.slice(0, 3).map(p => ({ id: p.id, firstName: p.firstName })))
-  }, [])
 
   // Debug logs pour la visibilité (débounced pour éviter les boucles)
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      console.log('🔍 [NamesCorrectionScreen] Visible items:', Array.from(visibleItems))
-      console.log('🔍 [NamesCorrectionScreen] Total visible items:', visibleItems.size)
-      console.log('🔍 [NamesCorrectionScreen] Total profiles:', memorizedProfiles.length)
     }, 100)
     
     return () => clearTimeout(timeoutId)
@@ -136,11 +127,7 @@ export default function NamesCorrectionScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <MemorizationHeader
-        onBack={() => navigation.goBack()}
-        title="Correction"
-        showTimer={false}
-      />
+      <Header />
 
       {/* Contenu principal */}
       <View style={styles.mainContent}>

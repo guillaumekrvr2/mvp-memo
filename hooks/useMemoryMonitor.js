@@ -57,7 +57,6 @@ export function useMemoryMonitor() {
       return
     }
     
-    console.log('🧹 [MemoryMonitor] Nettoyage préventif')
     
     try {
       if (Image.queryCache && typeof Image.queryCache.clear === 'function') {

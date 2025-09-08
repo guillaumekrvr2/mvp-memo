@@ -55,7 +55,6 @@ export function useNamesData(objectif = 20) {
       const canUseMale = maleNames.length > 0 && maleImageIndex < availableMaleImages.length
       
       if (!canUseFemale && !canUseMale) {
-        console.log(`⚠️ Arrêt génération à ${i} profils (plus d'images disponibles)`)
         break
       }
       
@@ -92,8 +91,6 @@ export function useNamesData(objectif = 20) {
       generatedProfiles.push(profile)
     }
     
-    console.log(`✅ [Final] ${generatedProfiles.length} profils générés sur ${objectif} demandés`)
-    console.log(`📋 [Summary] Premiers profils:`, generatedProfiles.slice(0, 3).map(p => `${p.firstName} ${p.lastName} (${p.gender}${p.imageNumber})`))
     
     return generatedProfiles
   }, [objectif, regenerationKey])

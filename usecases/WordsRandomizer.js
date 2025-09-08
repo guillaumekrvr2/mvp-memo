@@ -1,5 +1,5 @@
 // usecases/WordsRandomizer.js
-import wordsData from '../assets/words.json' with { type: 'json' };
+import wordsData from '../assets/words/words.json' with { type: 'json' };
 
 /**
  * Service de sélection aléatoire de mots pour la discipline Words

@@ -19,7 +19,6 @@ export function useNamesImagePreloader(profiles, startPreloading = false) {
     setIsPreloading(true)
     setPreloadProgress(0)
     
-    console.log(`🚀 Démarrage préchargement de ${profiles.length} images Names`)
     
     // Préchargement par batch pour éviter de surcharger
     const batchSize = 5
@@ -51,7 +50,6 @@ export function useNamesImagePreloader(profiles, startPreloading = false) {
                   .then(() => {
                     preloadedSet.add(profile.id)
                     successCount++
-                    console.log(`✅ Image preloadée: ${profile.firstName} ${profile.lastName} (${successCount}/${profiles.length})`)
                     resolve(true)
                   })
                   .catch((error) => {
@@ -81,7 +79,6 @@ export function useNamesImagePreloader(profiles, startPreloading = false) {
         if (currentIndex < profiles.length) {
           setTimeout(preloadBatch, 200) // Pause entre les batches
         } else {
-          console.log(`🎉 Préchargement terminé: ${successCount}/${profiles.length} images`)
           setIsPreloading(false)
         }
       })

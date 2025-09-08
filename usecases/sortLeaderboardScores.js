@@ -6,9 +6,10 @@
  * @param {string} discipline        Clé de la discipline ('numbers', 'cards', 'global', etc.)
  * @param {string} mode              Clé du mode de jeu ('memory-league', 'iam', etc.)
  * @param {Array} disciplines        Tableau des disciplines disponibles (pour calcul global)
+ * @param {Object} byDiscipline      Variants par discipline (depuis ModeVariantContext)
  * @returns {Array}                  Nouvel array trié
  */
-export function sortLeaderboardScores(accounts, discipline, mode, disciplines) {
+export function sortLeaderboardScores(accounts, discipline, mode, disciplines, byDiscipline = {}) {
   return [...accounts].sort((a, b) => {
     const getScore = acct => {
       if (discipline === 'global') {
