@@ -39,7 +39,7 @@ export default function MemoScreen({ route, navigation }) {
   <SafeAreaView style={styles.container}>
     {/* HEADER */}
     <MemorizationHeader
-      onBack={() => navigation.navigate('Numbers')}
+      onBack={() => navigation.popToTop()}
       onDone={() => navigation.replace('Recall', { 
         objectif, 
         temps, 

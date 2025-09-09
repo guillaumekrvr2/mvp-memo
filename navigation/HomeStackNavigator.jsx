@@ -113,8 +113,16 @@ export default function HomeStackNavigator() {
         component={CardsRecallScreen} 
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="Correction" component={NumbersCorrectionScreen} />
-      <Stack.Screen name="BinaryCorrection" component={BinaryCorrectionScreen} />
+      <Stack.Screen 
+        name="Correction" 
+        component={NumbersCorrectionScreen} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="BinaryCorrection" 
+        component={BinaryCorrectionScreen} 
+        options={{ headerShown: false }}
+      />
       <Stack.Screen 
         name="CardsCorrection" 
         component={CardsCorrectionScreen} 

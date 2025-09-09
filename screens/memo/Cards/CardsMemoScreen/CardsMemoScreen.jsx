@@ -118,7 +118,7 @@ export default function CardsScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <MemorizationHeader
-        onBack={() => navigation.navigate('Cards')}
+        onBack={() => navigation.popToTop()}
         onDone={handleDone} // 🃏 Utilise la nouvelle fonction handleDone
         duration={temps} // 🃏 Utilise le temps des paramètres
       />

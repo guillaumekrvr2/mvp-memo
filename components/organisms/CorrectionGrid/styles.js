@@ -2,17 +2,17 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  // Conteneur qui enveloppe la ScrollView
-  container: {
+  // Style pour le ScrollView principal
+  scrollContainer: {
     flex: 1,             // pour prendre tout l'espace dispo dans le BorderedContainer
-    alignItems: 'center' // centre la grille horizontalement
   },
 
   // Styles appliqués au contentContainer de la ScrollView
   scroll: {
     paddingHorizontal: 12,
     paddingTop: 16,
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'center'
   },
 
   // Chaque ligne de la grille

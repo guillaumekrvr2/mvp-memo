@@ -4,7 +4,6 @@ import {
   SafeAreaView,
   View,
   Text,
-  ScrollView,
   Alert,
 } from 'react-native'
 
@@ -107,14 +106,13 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
     setShowRecordModal(false)
   }
 
+  // VERSION AVEC ARCHITECTURE MEMO SCREEN (space-between layout)
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingTop: 80, paddingBottom: 100 }]}
-        showsVerticalScrollIndicator={false}
-      >
+      <Header navigation={navigation} />
+      
+      {/* CONTENU PRINCIPAL avec espacement équitable */}
+      <View style={styles.mainContent}>
         {/* RÉSULTATS */}
         <View style={styles.resultsContainer}>
           <Text style={styles.resultsTitle}>Résultats Spokens 🎤</Text>
@@ -127,7 +125,7 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
         </View>
 
         {/* GRILLE DE CORRECTION */}
-        <BorderedContainer style={styles.gridContainer}>
+        <BorderedContainer>
           <CorrectionGrid 
             inputs={inputs} 
             numbers={digitSequence} 
@@ -135,25 +133,26 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
           />
         </BorderedContainer>
 
-        {/* INSTRUCTIONS */}
-        <View style={styles.instructionsContainer}>
-          <Text style={styles.instructionsText}>
-            Cellules vertes = chiffres corrects
-          </Text>
-          <Text style={styles.instructionsText}>
-            Cellules rouges = chiffres incorrects (appuyez pour révéler)
-          </Text>
+        {/* INSTRUCTIONS + BOUTON RETRY */}
+        <View style={styles.bottomSection}>
+          <View style={styles.instructionsContainer}>
+            <Text style={styles.instructionsText}>
+              Cellules vertes = chiffres corrects
+            </Text>
+            <Text style={styles.instructionsText}>
+              Cellules rouges = chiffres incorrects (appuyez pour révéler)
+            </Text>
+          </View>
+          
+          <PrimaryButton
+            style={styles.retryButton}
+            onPress={handleRetry}
+            disabled={loading}
+          >
+            {loading ? 'Saving...' : 'Retry'}
+          </PrimaryButton>
         </View>
-
-        {/* BOUTON RETRY */}
-        <PrimaryButton
-          style={styles.retryButton}
-          onPress={handleRetry}
-          disabled={loading}
-        >
-          {loading ? 'Saving...' : 'Retry'}
-        </PrimaryButton>
-      </ScrollView>
+      </View>
 
       {/* Modal de nouveau record */}
       <NewRecordModal

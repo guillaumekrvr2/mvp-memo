@@ -81,7 +81,7 @@ export default function SpokenRecallScreen({ route, navigation }) {
         {/* HEADER */}
         <MemorizationHeader
           duration={totalTime}
-          onBack={() => navigation.navigate('Spoken')}
+          onBack={() => navigation.popToTop()}
           onDone={navigateToCorrection}
         />
 
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   inputScrollContent: {
     flexGrow: 1,
     paddingVertical: 16,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
   },
   mainInput: {
     color: '#fff',
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     textAlign: 'center',
     textAlignVertical: 'top',
-    letterSpacing: 30,
+    letterSpacing: 35,
     lineHeight: 36,
   },
 })

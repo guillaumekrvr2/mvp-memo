@@ -22,6 +22,12 @@ export default function MemorizationHeader({
   // Animated.Value pour le progress (utilisé différemment selon le type)
   const staticProgress = useRef(new Animated.Value(0)).current
   const spokenProgress = useRef(new Animated.Value(0)).current
+  const onDoneRef = useRef(onDone)
+
+  // Mettre à jour la référence du callback sans redémarrer l'animation
+  useEffect(() => {
+    onDoneRef.current = onDone
+  }, [onDone])
 
   // Logique différente selon le type de discipline
   let progress;
@@ -37,19 +43,26 @@ export default function MemorizationHeader({
         const nextProgress = (currentDigitIndex + 1) / totalDigits;
         
         // Animation fluide de 1.8 seconde (speech + pause) pour chaque chiffre
-        Animated.timing(progress, {
+        const animation = Animated.timing(progress, {
           toValue: nextProgress,
           duration: 1800, // Durée totale par chiffre (speech + pause entre chiffres)
           easing: Easing.linear,
           useNativeDriver: false,
-        }).start(({ finished }) => {
+        })
+        
+        animation.start(({ finished }) => {
           // Quand la progress bar est complète (dernière animation), déclencher onDone
           if (finished && nextProgress >= 1.0) {
-            onDone?.();
+            onDoneRef.current?.();
           }
         });
+
+        // Cleanup: arrêter l'animation si le composant se démonte ou si les dépendances changent
+        return () => {
+          animation.stop()
+        }
       }
-    }, [currentDigitIndex, totalDigits, progress, onDone]);
+    }, [currentDigitIndex, totalDigits, progress]); // Retiré onDone des dépendances
   } else {
     // Pour les autres disciplines : progress basé sur le temps
     progress = (duration && duration > 0) 

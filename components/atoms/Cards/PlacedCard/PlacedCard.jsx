@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { TouchableOpacity, Image, Vibration } from 'react-native'
 import { styles } from './styles'
 
@@ -9,13 +9,29 @@ export function PlacedCard({
   onPress,
   // Props pour le mode correction
   isCorrect = null,
-  showCorrection = false
+  showCorrection = false,
+  correctCard = null
 }) {
+  // État local pour l'effet peek (maintenir pour voir la vraie carte)
+  const [isPeeking, setIsPeeking] = useState(false)
   const handlePress = () => {
     if (onPress) {
       Vibration.vibrate(15)
       onPress()
     }
+  }
+  
+  const handlePressIn = () => {
+    // Si on est en mode correction et que c'est une carte fausse, montrer la vraie carte
+    if (showCorrection && !isCorrect && correctCard) {
+      Vibration.vibrate(15)
+      setIsPeeking(true)
+    }
+  }
+  
+  const handlePressOut = () => {
+    // Arrêter de montrer la vraie carte
+    setIsPeeking(false)
   }
 
   // Style de correction : grisement pour cartes fausses
@@ -23,14 +39,17 @@ export function PlacedCard({
     if (!showCorrection || isCorrect === null) {
       return {}
     }
-    // Griser seulement les cartes fausses
-    if (!isCorrect) {
+    // Griser seulement les cartes fausses (sauf quand on fait peek)
+    if (!isCorrect && !isPeeking) {
       return {
         opacity: 0.4
       }
     }
     return {}
   }
+  
+  // Déterminer quelle carte afficher : vraie carte pendant le peek, sinon carte utilisateur
+  const displayCard = showCorrection && !isCorrect && isPeeking && correctCard ? correctCard : card
 
   return (
     <TouchableOpacity
@@ -43,10 +62,12 @@ export function PlacedCard({
         getCorrectionStyle()
       ]}
       onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
       activeOpacity={0.8}
     >
       <Image 
-        source={card.asset} 
+        source={displayCard.asset} 
         style={styles.cardImage} 
         resizeMode="contain" 
       />

@@ -24,7 +24,8 @@ export default function DecompteScreen({ route, navigation }) {
     fromValue,
     toValue,
     useSpecificRange,
-    cardFilters = null // 🎯 Filtres pour les cartes (avec valeur par défaut)
+    cardFilters = null, // 🎯 Filtres pour les cartes (avec valeur par défaut)
+    modeVariantId
   } = route.params
 
   const [counter, setCounter] = useState(3)
@@ -83,7 +84,9 @@ export default function DecompteScreen({ route, navigation }) {
         variant, 
         digitCount, 
         autoAdvance,
-        discipline
+        discipline,
+        mode,
+        modeVariantId
       })
     } else if (discipline === 'words') {
       navigation.replace('WordsMemo', { 
@@ -93,7 +96,8 @@ export default function DecompteScreen({ route, navigation }) {
         wordsCount, 
         autoAdvance,
         mode,
-        discipline
+        discipline,
+        modeVariantId
       })
     } else if (discipline === 'names') {
       // 👤 Navigation vers 'NamesMemo' pour les noms
@@ -144,7 +148,9 @@ export default function DecompteScreen({ route, navigation }) {
           temps, 
           variant, 
           digitCount, 
-          autoAdvance 
+          autoAdvance,
+          mode,
+          modeVariantId
         })
       } else if (discipline === 'words') {
         // 📝 Navigation vers 'WordsMemo' pour les mots
@@ -155,7 +161,8 @@ export default function DecompteScreen({ route, navigation }) {
           wordsCount, 
           autoAdvance,
           mode,
-          discipline
+          discipline,
+          modeVariantId
         })
       } else if (discipline === 'names') {
         // 👤 Navigation vers 'NamesMemo' pour les noms

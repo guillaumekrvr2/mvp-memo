@@ -195,7 +195,7 @@ export default function SpokenMemoScreen({ route, navigation }) {
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
       {/* HEADER */}
       <MemorizationHeader
-        onBack={() => navigation.navigate('Spoken')}
+        onBack={() => navigation.popToTop()}
         onDone={handleValidate}
         duration={temps}
         title="Spokens 🎤"

@@ -32,7 +32,7 @@ export default function Header({ navigation, back }) {
         <TouchableOpacity
           onPress={() => {
            if (current) {
-             navigation.navigate('Profile')
+             navigation.getParent()?.navigate('Profile')
            } else {
             navigation.getParent()?.navigate('Login')
            }

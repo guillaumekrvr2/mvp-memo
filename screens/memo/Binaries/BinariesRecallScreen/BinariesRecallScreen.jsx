@@ -19,7 +19,7 @@ import BorderedContainer from '../../../../components/atoms/Commons/BorderedCont
 export default function BinaryRecallScreen({ route, navigation }) {
   // Debug: voir ce qui est reçu
   
-  const { objectif, binaries, temps, variant, mode } = route.params
+  const { objectif, binaries, temps, variant, mode, modeVariantId } = route.params
 
   const totalTime = 4 * 60
   const [userInput, setUserInput] = useState('')
@@ -77,8 +77,9 @@ export default function BinaryRecallScreen({ route, navigation }) {
       temps,
       mode,
       variant,
+      modeVariantId
     })
-  }, [navigation, userInput, binaries, temps, mode, variant, objectif])
+  }, [navigation, userInput, binaries, temps, mode, variant, modeVariantId, objectif])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -89,7 +90,7 @@ export default function BinaryRecallScreen({ route, navigation }) {
         {/* HEADER */}
         <MemorizationHeader
           duration={totalTime}
-          onBack={() => navigation.navigate('Binaries')}
+          onBack={() => navigation.popToTop()}
           onDone={navigateToCorrection}
         />
 

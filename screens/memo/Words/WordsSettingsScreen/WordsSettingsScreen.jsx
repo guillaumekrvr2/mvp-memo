@@ -98,7 +98,8 @@ export default function WordsScreen() {
       variant: selectedVariant?.id,
       wordsCount, // 📝 CLEF : Paramètre spécifique aux mots
       autoAdvance,
-      discipline: 'words' // 📝 CLEF : Indique la discipline
+      discipline: 'words', // 📝 CLEF : Indique la discipline
+      modeVariantId: selectedVariant?.id
     }
     
     console.log('📝 WordsScreen - Navigation params:', navigationParams)

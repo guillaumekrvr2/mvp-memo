@@ -13,8 +13,11 @@ export default function CorrectionGrid({ inputs, numbers, binaries, cols }) {
   const correctAnswers = numbers || binaries;
 
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+    <ScrollView 
+      style={styles.scrollContainer} 
+      contentContainerStyle={styles.scroll} 
+      showsVerticalScrollIndicator={false}
+    >
         {rows.map((row, rIdx) => (
           <View key={rIdx} style={styles.row}>
             {row.map((val, cIdx) => {
@@ -35,7 +38,6 @@ export default function CorrectionGrid({ inputs, numbers, binaries, cols }) {
             })}
           </View>
         ))}
-      </ScrollView>
-    </View>
+    </ScrollView>
   );
 }

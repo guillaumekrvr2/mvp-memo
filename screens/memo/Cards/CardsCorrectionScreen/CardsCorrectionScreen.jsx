@@ -16,6 +16,8 @@ import {
   ScoreText,
   AccuracyBadge,
   AccuracyText,
+  HintCard,
+  HintText,
   CarouselSection,
   ButtonSection,
   ErrorContainer,
@@ -108,7 +110,7 @@ export default function CardsCorrectionScreen({ route, navigation }) {
 
   return (
     <Container>
-      <Header />
+      <Header navigation={navigation} />
       <ContentScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: theme.spacing.xl }}
@@ -125,6 +127,13 @@ export default function CardsCorrectionScreen({ route, navigation }) {
             </AccuracyBadge>
           </ScoreContainer>
         </ResultsCard>
+
+        {/* Hint pour l'interaction peek */}
+        <HintCard>
+          <HintText>
+            💫 Maintenez appuyé sur une carte grisée pour dévoiler la vraie carte
+          </HintText>
+        </HintCard>
 
         {/* Carousel de correction avec bordures colorées */}
         <CarouselSection>

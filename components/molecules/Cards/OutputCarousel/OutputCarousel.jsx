@@ -61,6 +61,7 @@ export const OutputCarousel = forwardRef(({
                 onPress={() => onCardRemove && onCardRemove(index)}
                 isCorrect={isCorrect}
                 showCorrection={showCorrection}
+                correctCard={correctCard}
               />
             )
           })}

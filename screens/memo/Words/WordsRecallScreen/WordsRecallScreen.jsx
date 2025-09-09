@@ -14,6 +14,7 @@ export default function WordsRecallScreen({ route, navigation }) {
     autoAdvance, 
     mode, 
     discipline,
+    modeVariantId,
     words // Les mots à retenir passés depuis le memo screen
   } = route.params
 
@@ -43,7 +44,8 @@ export default function WordsRecallScreen({ route, navigation }) {
       variant,
       wordsCount,
       mode,
-      discipline
+      discipline,
+      modeVariantId
     };
 
     // Naviguer vers WordsCorrectionScreen
@@ -59,7 +61,7 @@ export default function WordsRecallScreen({ route, navigation }) {
     <SafeAreaView style={styles.container}>
       {/* HEADER */}
       <MemorizationHeader
-        onBack={() => navigation.navigate('Words')}
+        onBack={() => navigation.popToTop()}
         onDone={handleDone}
         duration={recallTime}
       />

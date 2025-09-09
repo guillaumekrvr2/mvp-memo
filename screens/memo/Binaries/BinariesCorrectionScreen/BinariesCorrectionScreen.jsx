@@ -1,5 +1,5 @@
 // screens/memo/Binaries/CorrectionScreen/CorrectionScreen.jsx
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import {
   SafeAreaView,
   View,
@@ -12,12 +12,17 @@ import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButto
 import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
 import CorrectionGrid from '../../../../components/organisms/CorrectionGrid/CorrectionGrid'
 import useSaveBestScore from '../../../../hooks/useSaveBestScore'
+import NewRecordModal from '../../../../components/molecules/Commons/NewRecordModal/NewRecordModal'
 import Header from '../../../../components/Header.jsx'
 import styles from './styles'
 
 export default function BinaryCorrectionScreen({ route, navigation }) {
 
-  const { inputs, binaries, temps, variant, mode } = route.params
+  const { inputs, binaries, temps, variant, mode, modeVariantId } = route.params
+
+  // État pour la modal du nouveau record
+  const [showNewRecordModal, setShowNewRecordModal] = useState(false)
+  const [previousScore, setPreviousScore] = useState(null)
 
   // Protection contre les paramètres manquants - AMÉLIORE
   if (!inputs || !binaries) {
@@ -34,9 +39,6 @@ export default function BinaryCorrectionScreen({ route, navigation }) {
   // Protection contre mode undefined
   const safeMode = mode || 'custom' // fallback si mode est undefined
 
-  // Le variant contient l'ID du mode variant
-  const modeVariantId = variant || safeMode
-
   // Calcul du score
   const total = inputs.length
   const score = inputs.reduce((acc, v, i) => {
@@ -49,16 +51,24 @@ export default function BinaryCorrectionScreen({ route, navigation }) {
   // Calcul de la précision
   const accuracy = Math.round((score / total) * 100)
 
+  // Flag pour éviter les sauvegardes multiples
+  const hasSavedRef = useRef(false)
 
-  // Sauvegarde automatique du score à l'affichage
+  // Sauvegarde automatique du score à l'affichage - une seule fois
   useEffect(() => {
-    const saveScoreOnMount = async () => {
+    const saveScore = async () => {
+      if (hasSavedRef.current) return
+      
+      if (!modeVariantId || typeof modeVariantId !== 'number') return
+
+      hasSavedRef.current = true
+
       try {
+        const result = await saveBestScore(modeVariantId, score)
         
-        // Sauvegarde conditionnelle du score s'il est meilleur
-        if (modeVariantId && typeof modeVariantId === 'number') {
-          await saveBestScore(modeVariantId, score)
-        } else {
+        // Si un nouveau record a été établi, afficher la modal
+        if (result.updated) {
+          setShowNewRecordModal(true)
         }
       } catch (error) {
         // Si l'utilisateur n'est pas connecté, afficher popup de connexion
@@ -84,22 +94,21 @@ export default function BinaryCorrectionScreen({ route, navigation }) {
       }
     }
 
-    saveScoreOnMount()
+    const timeoutId = setTimeout(saveScore, 100)
+    return () => clearTimeout(timeoutId)
   }, [modeVariantId, score, saveBestScore, navigation])
 
   const handleRetry = () => {
     navigation.navigate('Binaries')
   }
 
-  // VERSION FINALE AVEC TOUS LES COMPOSANTS ET STYLES + PADDING
+  // VERSION AVEC ARCHITECTURE MEMO SCREEN (space-between layout)
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingTop: 80, paddingBottom: 100 }]}
-        showsVerticalScrollIndicator={false}
-      >
+      <Header navigation={navigation} />
+      
+      {/* CONTENU PRINCIPAL avec espacement équitable */}
+      <View style={styles.mainContent}>
         {/* RÉSULTATS */}
         <View style={styles.resultsContainer}>
           <Text style={styles.resultsTitle}>Résultats</Text>
@@ -112,7 +121,7 @@ export default function BinaryCorrectionScreen({ route, navigation }) {
         </View>
 
         {/* GRILLE DE CORRECTION */}
-        <BorderedContainer style={styles.gridContainer}>
+        <BorderedContainer>
           <CorrectionGrid 
             inputs={inputs} 
             binaries={binaries} 
@@ -120,25 +129,35 @@ export default function BinaryCorrectionScreen({ route, navigation }) {
           />
         </BorderedContainer>
 
-        {/* INSTRUCTIONS */}
-        <View style={styles.instructionsContainer}>
-          <Text style={styles.instructionsText}>
-            Cellules vertes = correctes
-          </Text>
-          <Text style={styles.instructionsText}>
-            Cellules rouges = incorrectes (appuyez pour révéler)
-          </Text>
+        {/* INSTRUCTIONS + BOUTON RETRY */}
+        <View style={styles.bottomSection}>
+          <View style={styles.instructionsContainer}>
+            <Text style={styles.instructionsText}>
+              Cellules vertes = correctes
+            </Text>
+            <Text style={styles.instructionsText}>
+              Cellules rouges = incorrectes (appuyez pour révéler)
+            </Text>
+          </View>
+          
+          <PrimaryButton
+            style={styles.retryButton}
+            onPress={handleRetry}
+            disabled={loading}
+          >
+            {loading ? 'Saving...' : 'Retry'}
+          </PrimaryButton>
         </View>
+      </View>
 
-        {/* BOUTON RETRY */}
-        <PrimaryButton
-          style={styles.retryButton}
-          onPress={handleRetry}
-          disabled={loading} // Désactive pendant la sauvegarde
-        >
-          {loading ? 'Saving...' : 'Retry'}
-        </PrimaryButton>
-      </ScrollView>
+      {/* Modal de nouveau record */}
+      <NewRecordModal
+        visible={showNewRecordModal}
+        onClose={() => setShowNewRecordModal(false)}
+        score={score}
+        previousScore={previousScore}
+        discipline="Binaries"
+      />
     </SafeAreaView>
   )
 }

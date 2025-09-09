@@ -1,4 +1,4 @@
-// screens/memo/Binaries/MemoScreen.jsx
+// screens/memo/Binaries/NumbersMemoScreen.jsx
 import React, { useState, useRef } from 'react'
 import { SafeAreaView, View, Text, StyleSheet } from 'react-native'
 import useAutoAdvance from '../../../../hooks/useAutoAdvance.js'
@@ -14,7 +14,7 @@ import useAutoScroll    from '../../../../hooks/useAutoScroll.js'
 import { cellStyles } from '../../../../components/atoms/Numbers/Grid/styles.js';
 
 export default function BinaryMemoScreen({ route, navigation }) {
-  const { objectif, temps, variant, digitCount, autoAdvance, discipline } = route.params // routes
+  const { objectif, temps, variant, digitCount, autoAdvance, discipline, mode, modeVariantId } = route.params // routes
   const binaries = useBinaries(objectif) // Génération des chiffres binaires (0 et 1)
   const totalTime     = parseInt(temps, 10) || 0 // Chrono
   const [timeLeft]    = useTimer(totalTime) 
@@ -33,8 +33,8 @@ export default function BinaryMemoScreen({ route, navigation }) {
   <SafeAreaView style={styles.container}>
     {/* HEADER */}
     <MemorizationHeader
-      onBack={() => navigation.navigate('Binaries')}
-      onDone={() => navigation.replace('BinaryRecall', { objectif, temps, binaries, variant, discipline })}
+      onBack={() => navigation.popToTop()}
+      onDone={() => navigation.replace('BinaryRecall', { objectif, temps, binaries, variant, discipline, mode, modeVariantId })}
       duration={totalTime}
     />
 

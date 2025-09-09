@@ -125,15 +125,13 @@ export default function CorrectionScreen({ route, navigation }) {
     navigation.navigate('Numbers')
   }
 
-  // VERSION FINALE AVEC TOUS LES COMPOSANTS ET STYLES + PADDING
+  // VERSION AVEC ARCHITECTURE MEMO SCREEN (space-between layout)
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingTop: 80, paddingBottom: 100 }]}
-        showsVerticalScrollIndicator={false}
-      >
+      <Header navigation={navigation} />
+      
+      {/* CONTENU PRINCIPAL avec espacement équitable */}
+      <View style={styles.mainContent}>
         {/* RÉSULTATS */}
         <View style={styles.resultsContainer}>
           <Text style={styles.resultsTitle}>Résultats</Text>
@@ -146,7 +144,7 @@ export default function CorrectionScreen({ route, navigation }) {
         </View>
 
         {/* GRILLE DE CORRECTION */}
-        <BorderedContainer style={styles.gridContainer}>
+        <BorderedContainer>
           <CorrectionGrid 
             inputs={inputs} 
             numbers={numbers} 
@@ -154,26 +152,28 @@ export default function CorrectionScreen({ route, navigation }) {
           />
         </BorderedContainer>
 
-        {/* INSTRUCTIONS */}
-        <View style={styles.instructionsContainer}>
-          <Text style={styles.instructionsText}>
-            Cellules vertes = correctes
-          </Text>
-          <Text style={styles.instructionsText}>
-            Cellules rouges = incorrectes (appuyez pour révéler)
-          </Text>
+        {/* INSTRUCTIONS + BOUTON RETRY */}
+        <View style={styles.bottomSection}>
+          <View style={styles.instructionsContainer}>
+            <Text style={styles.instructionsText}>
+              Cellules vertes = correctes
+            </Text>
+            <Text style={styles.instructionsText}>
+              Cellules rouges = incorrectes (appuyez pour révéler)
+            </Text>
+          </View>
+          
+          <PrimaryButton
+            style={styles.retryButton}
+            onPress={handleRetry}
+            disabled={loading}
+          >
+            {loading ? 'Saving...' : 'Retry'}
+          </PrimaryButton>
         </View>
+      </View>
 
-        {/* BOUTON RETRY */}
-        <PrimaryButton
-          style={styles.retryButton}
-          onPress={handleRetry}
-          disabled={loading} // Désactive pendant la sauvegarde
-        >
-          {loading ? 'Saving...' : 'Retry'}
-        </PrimaryButton>
-      </ScrollView>
-
+      
       {/* Modal nouveau record */}
       <NewRecordModal
         visible={showNewRecordModal}

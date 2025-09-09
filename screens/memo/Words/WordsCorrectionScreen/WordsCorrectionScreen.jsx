@@ -1,9 +1,11 @@
 // screens/memo/Words/WordsCorrectionScreen.jsx
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { SafeAreaView, View, Text, ScrollView, StyleSheet } from 'react-native'
 import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton.jsx'
 import WordsGrid from '../../../../components/atoms/Words/WordsGrid/WordsGrid.jsx'
 import Header from '../../../../components/Header.jsx'
+import useSaveBestScore from '../../../../hooks/useSaveBestScore'
+import NewRecordModal from '../../../../components/molecules/Commons/NewRecordModal/NewRecordModal'
 
 export default function WordsCorrectionScreen({ route, navigation }) {
   const { 
@@ -14,11 +16,16 @@ export default function WordsCorrectionScreen({ route, navigation }) {
     variant,
     wordsCount,
     mode,
-    discipline
+    discipline,
+    modeVariantId
   } = route.params
 
   // State pour révéler les mots corrects
   const [revealedWords, setRevealedWords] = useState({});
+
+  // État pour la modal du nouveau record
+  const [showNewRecordModal, setShowNewRecordModal] = useState(false)
+  const [previousScore, setPreviousScore] = useState(null)
 
   // Calcul du score
   const total = originalWords.length;
@@ -27,8 +34,39 @@ export default function WordsCorrectionScreen({ route, navigation }) {
     return acc + (userWord.toLowerCase().trim() === word.toLowerCase().trim() ? 1 : 0);
   }, 0);
 
+  // Hook pour la sauvegarde du meilleur score
+  const { saveBestScore, loading, error } = useSaveBestScore()
+
   // Calcul de la précision
   const accuracy = Math.round((score / total) * 100);
+
+  // Flag pour éviter les sauvegardes multiples
+  const hasSavedRef = useRef(false)
+
+  // Sauvegarde automatique du score à l'affichage - une seule fois
+  useEffect(() => {
+    const saveScore = async () => {
+      if (hasSavedRef.current) return
+      
+      if (!modeVariantId || typeof modeVariantId !== 'number') return
+
+      hasSavedRef.current = true
+
+      try {
+        const result = await saveBestScore(modeVariantId, score)
+        
+        // Si un nouveau record a été établi, afficher la modal
+        if (result.updated) {
+          setShowNewRecordModal(true)
+        }
+      } catch (error) {
+        // Ignore silently
+      }
+    }
+
+    const timeoutId = setTimeout(saveScore, 100)
+    return () => clearTimeout(timeoutId)
+  }, [modeVariantId, score, saveBestScore])
 
   // Fonction pour révéler un mot
   const handleWordReveal = (wordIndex) => {
@@ -60,7 +98,7 @@ export default function WordsCorrectionScreen({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       {/* HEADER */}
-      <Header/>
+      <Header navigation={navigation} />
 
       {/* CONTENU PRINCIPAL */}
       <View style={styles.mainContent}>
@@ -106,6 +144,15 @@ export default function WordsCorrectionScreen({ route, navigation }) {
           Retry
         </PrimaryButton>
       </View>
+
+      {/* Modal de nouveau record */}
+      <NewRecordModal
+        visible={showNewRecordModal}
+        onClose={() => setShowNewRecordModal(false)}
+        score={score}
+        previousScore={previousScore}
+        discipline="Words"
+      />
     </SafeAreaView>
   )
 }

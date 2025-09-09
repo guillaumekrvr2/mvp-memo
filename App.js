@@ -1,6 +1,7 @@
 // App.js
-import React from 'react';
-import { StatusBar } from 'react-native';
+import React, { useEffect } from 'react';
+import { StatusBar, Platform } from 'react-native';
+import * as NavigationBar from 'expo-navigation-bar';
 import { NavigationContainer, DarkTheme as NavDarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ThemeProvider } from 'styled-components/native';
@@ -31,9 +32,35 @@ const MyNavTheme = {
 const RootStack = createNativeStackNavigator();
 
 export default function App() {
+  // Configuration de la barre de navigation Android au démarrage
+  useEffect(() => {
+    const configureAndroidNavigation = async () => {
+      if (Platform.OS === 'android') {
+        try {
+          // Masquer la barre de navigation (fonctionne seulement avec les boutons traditionnels)
+          await NavigationBar.setVisibilityAsync('hidden');
+          // Rendre la barre transparente quand elle apparaît
+          await NavigationBar.setBackgroundColorAsync('#00000000');
+          // Configuration du comportement de réapparition
+          await NavigationBar.setBehaviorAsync('inset-swipe');
+          console.log('📱 Navigation bar configured for Android');
+        } catch (error) {
+          console.log('⚠️ Navigation bar configuration failed (normal sur les appareils avec gestes):', error.message);
+        }
+      }
+    };
+    
+    configureAndroidNavigation();
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <StatusBar barStyle="light-content" backgroundColor={styledTheme.colors.background} />
+      <StatusBar 
+        barStyle="light-content" 
+        backgroundColor={styledTheme.colors.background}
+        translucent={true}
+        hidden={false}
+      />
       
       <ThemeProvider theme={styledTheme}>
         <NavigationContainer theme={MyNavTheme}>

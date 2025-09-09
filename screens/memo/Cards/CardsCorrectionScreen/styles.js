@@ -17,13 +17,13 @@ export const Container = styled.SafeAreaView`
 
 export const ContentScrollView = styled.ScrollView`
   flex: 1;
-  padding-top: 100px;
+  padding-top: 40px;
   padding-horizontal: 24px;
 `
 
 export const ResultsCard = styled.View`
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   padding: 32px;
   background-color: #1e1e2e;
   border-radius: 20px;
@@ -70,6 +70,24 @@ export const AccuracyText = styled.Text`
   color: #ffffff;
   font-size: 16px;
   font-weight: 600;
+`
+
+export const HintCard = styled.View`
+  background-color: #2a2a3e;
+  border-radius: 16px;
+  border-width: 1px;
+  border-color: #667eea40;
+  padding: 16px;
+  margin-bottom: 12px;
+  align-items: center;
+`
+
+export const HintText = styled.Text`
+  color: #a0a9c0;
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 20px;
 `
 
 export const CarouselSection = styled.View`

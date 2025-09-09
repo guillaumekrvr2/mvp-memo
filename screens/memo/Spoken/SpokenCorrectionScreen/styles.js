@@ -6,12 +6,12 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#0a0a0a', // theme.colors.background
   },
-  scrollView: {
+  mainContent: {
     flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 16,
+    justifyContent: 'space-between', // Espacement équitable entre les 3 éléments
+    alignItems: 'center', // Centrage horizontal
+    paddingVertical: 20,
+    paddingTop: 30, // Ajusté pour remonter davantage
   },
   resultsContainer: {
     alignItems: 'center',
@@ -33,14 +33,13 @@ export default StyleSheet.create({
     fontSize: 16,
     color: '#a0a9c0', // theme.colors.secondary
   },
-  gridContainer: {
-    flex: 1,
-    minHeight: 300,
-    marginVertical: 20,
+  bottomSection: {
+    alignItems: 'center',
+    width: '100%',
   },
   instructionsContainer: {
     alignItems: 'center',
-    marginVertical: 16,
+    marginBottom: 16,
   },
   instructionsText: {
     fontSize: 14,
@@ -49,7 +48,6 @@ export default StyleSheet.create({
     marginVertical: 2,
   },
   retryButton: {
-    marginVertical: 20,
     alignSelf: 'center',
   },
 })

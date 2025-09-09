@@ -22,7 +22,12 @@
         "foregroundImage": "./assets/icons/splash.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.gk37550sta.mvpmemo"
+      "package": "com.gk37550sta.mvpmemo",
+      "softwareKeyboardLayoutMode": "pan"
+    },
+    "androidNavigationBar": {
+      "visible": "sticky-immersive",
+      "backgroundColor": "#000000"
     },
     "plugins": [
       [

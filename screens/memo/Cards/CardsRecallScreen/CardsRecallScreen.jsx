@@ -65,7 +65,7 @@ export default function CardsRecallScreen(props) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors?.background || '#000' }}>
       <MemorizationHeader
-        onBack={() => navigation.navigate('Cards')}
+        onBack={() => navigation.popToTop()}
         onDone={handleDone}
         duration={recallTime}
       />

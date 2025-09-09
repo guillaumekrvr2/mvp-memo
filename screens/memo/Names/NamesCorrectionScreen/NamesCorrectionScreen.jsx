@@ -48,16 +48,17 @@ export default function NamesCorrectionScreen({ route, navigation }) {
   const { saveBestScore, loading: savingScore } = useSaveBestScore()
   const insets = useSafeAreaInsets()
 
-  // Calcul du score
+  // Calcul du score - 1 point par prénom correct + 1 point par nom correct
   const totalProfiles = memorizedProfiles.length
   const correctAnswers = memorizedProfiles.reduce((acc, profile) => {
     const userAnswer = userAnswers[profile.id] || {}
     const isFirstNameCorrect = userAnswer.firstName?.toLowerCase().trim() === profile.firstName?.toLowerCase().trim()
     const isLastNameCorrect = userAnswer.lastName?.toLowerCase().trim() === profile.lastName?.toLowerCase().trim()
-    return acc + (isFirstNameCorrect && isLastNameCorrect ? 1 : 0)
+    return acc + (isFirstNameCorrect ? 1 : 0) + (isLastNameCorrect ? 1 : 0)
   }, 0)
 
-  const accuracy = Math.round((correctAnswers / totalProfiles) * 100)
+  const totalPossiblePoints = totalProfiles * 2 // 2 points par profil (prénom + nom)
+  const accuracy = Math.round((correctAnswers / totalPossiblePoints) * 100)
 
   // Gestion de la révélation
   const handleReveal = useCallback((profileId) => {
@@ -127,7 +128,7 @@ export default function NamesCorrectionScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <Header navigation={navigation} />
 
       {/* Contenu principal */}
       <View style={styles.mainContent}>
@@ -135,7 +136,7 @@ export default function NamesCorrectionScreen({ route, navigation }) {
         <View style={styles.resultsContainer}>
           <Text style={styles.resultsTitle}>Résultats</Text>
           <Text style={styles.scoreText}>
-            Score: {correctAnswers} / {totalProfiles}
+            Score: {correctAnswers} / {totalPossiblePoints}
           </Text>
           <Text style={styles.accuracyText}>
             Précision: {accuracy}%

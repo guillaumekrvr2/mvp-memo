@@ -9,7 +9,7 @@ import WordsGrid from '../../../../components/atoms/Words/WordsGrid/WordsGrid.js
 import wordsRandomizer from '../../../../usecases/WordsRandomizer.js'
 
 export default function WordsMemoScreen({ route, navigation }) {
-  const { objectif, temps, variant, wordsCount, autoAdvance, mode, discipline } = route.params // routes
+  const { objectif, temps, variant, wordsCount, autoAdvance, mode, discipline, modeVariantId } = route.params // routes
   
   // 📝 Génération des mots aléatoires depuis la base de données complète
   const words = useMemo(() => {
@@ -58,7 +58,8 @@ export default function WordsMemoScreen({ route, navigation }) {
       wordsCount,
       autoAdvance,
       mode,
-      discipline
+      discipline,
+      modeVariantId
     });
   };
 
@@ -66,7 +67,7 @@ export default function WordsMemoScreen({ route, navigation }) {
     <SafeAreaView style={styles.container}>
       {/* HEADER */}
       <MemorizationHeader
-        onBack={() => navigation.navigate('Words')}
+        onBack={() => navigation.popToTop()}
         onDone={handleDone}
         duration={totalTime}
       />

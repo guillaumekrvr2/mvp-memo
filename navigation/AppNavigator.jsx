@@ -83,7 +83,7 @@ export default function AppNavigator() {
         component={HomeStackNavigator}
         options={({ route }) => {
           const nested = getFocusedRouteNameFromRoute(route) ?? 'HomeMain'
-          const hideTabsOn = ['Memorisation', 'Decompte', 'Recall', 'Numbers', 'Cards', 'CardsGame', 'CardsRecall', 'BinaryMemo', 'BinaryRecall', 'Binaries', 'Words', 'WordsMemo', 'WordsRecall', 'WordsCorrection', 'Spoken', 'SpokenDecompte', 'SpokenMemo', 'SpokenRecall', 'SpokenCorrection', 'Names', 'NamesMemo', 'NamesRecall', 'NamesCorrection']
+          const hideTabsOn = ['Memorisation', 'Decompte', 'Recall', 'Numbers', 'Cards', 'CardsGame', 'CardsRecall', 'BinaryMemo', 'BinaryRecall', 'Binaries', 'Words', 'WordsMemo', 'WordsRecall', 'WordsCorrection', 'Spoken', 'SpokenDecompte', 'SpokenMemo', 'SpokenRecall', 'SpokenCorrection', 'Names', 'NamesMemo', 'NamesRecall', 'NamesCorrection', 'Correction', 'BinaryCorrection', 'CardsCorrection']
           if (hideTabsOn.includes(nested)) {
             return { 
               tabBarStyle: { display: 'none' },
