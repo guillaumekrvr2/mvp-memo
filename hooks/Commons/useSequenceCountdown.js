@@ -27,7 +27,7 @@ export const useSequenceCountdown = (sequences = [], onComplete, hapticConfig = 
     stopSpeaking()
     
     Speech.speak(item, {
-      language: 'fr-FR',
+      language: 'en-US',
       rate: 0.8, // Vitesse de parole
       pitch: 1.0, // Ton de la voix 
       volume: 1.0, // Volume

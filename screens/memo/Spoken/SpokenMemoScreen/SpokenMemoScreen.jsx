@@ -1,5 +1,5 @@
 // screens/memo/Spoken/SpokenMemoScreen/SpokenMemoScreen.jsx
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { SafeAreaView } from 'react-native'
 import * as Speech from 'expo-speech'
 import { theme } from '../../../../theme'
@@ -23,6 +23,7 @@ export default function SpokenMemoScreen({ route, navigation }) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [showCurrentDigit, setShowCurrentDigit] = useState(false)
   const [shouldStop, setShouldStop] = useState(false) // Flag pour arrêter la séquence
+  const isMountedRef = useRef(true) // Référence pour vérifier si le composant est monté
 
   // Génération d'une séquence aléatoire de chiffres
   const generateDigitSequence = () => {
@@ -62,10 +63,18 @@ export default function SpokenMemoScreen({ route, navigation }) {
   const stopSpeaking = () => {
     setShouldStop(true) // Activer le flag d'arrêt
     Speech.stop()
+    // Arrêter immédiatement les états si le composant est encore monté
+    if (isMountedRef.current) {
+      setIsPlaying(false)
+      setCurrentDigitIndex(-1)
+      setShowCurrentDigit(false)
+    }
   }
 
   // Lecture séquentielle des chiffres avec expo-speech
   const playDigitSequence = async (sequence) => {
+    // Vérifier si le composant est encore monté avant de commencer
+    if (!isMountedRef.current) return
     
     setIsPlaying(true)
     setCurrentDigitIndex(0)
@@ -74,22 +83,24 @@ export default function SpokenMemoScreen({ route, navigation }) {
     const sequenceStartTime = Date.now()
     
     for (let i = 0; i < sequence.length; i++) {
-      // Vérifier si on doit arrêter
-      if (shouldStop) {
+      // Vérifier si on doit arrêter ou si le composant est démonté
+      if (shouldStop || !isMountedRef.current) {
         break
       }
       
       const digit = sequence[i]
       
-      // Afficher le chiffre actuel
-      setCurrentDigitIndex(i)
-      setShowCurrentDigit(true)
+      // Afficher le chiffre actuel seulement si le composant est monté
+      if (isMountedRef.current) {
+        setCurrentDigitIndex(i)
+        setShowCurrentDigit(true)
+      }
       
       // Prononcer le chiffre avec expo-speech et récupérer la durée réelle
       const actualSpeechDuration = await speakDigit(digit)
       
       // Vérifier à nouveau après la synthèse
-      if (shouldStop) {
+      if (shouldStop || !isMountedRef.current) {
         break
       }
       
@@ -103,27 +114,31 @@ export default function SpokenMemoScreen({ route, navigation }) {
           const checkInterval = 100 // Vérifier toutes les 100ms
           let remainingTime = remainingDelay
           
-          while (remainingTime > 0 && !shouldStop) {
+          while (remainingTime > 0 && !shouldStop && isMountedRef.current) {
             const waitTime = Math.min(checkInterval, remainingTime)
             await new Promise(resolve => setTimeout(resolve, waitTime))
             remainingTime -= waitTime
           }
           
-          if (shouldStop) {
+          if (shouldStop || !isMountedRef.current) {
             break
           }
         }
       }
     }
     
-    // Fin de la séquence
-    setTimeout(() => {
-      const totalTime = Date.now() - sequenceStartTime
-      
-      setIsPlaying(false)
-      setCurrentDigitIndex(-1)
-      setShowCurrentDigit(false)
-    }, 1000)
+    // Fin de la séquence - seulement si le composant est encore monté
+    if (isMountedRef.current) {
+      setTimeout(() => {
+        if (isMountedRef.current) {
+          const totalTime = Date.now() - sequenceStartTime
+          
+          setIsPlaying(false)
+          setCurrentDigitIndex(-1)
+          setShowCurrentDigit(false)
+        }
+      }, 1000)
+    }
   }
 
   const handleValidate = () => {
@@ -163,6 +178,7 @@ export default function SpokenMemoScreen({ route, navigation }) {
   // Nettoyer la synthèse vocale au démontage du composant
   useEffect(() => {
     return () => {
+      isMountedRef.current = false // Marquer comme démonté
       stopSpeaking()
     }
   }, [])
@@ -170,22 +186,18 @@ export default function SpokenMemoScreen({ route, navigation }) {
   // Arrêter la synthèse vocale quand on quitte l'écran
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      isMountedRef.current = false // Marquer comme démonté
       stopSpeaking()
-      setIsPlaying(false)
-      setCurrentDigitIndex(-1)
-      setShowCurrentDigit(false)
     })
 
     return unsubscribe
   }, [navigation])
 
-  // Arrêter la synthèse vocale quand le composant est sur le point d'être démonté
+  // Arrêter la synthèse vocale quand le composant perd le focus
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
+      isMountedRef.current = false // Marquer comme démonté
       stopSpeaking()
-      setIsPlaying(false)
-      setCurrentDigitIndex(-1)
-      setShowCurrentDigit(false)
     })
 
     return unsubscribe
