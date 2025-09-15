@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react'
 import { SafeAreaView, View, Text, StyleSheet } from 'react-native'
 import useAutoAdvance from '../../../../hooks/useAutoAdvance.js'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader.jsx'
-import HighlightBox from '../../../../components/atoms/Commons/HighlightBox/HighlightBox.jsx'
+import BinariesHighlightBox from '../../../../components/atoms/Commons/BinariesHighlightBox/BinariesHighlightBox.jsx'
 import ChevronButton from '../../../../components/atoms/Commons/ChevronButton/ChevronButton.jsx'
 import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer.jsx'
 import Grid  from '../../../../components/atoms/Numbers/Grid/Grid.jsx'
@@ -14,18 +14,26 @@ import useAutoScroll    from '../../../../hooks/useAutoScroll.js'
 import { cellStyles } from '../../../../components/atoms/Numbers/Grid/styles.js';
 
 export default function BinaryMemoScreen({ route, navigation }) {
-  const { objectif, temps, variant, digitCount, autoAdvance, discipline, mode, modeVariantId } = route.params // routes
+  const { objectif, temps, variant, digitCount, autoAdvance, discipline, mode, modeVariantId, columns, rows: matrixRows } = route.params // routes
   const binaries = useBinaries(objectif) // Génération des chiffres binaires (0 et 1)
   const totalTime     = parseInt(temps, 10) || 0 // Chrono
   const [timeLeft]    = useTimer(totalTime) 
-  const cols = 6 //génération de la grille 
-  const grouping = digitCount
+  const cols = 6 //génération de la grille
+  // Pour les binaires, le grouping est défini par la matrice columns x rows
+  const binaryGrouping = (columns && matrixRows) ? columns * matrixRows : digitCount || 6 // fallback
+  const grouping = binaryGrouping
+  // Debug pour voir les valeurs avant useGrid
+  console.log('Before useGrid:', { binaries: binaries?.length, digitCount, binaryGrouping, grouping, columns, matrixRows });
+
   const { rows, highlightIndex, setHighlightIndex, maxIndex, highlightDigits, totalGroups } =
-  useGrid(binaries, 6, digitCount)
+  useGrid(binaries, 6, binaryGrouping)
+
+  // Debug pour voir ce que retourne useGrid
+  console.log('After useGrid:', { highlightDigits, highlightIndex, totalGroups });
   const scrollRef     = useRef(null) //autodéfilement de la grille 
   const [scrollH, setH] = useState(0)
   // Calcul de la ligne où commence le groupe pour l'auto-scroll
-  const groupStartLine = Math.floor((highlightIndex * digitCount) / cols)
+  const groupStartLine = Math.floor((highlightIndex * binaryGrouping) / cols)
   useAutoScroll(scrollRef, scrollH, groupStartLine, 48 + 12)
   useAutoAdvance(autoAdvance, totalTime, totalGroups, setHighlightIndex) //  Hook d'auto-advance
 
@@ -41,7 +49,7 @@ export default function BinaryMemoScreen({ route, navigation }) {
     {/* CONTENU PRINCIPAL avec espacement équitable */}
     <View style={styles.mainContent}>
       {/* HIGHLIGHT BOX */}
-      <HighlightBox text={highlightDigits} />
+      <BinariesHighlightBox text={highlightDigits} columns={columns} rows={matrixRows} />
 
       {/* GRILLE */}
       <BorderedContainer onLayout={e => setH(e.nativeEvent.layout.height)}>
@@ -51,8 +59,8 @@ export default function BinaryMemoScreen({ route, navigation }) {
           scrollRef={scrollRef}
           renderCell={(n, rowIdx, colIdx) => {
           const globalIdx = rowIdx * cols + colIdx;
-          const groupStart = highlightIndex * grouping;
-          const groupEnd = groupStart + grouping;
+          const groupStart = highlightIndex * binaryGrouping;
+          const groupEnd = groupStart + binaryGrouping;
           
           const isInGroup = globalIdx >= groupStart && globalIdx < groupEnd;
           // Suppression de isMainHighlight - maintenant tout le groupe a le même style
@@ -104,9 +112,9 @@ const styles = StyleSheet.create({
     alignItems: 'center', // Centrage horizontal
     paddingVertical: 20, // Un peu de padding en haut et bas
   },
-    controls: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-around', 
+    controls: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     width: '100%', // Pour que les chevrons utilisent toute la largeur
   }
 })

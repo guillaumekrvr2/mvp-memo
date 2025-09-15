@@ -8,14 +8,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { styles } from './styles';
 
 import AutoAdvanceSwitch from '../../../../components/atoms/Commons/AutoAdvanceSwitch/AutoAdvanceSwitch';
-import useDigitPicker from '../../../../hooks/useDigitPicker';
 import { ModePicker } from '../../../../components/molecules/Commons/ModePicker/ModePicker';
-import DigitPickerModal from '../../../../components/molecules/Commons/DigitPickerModal/DigitPickerModal';
+import DigitPickerModalBinaries from '../../../../components/molecules/Commons/DigitPickerModalBinaries/DigitPickerModalBinaries';
 import PlayButton from '../../../../components/atoms/Commons/PlayButton/PlayButton';
 import { SecondaryButton } from '../../../../components/atoms/Commons/SecondaryButton/SecondaryButton';
 import RecordDisplay from '../../../../components/molecules/Commons/RecordDisplay/RecordDisplay';
 import ObjectiveTimePicker from '../../../../components/molecules/Commons/ObjectiveTimePicker/ObjectiveTimePicker';
-import HighlightBoxSetter from '../../../../components/atoms/Commons/HighlightBoxSetter/HighlightBoxSetter';
+import HighlightBoxSetterBinaries from '../../../../components/atoms/Commons/HighlightBoxSetterBinaries/HighlightBoxSetterBinaries';
 import IAMVariantPickerModal from '../../../../components/molecules/Commons/IAMVariantPickerModal/IAMVariantPickerModal';
 import DisciplineHeader from '../../../../components/molecules/Commons/DisciplineHeader/DisciplineHeader';
 
@@ -31,15 +30,10 @@ export default function BinariesScreen() {
   const navigation = useNavigation();
   const [iamVariantModalVisible, setIamVariantModalVisible] = useState(false);
 
-  // Digit picker pour le nombre de chiffres binaires - 6 par défaut
-  const {
-    digitCount,
-    previewDigits,
-    modalVisible,
-    openModal,
-    closeModal,
-    setDigitCount,
-  } = useDigitPicker(6);
+  // États pour la matrice binaires
+  const [columns, setColumns] = useState(3);
+  const [rows, setRows] = useState(2);
+  const [matrixModalVisible, setMatrixModalVisible] = useState(false);
 
   // Mode de jeu (iam, custom) - Memory League ne fait pas de binaires
   const binaryModeOptions = modeOptions.filter(option => option.value !== 'memory-league');
@@ -72,8 +66,19 @@ export default function BinariesScreen() {
     ? temps
     : selectedVariant?.duration_seconds ?? 0;
 
-  // On transforme previewDigits en binaires (0 et 1) basé sur la parité
-  const previewBinaries = previewDigits.map(digit => digit % 2);
+  // Handlers pour la modal de matrice
+  const openMatrixModal = () => {
+    setMatrixModalVisible(true);
+  };
+
+  const closeMatrixModal = () => {
+    setMatrixModalVisible(false);
+  };
+
+  const handleMatrixConfirm = (matrixParams) => {
+    setColumns(matrixParams.columns);
+    setRows(matrixParams.rows);
+  };
 
   // Gestion du modal IAM variants
   const openIamVariantModal = () => {
@@ -100,11 +105,11 @@ export default function BinariesScreen() {
         
         {/* 🎯 SECTION DU HAUT - Configuration */}
         <View style={styles.topSection}>
-          <HighlightBoxSetter
+          <HighlightBoxSetterBinaries
             style={styles.highlightBoxSetter}
-            label={previewBinaries.join('')}
-            icon={<Ionicons name="settings-outline" size={24} color="#667eea" />}
-            onPress={openModal}
+            columns={columns}
+            rows={rows}
+            onPress={openMatrixModal}
           />
           
           <ModePicker
@@ -187,7 +192,8 @@ export default function BinariesScreen() {
                 temps: playTime,
                 mode,
                 variant: selectedVariant?.id,
-                digitCount,
+                columns,
+                rows,
                 autoAdvance,
                 discipline: 'binaries', // 🎯 AJOUTÉ : Indique la discipline binaries
                 modeVariantId: selectedVariant?.id
@@ -205,14 +211,15 @@ export default function BinariesScreen() {
         </View>
 
         {/* Modales */}
-        <DigitPickerModal
-          visible={modalVisible}
-          digitCount={digitCount}
-          onValueChange={setDigitCount}
-          onClose={closeModal}
-          title="Choisir le nombre de bits à afficher"
-          min={1}
-          max={9}
+        <DigitPickerModalBinaries
+          visible={matrixModalVisible}
+          columns={columns}
+          rows={rows}
+          onColumnsChange={setColumns}
+          onRowsChange={setRows}
+          onClose={closeMatrixModal}
+          onConfirm={handleMatrixConfirm}
+          title="Matrice des binaires"
         />
 
         <IAMVariantPickerModal

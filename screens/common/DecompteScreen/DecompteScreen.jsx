@@ -11,12 +11,12 @@ import { useNamesImagePreloader } from '../../../hooks/Names/useNamesImagePreloa
 
 export default function DecompteScreen({ route, navigation }) {
   // 🎯 Récupération de tous les paramètres incluant la discipline
-  const { 
-    objectif, 
-    temps, 
-    variant, 
-    digitCount, 
-    cardsCount, 
+  const {
+    objectif,
+    temps,
+    variant,
+    digitCount,
+    cardsCount,
     wordsCount = 1, // 📝 Nombre de mots simultanés (avec valeur par défaut)
     autoAdvance,
     mode,
@@ -25,7 +25,9 @@ export default function DecompteScreen({ route, navigation }) {
     toValue,
     useSpecificRange,
     cardFilters = null, // 🎯 Filtres pour les cartes (avec valeur par défaut)
-    modeVariantId
+    modeVariantId,
+    columns, // 🔢 Paramètres pour les binaries
+    rows // 🔢 Paramètres pour les binaries
   } = route.params
 
   const [counter, setCounter] = useState(3)
@@ -78,15 +80,17 @@ export default function DecompteScreen({ route, navigation }) {
         cardFilters // 🎯 Transmet les filtres de cartes
       })
     } else if (discipline === 'binaries') {
-      navigation.replace('BinaryMemo', { 
-        objectif, 
-        temps, 
-        variant, 
-        digitCount, 
+      navigation.replace('BinaryMemo', {
+        objectif,
+        temps,
+        variant,
+        digitCount,
         autoAdvance,
         discipline,
         mode,
-        modeVariantId
+        modeVariantId,
+        columns, // 🔢 Transmet les paramètres de matrice
+        rows // 🔢 Transmet les paramètres de matrice
       })
     } else if (discipline === 'words') {
       navigation.replace('WordsMemo', { 
@@ -143,14 +147,16 @@ export default function DecompteScreen({ route, navigation }) {
         })
       } else if (discipline === 'binaries') {
         // 🔢 Navigation vers 'BinaryMemo' pour les binaires
-        navigation.replace('BinaryMemo', { 
-          objectif, 
-          temps, 
-          variant, 
-          digitCount, 
+        navigation.replace('BinaryMemo', {
+          objectif,
+          temps,
+          variant,
+          digitCount,
           autoAdvance,
           mode,
-          modeVariantId
+          modeVariantId,
+          columns, // 🔢 Transmet les paramètres de matrice
+          rows // 🔢 Transmet les paramètres de matrice
         })
       } else if (discipline === 'words') {
         // 📝 Navigation vers 'WordsMemo' pour les mots
