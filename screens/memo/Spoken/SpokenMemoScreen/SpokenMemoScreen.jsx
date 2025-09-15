@@ -41,7 +41,7 @@ export default function SpokenMemoScreen({ route, navigation }) {
     
     return new Promise((resolve) => {
       Speech.speak(digit, {
-        language: 'fr-FR',
+        language: 'en-US',
         rate: 1.2, // Vitesse plus rapide pour libérer du temps pour les délais
         pitch: 1.0, // Ton de la voix (0.5 à 2.0) 
         volume: 1.0, // Volume (0.0 à 1.0)
