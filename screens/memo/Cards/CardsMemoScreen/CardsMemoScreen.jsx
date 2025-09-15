@@ -1,5 +1,5 @@
 // screens/memo/Cards/CardsScreen.jsx - VERSION AVEC GROUPES/PAQUETS
-import React, { useState, useMemo, useCallback, useEffect } from 'react'
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { SafeAreaView, View, Image } from 'react-native'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { CardsStack } from '../../../../components/molecules/Cards/CardsStack/CardsStack'
@@ -24,6 +24,9 @@ export default function CardsScreen({ route, navigation }) {
   
   // État local pour l'index du groupe actuel
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0)
+  
+  // Ref pour nettoyer le setTimeout
+  const swipeTimeoutRef = useRef(null)
   
   const {
     deck,
@@ -84,11 +87,10 @@ export default function CardsScreen({ route, navigation }) {
 
   // 🃏 Gestion du swipe de groupe - tout le groupe part d'un coup
   const handleGroupSwipe = () => {
-  
     
     if (isLastGroup) {
-      // Dernier groupe → navigation vers CardsRecall
-      setTimeout(() => {
+      // Dernier groupe → navigation vers CardsRecall avec timeout nettoyable
+      swipeTimeoutRef.current = setTimeout(() => {
         navigateToRecall()
       }, 1000)
     } else {
@@ -114,6 +116,16 @@ export default function CardsScreen({ route, navigation }) {
       setCurrentGroupIndex(prev => prev + 1)
     }
   }, [currentGroupIndex, totalGroups])
+
+  // Nettoyage du timeout lors du démontage
+  useEffect(() => {
+    return () => {
+      if (swipeTimeoutRef.current) {
+        clearTimeout(swipeTimeoutRef.current)
+        swipeTimeoutRef.current = null
+      }
+    }
+  }, [])
 
   return (
     <SafeAreaView style={styles.container}>

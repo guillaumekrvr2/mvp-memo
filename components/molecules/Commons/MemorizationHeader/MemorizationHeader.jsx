@@ -1,5 +1,5 @@
 // components/molecules/MemorizationHeader/MemorizationHeader.jsx
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { View, StyleSheet, Animated, Easing } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import BackButton from '../../../atoms/Commons/BackButton/BackButton'
@@ -23,11 +23,20 @@ export default function MemorizationHeader({
   const staticProgress = useRef(new Animated.Value(0)).current
   const spokenProgress = useRef(new Animated.Value(0)).current
   const onDoneRef = useRef(onDone)
+  const [isMounted, setIsMounted] = useState(true)
 
   // Mettre à jour la référence du callback sans redémarrer l'animation
   useEffect(() => {
     onDoneRef.current = onDone
   }, [onDone])
+
+  // Suivre l'état monté du composant
+  useEffect(() => {
+    setIsMounted(true)
+    return () => {
+      setIsMounted(false)
+    }
+  }, [])
 
   // Logique différente selon le type de discipline
   let progress;
@@ -52,7 +61,7 @@ export default function MemorizationHeader({
         
         animation.start(({ finished }) => {
           // Quand la progress bar est complète (dernière animation), déclencher onDone
-          if (finished && nextProgress >= 1.0) {
+          if (finished && nextProgress >= 1.0 && isMounted) {
             onDoneRef.current?.();
           }
         });
@@ -62,7 +71,7 @@ export default function MemorizationHeader({
           animation.stop()
         }
       }
-    }, [currentDigitIndex, totalDigits, progress]); // Retiré onDone des dépendances
+    }, [currentDigitIndex, totalDigits, progress, isMounted]); // Ajouté isMounted
   } else {
     // Pour les autres disciplines : progress basé sur le temps
     progress = (duration && duration > 0) 

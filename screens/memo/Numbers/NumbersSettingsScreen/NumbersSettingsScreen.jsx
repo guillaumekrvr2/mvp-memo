@@ -1,5 +1,5 @@
 // screens/memo//NumbersScreen/NumbersScreen.jsx - Version avec import des styles
-import { SafeAreaView, View } from 'react-native';
+import { SafeAreaView, View, Alert } from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -175,9 +175,29 @@ export default function NumbersScreen() {
         <View style={styles.bottomSection}>
           <PlayButton
             style={styles.playButton}
-            onPress={() =>
+            onPress={() => {
+              // Validation de l'objectif
+              if (!objectif || objectif.trim() === '') {
+                Alert.alert(
+                  'Objectif manquant',
+                  'Veuillez remplir le champ Objectif avant de commencer.',
+                  [{ text: 'OK' }]
+                )
+                return
+              }
+
+              const objValue = parseInt(objectif, 10)
+              if (isNaN(objValue) || objValue <= 0) {
+                Alert.alert(
+                  'Objectif invalide',
+                  'Veuillez saisir un nombre valide pour l\'objectif.',
+                  [{ text: 'OK' }]
+                )
+                return
+              }
+
               navigation.navigate('Decompte', {
-                objectif: parseInt(objectif, 10),
+                objectif: objValue,
                 temps: playTime,
                 mode,
                 variant: selectedVariant?.id,
@@ -189,7 +209,7 @@ export default function NumbersScreen() {
                 toValue: mode === 'custom' ? toValue : undefined,
                 useSpecificRange: mode === 'custom' && fromValue > 0 && toValue > 0 && fromValue <= toValue
               })
-            }
+            }}
           />
 
           <SecondaryButton 

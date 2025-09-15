@@ -1,5 +1,5 @@
 //hooks/useProgressWithCallback.js
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { Animated, Easing } from 'react-native'
 
 /**
@@ -11,11 +11,20 @@ import { Animated, Easing } from 'react-native'
 export default function useProgressWithCallback(durationSec, onComplete) {
   const progress = useRef(new Animated.Value(0)).current
   const callbackRef = useRef(onComplete)
+  const [isMounted, setIsMounted] = useState(true)
   
   // Mettre à jour la référence du callback sans redémarrer l'animation
   useEffect(() => {
     callbackRef.current = onComplete
   }, [onComplete])
+
+  // Suivre l'état monté du composant
+  useEffect(() => {
+    setIsMounted(true)
+    return () => {
+      setIsMounted(false)
+    }
+  }, [])
 
   useEffect(() => {
     progress.setValue(0)
@@ -27,7 +36,9 @@ export default function useProgressWithCallback(durationSec, onComplete) {
     })
     
     animation.start(({ finished }) => {
-      if (finished) callbackRef.current?.()
+      if (finished && isMounted) {
+        callbackRef.current?.()
+      }
     })
 
     // Cleanup: arrêter l'animation si le composant se démonte ou si durationSec change
