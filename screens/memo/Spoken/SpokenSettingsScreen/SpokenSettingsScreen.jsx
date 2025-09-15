@@ -1,5 +1,5 @@
 // screens/memo/Spoken/SpokenScreen/SpokenScreen.jsx
-import { SafeAreaView, View } from 'react-native';
+import { SafeAreaView, View, Alert } from 'react-native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -89,15 +89,35 @@ export default function SpokenScreen() {
         <View style={styles.bottomSection}>
           <PlayButton
             style={styles.playButton}
-            onPress={() =>
+            onPress={() => {
+              // Validation de l'objectif
+              if (!objectif || objectif.trim() === '') {
+                Alert.alert(
+                  'Objectif manquant',
+                  'Veuillez remplir le champ Objectif avant de commencer.',
+                  [{ text: 'OK' }]
+                )
+                return
+              }
+
+              const objValue = parseInt(objectif, 10)
+              if (isNaN(objValue) || objValue <= 0) {
+                Alert.alert(
+                  'Objectif invalide',
+                  'Veuillez saisir un nombre valide pour l\'objectif.',
+                  [{ text: 'OK' }]
+                )
+                return
+              }
+
               navigation.navigate('SpokenDecompte', {
-                objectif: parseInt(objectif, 10),
+                objectif: objValue,
                 temps: playTime,
                 mode,
                 speechSpeed, // Ajout de la vitesse de lecture
                 discipline: 'spokens' // Discipline spokens
               })
-            }
+            }}
           />
 
           <SecondaryButton 

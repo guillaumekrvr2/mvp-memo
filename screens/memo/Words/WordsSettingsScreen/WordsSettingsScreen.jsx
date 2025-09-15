@@ -1,6 +1,6 @@
 // screens/memo/Words/WordsScreen/WordsScreen.jsx
 import React, { useState } from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { SafeAreaView, View, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -91,8 +91,28 @@ export default function WordsScreen() {
 
   // 📝 Handler pour le bouton Play avec debug
   const handlePlay = () => {
+    // Validation de l'objectif
+    if (!objectif || objectif.trim() === '') {
+      Alert.alert(
+        'Objectif manquant',
+        'Veuillez remplir le champ Objectif avant de commencer.',
+        [{ text: 'OK' }]
+      )
+      return
+    }
+
+    const objValue = parseInt(objectif, 10)
+    if (isNaN(objValue) || objValue <= 0) {
+      Alert.alert(
+        'Objectif invalide',
+        'Veuillez saisir un nombre valide pour l\'objectif.',
+        [{ text: 'OK' }]
+      )
+      return
+    }
+
     const navigationParams = {
-      objectif: parseInt(objectif, 10),
+      objectif: objValue,
       temps: playTime,
       mode,
       variant: selectedVariant?.id,
