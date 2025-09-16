@@ -6,8 +6,7 @@ import { useCardsRecallActions } from './useCardsRecallActions'
 
 export function useCardsRecall({ objectif, navigation, memorizedCards = [], variant, mode, temps }) {
   const { deck } = useCardDeck(objectif)
-  const cardsBySuit = useCardsBySuit(deck)
-  
+
   const {
     startTime,
     outputSlots,
@@ -22,6 +21,10 @@ export function useCardsRecall({ objectif, navigation, memorizedCards = [], vari
     setSelectedSlotIndex,
     outputScrollRef
   } = useCardsRecallState(objectif)
+
+  // Extraire les cartes utilisées des slots de sortie
+  const usedCards = outputSlots.map(slot => slot.card).filter(Boolean)
+  const cardsBySuit = useCardsBySuit(deck, usedCards, objectif)
 
   const {
     handleCardSelect,
