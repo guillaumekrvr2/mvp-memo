@@ -50,10 +50,10 @@ export default function WordsMemoScreen({ route, navigation }) {
 
   // 📝 Navigation vers le Recall Screen
   const handleDone = () => {
-    navigation.replace('WordsRecall', { 
-      objectif, 
-      temps, 
-      words, 
+    navigation.replace('WordsRecall', {
+      objectif,
+      temps,
+      words,
       variant,
       wordsCount,
       autoAdvance,
@@ -61,6 +61,11 @@ export default function WordsMemoScreen({ route, navigation }) {
       discipline,
       modeVariantId
     });
+  };
+
+  // 📝 Long press sur chevron gauche → retour au début
+  const handleResetToBeginning = () => {
+    setCurrentIndex(0);
   };
 
   return (
@@ -92,6 +97,7 @@ export default function WordsMemoScreen({ route, navigation }) {
           <ChevronButton
             direction="left"
             onPress={() => setCurrentIndex(i => Math.max(0, i - 1))}
+            onLongPress={handleResetToBeginning} // Long press → retour au début
           />
           <ChevronButton
             direction="right"

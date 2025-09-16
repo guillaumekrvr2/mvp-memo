@@ -9,8 +9,6 @@ import { styles } from './styles';
  * @param {number} rows - Nombre de lignes de la matrice.
  */
 export default function BinariesHighlightBox({ text, columns = 3, rows = 2 }) {
-  // Debug pour voir ce qu'on reçoit
-  console.log('BinariesHighlightBox received:', { text, columns, rows });
 
   // Si pas de texte, affichage vide (juste le container avec glow)
   if (!text || text.length === 0) {

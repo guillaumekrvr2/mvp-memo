@@ -22,14 +22,8 @@ export default function BinaryMemoScreen({ route, navigation }) {
   // Pour les binaires, le grouping est défini par la matrice columns x rows
   const binaryGrouping = (columns && matrixRows) ? columns * matrixRows : digitCount || 6 // fallback
   const grouping = binaryGrouping
-  // Debug pour voir les valeurs avant useGrid
-  console.log('Before useGrid:', { binaries: binaries?.length, digitCount, binaryGrouping, grouping, columns, matrixRows });
-
   const { rows, highlightIndex, setHighlightIndex, maxIndex, highlightDigits, totalGroups } =
   useGrid(binaries, 6, binaryGrouping)
-
-  // Debug pour voir ce que retourne useGrid
-  console.log('After useGrid:', { highlightDigits, highlightIndex, totalGroups });
   const scrollRef     = useRef(null) //autodéfilement de la grille 
   const [scrollH, setH] = useState(0)
   // Calcul de la ligne où commence le groupe pour l'auto-scroll
@@ -87,6 +81,7 @@ export default function BinaryMemoScreen({ route, navigation }) {
         <ChevronButton
           direction="left"
           onPress={() => setHighlightIndex(i => Math.max(0, i - 1))}
+          onLongPress={() => setHighlightIndex(0)} // Long press → retour au début
         />
         <ChevronButton
           direction="right"

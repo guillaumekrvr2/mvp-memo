@@ -4,7 +4,7 @@ import { SafeAreaView, View, Image } from 'react-native'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { CardsStack } from '../../../../components/molecules/Cards/CardsStack/CardsStack'
 import { CardsThumbnailRow } from '../../../../components/molecules/Cards/CardsThumbnailRow/CardsThumbnailRow'
-import { ChevronButton } from '../../../../components/atoms/Cards/ChevronButton/ChevronButton'
+import { SmallChevronButton } from '../../../../components/atoms/Commons/SmallChevronButton/SmallChevronButton'
 import { useCardDeck } from '../../../../hooks/Cards/useCardDeck'
 import useAutoAdvance from '../../../../hooks/useAutoAdvance'
 import { styles } from './styles'
@@ -117,6 +117,11 @@ export default function CardsScreen({ route, navigation }) {
     }
   }, [currentGroupIndex, totalGroups])
 
+  // 🎯 Long press sur chevron gauche → retour au début
+  const handleResetToBeginning = useCallback(() => {
+    setCurrentGroupIndex(0)
+  }, [])
+
   // Nettoyage du timeout lors du démontage
   useEffect(() => {
     return () => {
@@ -138,32 +143,29 @@ export default function CardsScreen({ route, navigation }) {
       {/* Container pour les cartes avec chevrons */}
       <View style={{ flex: 1, position: 'relative' }}>
         {/* Chevron gauche */}
-        <ChevronButton
+        <SmallChevronButton
           direction="left"
           onPress={handlePreviousGroup}
+          onLongPress={handleResetToBeginning} // Long press → retour au début
           disabled={currentGroupIndex === 0}
-          style={{ 
-            position: 'absolute',
+          style={{
             left: 20,
             top: '45%',
             zIndex: 1000,
-            elevation: 1000,
-            transform: [{ translateY: -20 }]
+            elevation: 1000
           }}
         />
 
         {/* Chevron droit */}
-        <ChevronButton
+        <SmallChevronButton
           direction="right"
           onPress={handleNextGroup}
           disabled={currentGroupIndex >= totalGroups - 1}
-          style={{ 
-            position: 'absolute',
+          style={{
             right: 20,
             top: '45%',
             zIndex: 1000,
-            elevation: 1000,
-            transform: [{ translateY: -20 }]
+            elevation: 1000
           }}
         />
 

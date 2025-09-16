@@ -2,7 +2,15 @@ import React from 'react'
 import { TouchableOpacity, Text, Vibration } from 'react-native'
 import { styles } from './styles'
 
-export function ChevronButton({
+/**
+ * SmallChevronButton - Composant mutualisé pour les chevrons dans Cards et Names
+ * @param {'left'|'right'} direction - Direction du chevron
+ * @param {() => void} onPress - Callback au clic normal
+ * @param {() => void} [onLongPress] - Callback au long press (optionnel)
+ * @param {boolean} [disabled=false] - État désactivé
+ * @param {object} [style] - Styles additionnels
+ */
+export function SmallChevronButton({
   direction,
   onPress,
   onLongPress,
