@@ -10,11 +10,11 @@ export default ({ config }) => {
     name: isBeta ? "Memorize Beta" : "MVP Memo",
     slug: "mvp-memo",
     version: "1.0.0",
-    sdkVersion: "53.0.0",
+    sdkVersion: "54.0.0",
     platforms: ["ios", "android", "web"],
     orientation: "portrait",
 
-    // Configuration Android
+    // Configuration Android avec icône personnalisée
     android: {
       package: "com.memorize.mvpmemo",
       versionCode: 1,
@@ -24,12 +24,29 @@ export default ({ config }) => {
       }
     },
 
+    // Icône principale
+    icon: "./assets/icon.png",
+
     // 🔧 Configuration des mises à jour OTA - activée pour bêta
     updates: {
       enabled: isBeta,  // Activé pour la bêta
       fallbackToCacheTimeout: isBeta ? 30000 : 0,
       checkAutomatically: isBeta ? "ON_LOAD" : "NEVER",
     },
+
+    // Configuration complète des icônes
+    splash: {
+      image: "./assets/icons/splash.png",
+      resizeMode: "contain",
+      backgroundColor: "#000000"
+    },
+
+    // Configuration des plugins
+    plugins: [
+      "expo-audio",
+      "expo-font",
+      "expo-web-browser"
+    ],
 
     // Variables extra, dont les clés Supabase et l'ID EAS
     extra: {

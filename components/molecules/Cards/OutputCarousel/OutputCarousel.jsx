@@ -58,6 +58,7 @@ export const OutputCarousel = forwardRef(({
                 card={slot.card}
                 index={index}
                 spacing={spacing}
+                position={slot.position}
                 onPress={() => onCardRemove && onCardRemove(index)}
                 isCorrect={isCorrect}
                 showCorrection={showCorrection}

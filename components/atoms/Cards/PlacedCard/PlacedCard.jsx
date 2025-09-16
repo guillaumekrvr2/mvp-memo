@@ -1,16 +1,18 @@
 import React, { useState } from 'react'
-import { TouchableOpacity, Image, Vibration } from 'react-native'
+import { TouchableOpacity, Image, Vibration, Text, View } from 'react-native'
 import { styles } from './styles'
 
-export function PlacedCard({ 
-  card, 
-  index, 
+export function PlacedCard({
+  card,
+  index,
   spacing = 30,
   onPress,
   // Props pour le mode correction
   isCorrect = null,
   showCorrection = false,
-  correctCard = null
+  correctCard = null,
+  // Position pour afficher le numéro de slot
+  position
 }) {
   // État local pour l'effet peek (maintenir pour voir la vraie carte)
   const [isPeeking, setIsPeeking] = useState(false)
@@ -52,25 +54,38 @@ export function PlacedCard({
   const displayCard = showCorrection && !isCorrect && isPeeking && correctCard ? correctCard : card
 
   return (
-    <TouchableOpacity
+    <View
       style={[
-        styles.container,
+        styles.wrapper,
         {
           transform: [{ translateX: index * spacing }],
           zIndex: index + 1
-        },
-        getCorrectionStyle()
+        }
       ]}
-      onPress={handlePress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      activeOpacity={0.8}
     >
-      <Image 
-        source={displayCard.asset} 
-        style={styles.cardImage} 
-        resizeMode="contain" 
-      />
-    </TouchableOpacity>
+      {/* Numéro de slot au-dessus */}
+      {position && (
+        <Text style={styles.slotNumber}>
+          {position}
+        </Text>
+      )}
+
+      <TouchableOpacity
+        style={[
+          styles.container,
+          getCorrectionStyle()
+        ]}
+        onPress={handlePress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={0.8}
+      >
+        <Image
+          source={displayCard.asset}
+          style={styles.cardImage}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
+    </View>
   )
 }

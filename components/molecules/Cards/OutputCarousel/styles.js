@@ -21,7 +21,8 @@ export const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 5,
-    height: 310
+    paddingTop: 30,
+    height: 340
   },
   cardsContainer: {
     flex: 1, 

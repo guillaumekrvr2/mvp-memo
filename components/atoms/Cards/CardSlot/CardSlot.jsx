@@ -2,13 +2,13 @@ import React from 'react'
 import { View, Text } from 'react-native'
 import { styles } from './styles'
 
-export function CardSlot({ 
-  position, 
-  index, 
-  spacing = 30 
+export function CardSlot({
+  position,
+  index,
+  spacing = 30
 }) {
   return (
-    <View 
+    <View
       style={[
         styles.container,
         {
@@ -17,7 +17,10 @@ export function CardSlot({
         }
       ]}
     >
-      {/* Numéro de position supprimé */}
+      {/* Numéro de slot au-dessus */}
+      <Text style={styles.slotNumber}>
+        {position}
+      </Text>
     </View>
   )
 }

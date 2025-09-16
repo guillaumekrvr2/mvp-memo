@@ -17,5 +17,19 @@ export const styles = StyleSheet.create({
     color: 'rgba(0, 0, 0, 0.5)',
     fontSize: 10,
     fontWeight: 'bold'
+  },
+  slotNumber: {
+    position: 'absolute',
+    top: -25,
+    left: 10,
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: 'bold',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    minWidth: 24,
+    textAlign: 'left'
   }
 })

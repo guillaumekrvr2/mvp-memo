@@ -9,7 +9,7 @@
     "slug": "mvp-memo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icons/splash.png",
+    "icon": "./assets/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icons/splash.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.gk37550sta.mvpmemo",

@@ -12,14 +12,16 @@
       }
     },
     "beta": {
-      "distribution": "store",
+      "distribution": "internal",
       "android": {
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease"
       },
       "env": {
         "EXPO_PUBLIC_ENV": "beta",
-        "android.enableProguardInReleaseBuilds": "true"
+        "android.enableProguardInReleaseBuilds": "true",
+        "android.enableR8": "true",
+        "android.enableSeparateBuildPerCPUArchitecture": "false"
       }
     },
     "preview": {
