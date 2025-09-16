@@ -13,7 +13,7 @@ export function CardSlot({
         styles.container,
         {
           transform: [{ translateX: index * spacing }],
-          zIndex: -index
+          zIndex: 1000 + index
         }
       ]}
     >
