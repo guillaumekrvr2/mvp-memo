@@ -11,7 +11,7 @@ import {
 import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton'
 import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
 import CorrectionGrid from '../../../../components/organisms/CorrectionGrid/CorrectionGrid'
-import useSaveBestScore from '../../../../hooks/useSaveBestScore'
+import useSaveScoreWithAuth from '../../../../hooks/useSaveScoreWithAuth'
 import NewRecordModal from '../../../../components/molecules/Commons/NewRecordModal/NewRecordModal'
 import Header from '../../../../components/Header.jsx'
 import styles from './styles'
@@ -45,8 +45,8 @@ export default function BinaryCorrectionScreen({ route, navigation }) {
     return acc + (v === String(binaries[i]) ? 1 : 0)
   }, 0)
 
-  // Hook pour la sauvegarde du meilleur score
-  const { saveBestScore, loading, error } = useSaveBestScore()
+  // Hook pour la sauvegarde du meilleur score avec gestion d'auth
+  const { saveScoreWithAuth, loading, error } = useSaveScoreWithAuth()
 
   // Calcul de la précision
   const accuracy = Math.round((score / total) * 100)
@@ -58,45 +58,22 @@ export default function BinaryCorrectionScreen({ route, navigation }) {
   useEffect(() => {
     const saveScore = async () => {
       if (hasSavedRef.current) return
-      
+
       if (!modeVariantId || typeof modeVariantId !== 'number') return
 
       hasSavedRef.current = true
 
-      try {
-        const result = await saveBestScore(modeVariantId, score)
-        
+      await saveScoreWithAuth(modeVariantId, score, navigation, (result) => {
         // Si un nouveau record a été établi, afficher la modal
         if (result.updated) {
           setShowNewRecordModal(true)
         }
-      } catch (error) {
-        // Si l'utilisateur n'est pas connecté, afficher popup de connexion
-        if (error.message === 'No user logged in') {
-          Alert.alert(
-            'Score non sauvegardé',
-            'Connecte-toi pour sauvegarder tes scores !',
-            [
-              {
-                text: 'Plus tard',
-                style: 'cancel'
-              },
-              {
-                text: 'Se connecter',
-                onPress: () => navigation.navigate('SignUp')
-              }
-            ]
-          )
-        } else {
-          // Autres erreurs : logguer
-          console.error('Erreur lors de la sauvegarde automatique:', error)
-        }
-      }
+      })
     }
 
     const timeoutId = setTimeout(saveScore, 100)
     return () => clearTimeout(timeoutId)
-  }, [modeVariantId, score, saveBestScore, navigation])
+  }, [modeVariantId, score, saveScoreWithAuth, navigation])
 
   const handleRetry = () => {
     navigation.navigate('Binaries')

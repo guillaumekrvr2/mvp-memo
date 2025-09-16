@@ -4,7 +4,7 @@ import { Alert } from 'react-native'
 import { SecondaryButton } from '../../../../components/atoms/Commons/SecondaryButton/SecondaryButton'
 import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton'
 import { CardsRecallOutput } from '../../../../components/organisms/Cards/CardsRecallOutput/CardsRecallOutput'
-import useSaveBestScore from '../../../../hooks/useSaveBestScore'
+import useSaveScoreWithAuth from '../../../../hooks/useSaveScoreWithAuth'
 import { theme } from '../../../../theme'
 import Header from '../../../../components/Header.jsx'
 import { 
@@ -64,8 +64,8 @@ export default function CardsCorrectionScreen({ route, navigation }) {
   // Calcul de la précision
   const accuracy = totalAnswered > 0 ? Math.round((score / totalAnswered) * 100) : 0
 
-  // Hook pour la sauvegarde du meilleur score
-  const { saveBestScore, loading, error } = useSaveBestScore()
+  // Hook pour la sauvegarde du meilleur score avec gestion d'auth
+  const { saveScoreWithAuth, loading, error } = useSaveScoreWithAuth()
 
   // Préparation des slots pour OutputCarousel
   const outputSlots = Array.from({ length: objectif }, (_, index) => ({
@@ -78,14 +78,8 @@ export default function CardsCorrectionScreen({ route, navigation }) {
   // Sauvegarde automatique du score à l'affichage
   useEffect(() => {
     const saveScore = async () => {
-      try {
-        
-        if (variant && typeof variant === 'number' && score >= 0) {
-          
-          const result = await saveBestScore(variant, score)
-          
-          
-          
+      if (variant && typeof variant === 'number' && score >= 0) {
+        await saveScoreWithAuth(variant, score, navigation, (result) => {
           if (result.updated) {
             console.log('🎉 Showing success popup!')
             Alert.alert(
@@ -94,14 +88,12 @@ export default function CardsCorrectionScreen({ route, navigation }) {
               [{ text: "Super !", style: "default" }]
             )
           }
-        }
-      } catch (error) {
-        console.error('💥 Erreur lors de la sauvegarde du score:', error)
+        })
       }
     }
 
     saveScore()
-  }, [variant, score, totalAnswered, saveBestScore])
+  }, [variant, score, totalAnswered, saveScoreWithAuth, navigation])
 
   const handleRetry = () => {
     // Retour à l'écran de configuration des cartes

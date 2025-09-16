@@ -11,7 +11,7 @@ import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButto
 import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
 import CorrectionGrid from '../../../../components/organisms/CorrectionGrid/CorrectionGrid'
 import NewRecordModal from '../../../../components/molecules/Commons/NewRecordModal/NewRecordModal'
-import useSaveBestScore from '../../../../hooks/useSaveBestScore'
+import useSaveScoreWithAuth from '../../../../hooks/useSaveScoreWithAuth'
 import Header from '../../../../components/Header.jsx'
 import styles from './styles'
 
@@ -47,8 +47,8 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
     return acc + (v === String(digitSequence[i]) ? 1 : 0)
   }, 0)
 
-  // Hook pour la sauvegarde du meilleur score
-  const { saveBestScore, loading, error } = useSaveBestScore()
+  // Hook pour la sauvegarde du meilleur score avec gestion d'auth
+  const { saveScoreWithAuth, loading, error } = useSaveScoreWithAuth()
 
   // Calcul de la précision
   const accuracy = Math.round((score / total) * 100)
@@ -57,11 +57,8 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
   // Sauvegarde automatique du score à l'affichage
   useEffect(() => {
     const saveScoreOnMount = async () => {
-      try {
-        
-        // Sauvegarde du score avec le variant Spokens (18)
-        const result = await saveBestScore(modeVariantId, score)
-        
+      // Sauvegarde du score avec le variant Spokens (18)
+      await saveScoreWithAuth(modeVariantId, score, navigation, (result) => {
         // Afficher modal si nouveau record
         if (result.updated) {
           setRecordData({
@@ -71,32 +68,11 @@ export default function SpokenCorrectionScreen({ route, navigation }) {
           })
           setShowRecordModal(true)
         }
-      } catch (error) {
-        // Si l'utilisateur n'est pas connecté, afficher popup de connexion
-        if (error.message === 'No user logged in') {
-          Alert.alert(
-            'Score non sauvegardé',
-            'Connecte-toi pour sauvegarder tes scores !',
-            [
-              {
-                text: 'Plus tard',
-                style: 'cancel'
-              },
-              {
-                text: 'Se connecter',
-                onPress: () => navigation.navigate('SignUp')
-              }
-            ]
-          )
-        } else {
-          // Autres erreurs : logguer
-          console.error('Erreur lors de la sauvegarde automatique spoken:', error)
-        }
-      }
+      })
     }
 
     saveScoreOnMount()
-  }, [modeVariantId, score, saveBestScore, navigation])
+  }, [modeVariantId, score, saveScoreWithAuth, navigation])
 
   const handleRetry = () => {
     navigation.navigate('Spoken')

@@ -4,7 +4,7 @@ import { SafeAreaView, View, Text, ScrollView, StyleSheet } from 'react-native'
 import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton.jsx'
 import WordsGrid from '../../../../components/atoms/Words/WordsGrid/WordsGrid.jsx'
 import Header from '../../../../components/Header.jsx'
-import useSaveBestScore from '../../../../hooks/useSaveBestScore'
+import useSaveScoreWithAuth from '../../../../hooks/useSaveScoreWithAuth'
 import NewRecordModal from '../../../../components/molecules/Commons/NewRecordModal/NewRecordModal'
 
 export default function WordsCorrectionScreen({ route, navigation }) {
@@ -34,8 +34,8 @@ export default function WordsCorrectionScreen({ route, navigation }) {
     return acc + (userWord.toLowerCase().trim() === word.toLowerCase().trim() ? 1 : 0);
   }, 0);
 
-  // Hook pour la sauvegarde du meilleur score
-  const { saveBestScore, loading, error } = useSaveBestScore()
+  // Hook pour la sauvegarde du meilleur score avec gestion d'auth
+  const { saveScoreWithAuth, loading, error } = useSaveScoreWithAuth()
 
   // Calcul de la précision
   const accuracy = Math.round((score / total) * 100);
@@ -47,26 +47,22 @@ export default function WordsCorrectionScreen({ route, navigation }) {
   useEffect(() => {
     const saveScore = async () => {
       if (hasSavedRef.current) return
-      
+
       if (!modeVariantId || typeof modeVariantId !== 'number') return
 
       hasSavedRef.current = true
 
-      try {
-        const result = await saveBestScore(modeVariantId, score)
-        
+      await saveScoreWithAuth(modeVariantId, score, navigation, (result) => {
         // Si un nouveau record a été établi, afficher la modal
         if (result.updated) {
           setShowNewRecordModal(true)
         }
-      } catch (error) {
-        // Ignore silently
-      }
+      })
     }
 
     const timeoutId = setTimeout(saveScore, 100)
     return () => clearTimeout(timeoutId)
-  }, [modeVariantId, score, saveBestScore])
+  }, [modeVariantId, score, saveScoreWithAuth, navigation])
 
   // Fonction pour révéler un mot
   const handleWordReveal = (wordIndex) => {

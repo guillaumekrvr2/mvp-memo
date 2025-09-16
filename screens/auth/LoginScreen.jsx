@@ -43,7 +43,7 @@ export default function LoginScreen({ navigation }) {
     <SafeAreaView style={styles.container}>
       {/* Header avec bouton retour */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('Main')} style={styles.backButton}>
           <Text style={styles.backText}>‹</Text>
         </TouchableOpacity>
       </View>

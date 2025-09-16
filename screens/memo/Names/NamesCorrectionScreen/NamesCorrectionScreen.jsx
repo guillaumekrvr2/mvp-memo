@@ -9,7 +9,7 @@ import NamesCorrectionCard from '../../../../components/molecules/Names/NamesCor
 import NewRecordModal from '../../../../components/molecules/Commons/NewRecordModal/NewRecordModal'
 
 import { useNamesRecallVisibility } from '../../../../hooks/Names/useNamesRecallVisibility'
-import useSaveBestScore from '../../../../hooks/useSaveBestScore'
+import useSaveScoreWithAuth from '../../../../hooks/useSaveScoreWithAuth'
 
 import { styles } from './styles'
 
@@ -45,7 +45,7 @@ export default function NamesCorrectionScreen({ route, navigation }) {
     
     return () => clearTimeout(timeoutId)
   }, [visibleItems.size, memorizedProfiles.length])
-  const { saveBestScore, loading: savingScore } = useSaveBestScore()
+  const { saveScoreWithAuth, loading: savingScore } = useSaveScoreWithAuth()
   const insets = useSafeAreaInsets()
 
   // Calcul du score - 1 point par prénom correct + 1 point par nom correct
@@ -73,10 +73,8 @@ export default function NamesCorrectionScreen({ route, navigation }) {
     const saveScore = async () => {
       // variant est déjà l'ID (number) envoyé depuis NamesScreen
       if (!variant || savingScore) return
-      
-      try {
-        const result = await saveBestScore(variant, correctAnswers)
-        
+
+      await saveScoreWithAuth(variant, correctAnswers, navigation, (result) => {
         if (result.updated) {
           setRecordData({
             score: correctAnswers,
@@ -85,13 +83,11 @@ export default function NamesCorrectionScreen({ route, navigation }) {
           })
           setShowRecordModal(true)
         }
-      } catch (error) {
-        console.error('Erreur lors de la sauvegarde du score:', error)
-      }
+      })
     }
 
     saveScore()
-  }, [variant, correctAnswers, saveBestScore, savingScore])
+  }, [variant, correctAnswers, saveScoreWithAuth, savingScore, navigation])
 
   // Configuration de la FlatList
   const renderItem = useCallback(({ item, index }) => {
