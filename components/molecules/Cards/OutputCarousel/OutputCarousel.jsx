@@ -4,11 +4,14 @@ import { CardSlot } from '../../../atoms/Cards/CardSlot/CardSlot'
 import { PlacedCard } from '../../../atoms/Cards/PlacedCard/PlacedCard'
 import { styles } from './styles'
 
-export const OutputCarousel = forwardRef(({ 
-  outputSlots, 
+export const OutputCarousel = forwardRef(({
+  outputSlots,
   objectif,
   spacing = 30,
   onCardRemove,
+  // Props pour le slot selection
+  selectedSlotIndex = null,
+  onSlotSelect,
   // Props pour le mode correction
   correctCards = [],
   showCorrection = false
@@ -42,6 +45,8 @@ export const OutputCarousel = forwardRef(({
                   position={slot.position}
                   index={index}
                   spacing={spacing}
+                  isSelected={selectedSlotIndex === index}
+                  onPress={onSlotSelect}
                 />
               )
             }

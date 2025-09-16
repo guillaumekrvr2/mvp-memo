@@ -59,7 +59,7 @@ export function PlacedCard({
         styles.wrapper,
         {
           transform: [{ translateX: index * spacing }],
-          zIndex: index + 1
+          zIndex: index * 10 + 1005
         }
       ]}
     >

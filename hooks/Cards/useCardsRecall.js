@@ -18,11 +18,14 @@ export function useCardsRecall({ objectif, navigation, memorizedCards = [], vari
     setRedoStack,
     selectedSuitTab,
     setSelectedSuitTab,
+    selectedSlotIndex,
+    setSelectedSlotIndex,
     outputScrollRef
   } = useCardsRecallState(objectif)
 
   const {
     handleCardSelect,
+    handleSlotSelect,
     handleUndo,
     handleRedo,
     handleRemoveCard,
@@ -34,6 +37,8 @@ export function useCardsRecall({ objectif, navigation, memorizedCards = [], vari
     setUndoStack,
     redoStack,
     setRedoStack,
+    selectedSlotIndex,
+    setSelectedSlotIndex,
     outputScrollRef,
     objectif,
     navigation,
@@ -49,15 +54,17 @@ export function useCardsRecall({ objectif, navigation, memorizedCards = [], vari
     outputSlots,
     selectedSuitTab,
     setSelectedSuitTab,
+    selectedSlotIndex,
     outputScrollRef,
     undoStack,
     redoStack,
-    
+
     // Data
     cardsBySuit,
-    
+
     // Actions
     handleCardSelect,
+    handleSlotSelect,
     handleUndo,
     handleRedo,
     handleRemoveCard,

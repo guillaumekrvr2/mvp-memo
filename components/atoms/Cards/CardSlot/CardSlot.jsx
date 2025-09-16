@@ -1,26 +1,31 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { styles } from './styles'
 
 export function CardSlot({
   position,
   index,
-  spacing = 30
+  spacing = 30,
+  isSelected = false,
+  onPress
 }) {
   return (
-    <View
+    <TouchableOpacity
       style={[
         styles.container,
+        isSelected && styles.selectedContainer,
         {
           transform: [{ translateX: index * spacing }],
-          zIndex: 1000 + index
+          zIndex: index * 10 + 1000
         }
       ]}
+      onPress={() => onPress && onPress(index)}
+      activeOpacity={0.8}
     >
       {/* Numéro de slot au-dessus */}
       <Text style={styles.slotNumber}>
         {position}
       </Text>
-    </View>
+    </TouchableOpacity>
   )
 }

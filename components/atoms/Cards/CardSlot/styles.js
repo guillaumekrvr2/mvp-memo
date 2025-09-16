@@ -31,5 +31,10 @@ export const styles = StyleSheet.create({
     borderRadius: 4,
     minWidth: 24,
     textAlign: 'left'
+  },
+  selectedContainer: {
+    borderColor: '#FFD700',
+    borderWidth: 3,
+    backgroundColor: 'rgba(255, 215, 0, 0.2)',
   }
 })

@@ -37,22 +37,24 @@ export default function CardsRecallScreen(props) {
     outputSlots,
     selectedSuitTab,
     setSelectedSuitTab,
+    selectedSlotIndex,
     outputScrollRef,
     undoStack,
     redoStack,
     cardsBySuit,
     handleCardSelect,
+    handleSlotSelect,
     handleUndo,
     handleRedo,
     handleRemoveCard,
     handleComplete
-  } = useCardsRecall({ 
-    objectif, 
-    navigation, 
-    memorizedCards, 
-    variant, 
-    mode, 
-    temps 
+  } = useCardsRecall({
+    objectif,
+    navigation,
+    memorizedCards,
+    variant,
+    mode,
+    temps
   })
 
   // Fonction pour gérer le bouton Done
@@ -76,6 +78,8 @@ export default function CardsRecallScreen(props) {
           outputSlots={outputSlots}
           objectif={objectif}
           onCardRemove={handleRemoveCard}
+          selectedSlotIndex={selectedSlotIndex}
+          onSlotSelect={handleSlotSelect}
         />
 
         <CardsRecallInput

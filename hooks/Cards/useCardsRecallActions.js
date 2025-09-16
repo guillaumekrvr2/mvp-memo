@@ -9,6 +9,8 @@ export function useCardsRecallActions({
   setUndoStack,
   redoStack,
   setRedoStack,
+  selectedSlotIndex,
+  setSelectedSlotIndex,
   outputScrollRef,
   objectif,
   navigation,
@@ -44,9 +46,31 @@ export function useCardsRecallActions({
     navigation.navigate('CardsCorrection', result)
   }, [navigation, startTime, memorizedCards, objectif, variant, mode, temps])
 
+  const handleSlotSelect = useCallback((slotIndex) => {
+    const slot = outputSlots[slotIndex]
+    if (!slot || slot.card !== null) {
+      return // Slot already filled
+    }
+
+    setSelectedSlotIndex(slotIndex)
+    Vibration.vibrate([0, 20])
+  }, [outputSlots, setSelectedSlotIndex])
+
   const handleCardSelect = useCallback((card) => {
-    const availableSlots = outputSlots.filter(slot => slot.card === null)
-    if (availableSlots.length === 0) {
+    let targetSlotIndex = selectedSlotIndex
+
+    // If no slot is selected, find first available slot
+    if (targetSlotIndex === null) {
+      const availableSlots = outputSlots.filter(slot => slot.card === null)
+      if (availableSlots.length === 0) {
+        Vibration.vibrate([0, 50, 100, 50])
+        return
+      }
+      targetSlotIndex = availableSlots[0].id
+    }
+
+    const targetSlot = outputSlots[targetSlotIndex]
+    if (!targetSlot || targetSlot.card !== null) {
       Vibration.vibrate([0, 50, 100, 50])
       return
     }
@@ -58,26 +82,25 @@ export function useCardsRecallActions({
     setUndoStack(prev => [...prev, currentState])
     setRedoStack([])
 
-    // Add card to first available slot
+    // Add card to selected slot
     const newOutputSlots = [...outputSlots]
-    newOutputSlots[availableSlots[0].id] = {
-      ...availableSlots[0],
+    newOutputSlots[targetSlotIndex] = {
+      ...targetSlot,
       card: card
     }
     setOutputSlots(newOutputSlots)
-    
+
+    // Clear selected slot
+    setSelectedSlotIndex(null)
+
     Vibration.vibrate([0, 30, 20, 50])
 
-    // Auto-scroll to focus on the last filled card
+    // Auto-scroll to focus on the placed card
     setTimeout(() => {
-      const lastFilledIndex = newOutputSlots.map((slot, index) => slot.card ? index : -1)
-        .filter(index => index >= 0)
-        .pop()
-      
-      if (lastFilledIndex >= 0 && outputScrollRef.current) {
+      if (outputScrollRef.current) {
         const cardSpacing = 30
         outputScrollRef.current.scrollTo({
-          x: Math.max(0, (lastFilledIndex - 1) * cardSpacing),
+          x: Math.max(0, (targetSlotIndex - 1) * cardSpacing),
           animated: true
         })
       }
@@ -88,7 +111,7 @@ export function useCardsRecallActions({
     if (filledSlots >= objectif) {
       handleComplete(newOutputSlots)
     }
-  }, [outputSlots, objectif, handleComplete, setOutputSlots, setUndoStack, setRedoStack, outputScrollRef])
+  }, [outputSlots, selectedSlotIndex, objectif, handleComplete, setOutputSlots, setUndoStack, setRedoStack, setSelectedSlotIndex, outputScrollRef])
 
   const handleUndo = useCallback(() => {
     if (undoStack.length === 0) {
@@ -154,6 +177,7 @@ export function useCardsRecallActions({
 
   return {
     handleCardSelect,
+    handleSlotSelect,
     handleUndo,
     handleRedo,
     handleRemoveCard,
