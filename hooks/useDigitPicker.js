@@ -1,9 +1,15 @@
 // hooks/useDigitPicker.js
 import { useState, useEffect } from 'react';
+import useAsyncStorageState from './useAsyncStorageState';
 
-export default function useDigitPicker(initialCount = 6) {
-  // 1) état du nombre de chiffres
-  const [digitCount, setDigitCount] = useState(initialCount);
+export default function useDigitPicker(initialCount = 6, storageKey = null) {
+  // 1) Toujours utiliser les deux hooks pour éviter les problèmes de hooks conditionnels
+  const [persistentDigitCount, setPersistentDigitCount] = useAsyncStorageState(storageKey || 'temp', initialCount);
+  const [localDigitCount, setLocalDigitCount] = useState(initialCount);
+
+  // Utiliser l'état persistant ou local selon le cas
+  const digitCount = storageKey ? persistentDigitCount : localDigitCount;
+  const setDigitCount = storageKey ? setPersistentDigitCount : setLocalDigitCount;
   // 2) valeurs aléatoires pour l’aperçu
   const [previewDigits, setPreviewDigits] = useState([]);
   // 3) affichage du modal

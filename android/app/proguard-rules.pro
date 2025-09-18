@@ -1,14 +1,28 @@
-# Add project specific ProGuard rules here.
-# By default, the flags in this file are appended to flags specified
-# in /usr/local/Cellar/android-sdk/24.3.3/tools/proguard/proguard-android.txt
-# You can edit the include path and order by changing the proguardFiles
-# directive in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Configuration ProGuard simplifiée pour éviter les erreurs de build
+
+# React Native essentials - À GARDER
+-keep class com.facebook.react.** { *; }
+-keep class com.facebook.jni.** { *; }
+-keep class com.facebook.soloader.** { *; }
+-keep class com.facebook.react.turbomodule.** { *; }
 
 # react-native-reanimated
 -keep class com.swmansion.reanimated.** { *; }
--keep class com.facebook.react.turbomodule.** { *; }
 
-# Add any project specific keep options here:
+# Expo essentials
+-keep class expo.** { *; }
+-keep class versioned.host.exp.exponent.** { *; }
+
+# AsyncStorage
+-keep class com.reactnativecommunity.asyncstorage.** { *; }
+
+# Navigation
+-keep class com.reactnavigation.** { *; }
+-keep class com.swmansion.** { *; }
+
+# Hermes
+-keep class com.facebook.hermes.** { *; }
+
+# Basic optimization
+-dontobfuscate
+-optimizations !code/simplification/arithmetic

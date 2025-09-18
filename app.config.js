@@ -53,6 +53,7 @@ export default ({ config }) => {
       eas: {
         projectId: "0422222f-d110-4848-8949-09dd8146672a"
       },
+      // Les clés Supabase sont gérées via EAS secrets pour la sécurité
       SUPABASE_URL: process.env.SUPABASE_URL,
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
       IS_BETA: isBeta

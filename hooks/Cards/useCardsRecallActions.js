@@ -11,6 +11,8 @@ export function useCardsRecallActions({
   setRedoStack,
   selectedSlotIndex,
   setSelectedSlotIndex,
+  lastUsedSlotIndex,
+  setLastUsedSlotIndex,
   outputScrollRef,
   objectif,
   navigation,
@@ -59,14 +61,22 @@ export function useCardsRecallActions({
   const handleCardSelect = useCallback((card) => {
     let targetSlotIndex = selectedSlotIndex
 
-    // If no slot is selected, find first available slot
+    // If no slot is selected, find next available slot based on strategy
     if (targetSlotIndex === null) {
       const availableSlots = outputSlots.filter(slot => slot.card === null)
       if (availableSlots.length === 0) {
         Vibration.vibrate([0, 50, 100, 50])
         return
       }
-      targetSlotIndex = availableSlots[0].id
+
+      // Strategy: if we have a lastUsedSlotIndex, find next available slot after it
+      if (lastUsedSlotIndex !== null) {
+        const nextAvailableSlot = availableSlots.find(slot => slot.id > lastUsedSlotIndex)
+        targetSlotIndex = nextAvailableSlot ? nextAvailableSlot.id : availableSlots[0].id
+      } else {
+        // Fallback to first available slot
+        targetSlotIndex = availableSlots[0].id
+      }
     }
 
     const targetSlot = outputSlots[targetSlotIndex]
@@ -90,8 +100,9 @@ export function useCardsRecallActions({
     }
     setOutputSlots(newOutputSlots)
 
-    // Clear selected slot
+    // Clear selected slot and update last used slot
     setSelectedSlotIndex(null)
+    setLastUsedSlotIndex(targetSlotIndex)
 
     Vibration.vibrate([0, 30, 20, 50])
 
@@ -111,7 +122,7 @@ export function useCardsRecallActions({
     if (filledSlots >= objectif) {
       handleComplete(newOutputSlots)
     }
-  }, [outputSlots, selectedSlotIndex, objectif, handleComplete, setOutputSlots, setUndoStack, setRedoStack, setSelectedSlotIndex, outputScrollRef])
+  }, [outputSlots, selectedSlotIndex, lastUsedSlotIndex, objectif, handleComplete, setOutputSlots, setUndoStack, setRedoStack, setSelectedSlotIndex, setLastUsedSlotIndex, outputScrollRef])
 
   const handleUndo = useCallback(() => {
     if (undoStack.length === 0) {

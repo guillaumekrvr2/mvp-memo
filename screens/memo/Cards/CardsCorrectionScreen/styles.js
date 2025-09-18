@@ -24,7 +24,7 @@ export const ContentScrollView = styled.ScrollView`
 export const ResultsCard = styled.View`
   align-items: center;
   margin-bottom: 16px;
-  padding: 32px;
+  padding: 20px;
   background-color: #1e1e2e;
   border-radius: 20px;
   border-width: 1px;
@@ -38,20 +38,20 @@ export const ResultsCard = styled.View`
 
 export const ResultsTitle = styled.Text`
   color: #ffffff;
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 `
 
 export const ScoreContainer = styled.View`
   flex-direction: row;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 `
 
 export const ScoreText = styled.Text`
   color: #ffffff;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
 `
 

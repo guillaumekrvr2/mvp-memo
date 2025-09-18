@@ -8,6 +8,7 @@ export function useCardsRecallState(objectif) {
   const [redoStack, setRedoStack] = useState([])
   const [selectedSuitTab, setSelectedSuitTab] = useState('spades')
   const [selectedSlotIndex, setSelectedSlotIndex] = useState(null)
+  const [lastUsedSlotIndex, setLastUsedSlotIndex] = useState(null)
   const outputScrollRef = useRef(null)
 
   // Initialize output slots
@@ -32,6 +33,8 @@ export function useCardsRecallState(objectif) {
     setSelectedSuitTab,
     selectedSlotIndex,
     setSelectedSlotIndex,
+    lastUsedSlotIndex,
+    setLastUsedSlotIndex,
     outputScrollRef
   }
 }

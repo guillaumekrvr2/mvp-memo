@@ -39,7 +39,7 @@ export default function CardsSettingsScreen() {
   const [toValue, setToValue] = useState(14);
   const [cardFilters, setCardFilters] = useState(null);
 
-  // 🃏 Digit picker pour le nombre de cartes simultanées
+  // 🃏 Digit picker pour le nombre de cartes simultanées avec persistance
   const {
     digitCount: cardsCount,
     previewDigits: previewCards,
@@ -47,7 +47,7 @@ export default function CardsSettingsScreen() {
     openModal,
     closeModal,
     setDigitCount: setCardsCount,
-  } = useDigitPicker(1); // 🃏 CORRECTION : Par défaut 1 carte (pas 3)
+  } = useDigitPicker(1, 'cards:highlightBox:count'); // 🃏 Persistance avec clé unique
 
   // Mode de jeu (memory-league, iam, custom…)
   const { mode, onModeChange, options } = useMode('memory-league', modeOptions);
