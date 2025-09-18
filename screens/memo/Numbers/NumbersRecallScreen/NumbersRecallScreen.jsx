@@ -58,15 +58,17 @@ export default function RecallScreen({ route, navigation }) {
 
   // Nettoie l'input utilisateur - Memoized pour éviter re-renders
   const handleInputChange = useCallback((text) => {
-    const cleanText = text.replace(/[^0-9]/g, '').slice(0, objectif)
+    const cleanText = text.replace(/[^0-9\-]/g, '').slice(0, objectif)
     setUserInput(cleanText)
     setCursorPosition(cleanText.length)
   }, [objectif])
 
   // Transforme l'entrée utilisateur en tableau
   const getUserInputArray = () => {
-    const digits = userInput.split('')
-    return digits.concat(Array(objectif - digits.length).fill(''))
+    const chars = userInput.split('')
+    // Remplace les tirets par des chaînes vides (skip)
+    const processedChars = chars.map(char => char === '-' ? '' : char)
+    return processedChars.concat(Array(objectif - processedChars.length).fill(''))
   }
 
   // Fonction pour naviguer vers la correction - Memoized
