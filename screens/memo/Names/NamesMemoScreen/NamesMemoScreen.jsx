@@ -1,6 +1,6 @@
 // screens/memo/Names/NamesMemoScreen/NamesMemoScreen.jsx
 import React, { useState, useMemo, useCallback } from 'react'
-import { SafeAreaView, View } from 'react-native'
+import { SafeAreaView, View, Platform } from 'react-native'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import NamesStack from '../../../../components/molecules/Names/NamesStack/NamesStack'
 import NamesThumbnailRow from '../../../../components/molecules/Names/NamesThumbnailRow/NamesThumbnailRow'
@@ -28,7 +28,10 @@ export default function NamesMemoScreen({ route, navigation }) {
   const [currentProfileIndex, setCurrentProfileIndex] = useState(0)
   // État minimal pour éviter le clignotement de la carte C
   const [isTransitioning, setIsTransitioning] = useState(false)
-  
+
+  // Container conditionnel comme NumbersMemoScreen
+  const Container = Platform.OS === 'ios' ? View : SafeAreaView;
+
   // Génération des données de noms avec le hook personnalisé
   const { profiles, totalProfiles } = useNamesData(objectif)
   
@@ -108,7 +111,7 @@ export default function NamesMemoScreen({ route, navigation }) {
   }, [totalProfiles])
 
   return (
-    <SafeAreaView style={styles.container}>
+    <Container style={styles.container}>
       <MemorizationHeader
         onBack={() => navigation.popToTop()}
         onDone={handleDone}
@@ -116,7 +119,7 @@ export default function NamesMemoScreen({ route, navigation }) {
       />
 
       {/* Container pour les profils avec chevrons */}
-      <View style={{ flex: 1, position: 'relative', marginTop: '15%' }}>
+      <View style={{ flex: 1, position: 'relative' }}>
         {/* Chevron gauche */}
         <SmallChevronButton
           direction="left"
@@ -158,6 +161,6 @@ export default function NamesMemoScreen({ route, navigation }) {
         currentProfileIndex={currentProfileIndex}
         onProfileSelect={handleProfileSelect}
       />
-    </SafeAreaView>
+    </Container>
   )
 }

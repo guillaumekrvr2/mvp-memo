@@ -81,8 +81,10 @@ export default function BinaryRecallScreen({ route, navigation }) {
     })
   }, [navigation, userInput, binaries, temps, mode, variant, modeVariantId, objectif])
 
+  const Container = Platform.OS === 'ios' ? View : SafeAreaView;
+
   return (
-    <SafeAreaView style={styles.container}>
+    <Container style={styles.container}>
       <KeyboardAvoidingView 
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -126,7 +128,7 @@ export default function BinaryRecallScreen({ route, navigation }) {
                 onChangeText={handleInputChange}
                 placeholder={placeholder}
                 placeholderTextColor="#666"
-                keyboardType="number-pad"
+                keyboardType={Platform.OS === 'ios' ? 'default' : 'number-pad'}
                 autoFocus={true}
                 blurOnSubmit={false}
                 multiline={true}
@@ -148,7 +150,7 @@ export default function BinaryRecallScreen({ route, navigation }) {
             </PrimaryButton>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </Container>
   )
 }
 

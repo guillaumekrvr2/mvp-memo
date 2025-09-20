@@ -1,5 +1,6 @@
 // components/molecules/Commons/DisciplineHeader/styles.js
 import styled from 'styled-components/native'
+import { Platform } from 'react-native'
 
 export const SafeArea = styled.View`
   background-color: rgba(10, 10, 10, 0.85);
@@ -12,7 +13,7 @@ export const Container = styled.View`
   justify-content: center;
   align-items: center;
   position: relative;
-  margin-top: 20px;
+  margin-top: ${Platform.OS === 'android' ? '20px' : '0px'};
 `
 
 export const BackButton = styled.TouchableOpacity`

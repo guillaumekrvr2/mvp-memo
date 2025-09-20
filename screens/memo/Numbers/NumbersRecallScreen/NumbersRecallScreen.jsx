@@ -58,7 +58,12 @@ export default function RecallScreen({ route, navigation }) {
 
   // Nettoie l'input utilisateur - Memoized pour éviter re-renders
   const handleInputChange = useCallback((text) => {
-    const cleanText = text.replace(/[^0-9\-]/g, '').slice(0, objectif)
+    // Remplace les tirets iOS "intelligents" par des tirets normaux
+    let fixedText = text
+      .replace(/—/g, '---')  // tiret cadratin → triple tiret
+      .replace(/–/g, '--')   // tiret demi-cadratin → double tiret
+
+    const cleanText = fixedText.replace(/[^0-9\-]/g, '').slice(0, objectif)
     setUserInput(cleanText)
     setCursorPosition(cleanText.length)
   }, [objectif])
@@ -82,9 +87,11 @@ export default function RecallScreen({ route, navigation }) {
     })
   }, [navigation, userInput, numbers, temps, mode, variant, objectif])
 
+  const Container = Platform.OS === 'ios' ? View : SafeAreaView;
+
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
+    <Container style={styles.container}>
+      <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
@@ -127,7 +134,7 @@ export default function RecallScreen({ route, navigation }) {
                 onChangeText={handleInputChange}
                 placeholder={placeholder}
                 placeholderTextColor="#666"
-                keyboardType="number-pad"
+                keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'number-pad'}
                 autoFocus={true}
                 blurOnSubmit={false}
                 multiline={true}
@@ -136,6 +143,9 @@ export default function RecallScreen({ route, navigation }) {
                 selectTextOnFocus={false}
                 removeClippedSubviews={true}
                 maxLength={objectif}
+                autoCorrect={false}
+                autoCapitalize="none"
+                spellCheck={false}
                 onLayout={(e) => {
                   const { width, height, x, y } = e.nativeEvent.layout
                 }}
@@ -149,7 +159,7 @@ export default function RecallScreen({ route, navigation }) {
             </PrimaryButton>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </Container>
   )
 }
 

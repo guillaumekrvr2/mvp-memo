@@ -27,6 +27,9 @@ export default ({ config }) => {
     // Icône principale
     icon: "./assets/icon.png",
 
+    // Configuration des assets pour inclusion dans le bundle
+    assetBundlePatterns: ["assets/**/*"],
+
     // 🔧 Configuration des mises à jour OTA - activée pour bêta
     updates: {
       enabled: isBeta,  // Activé pour la bêta

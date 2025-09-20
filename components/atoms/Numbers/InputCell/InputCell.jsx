@@ -1,6 +1,6 @@
 // components/atoms/InputCell/InputCell.jsx
 import React, { forwardRef, memo } from 'react'
-import { TextInput } from 'react-native'
+import { TextInput, Platform } from 'react-native'
 
 const InputCell = memo(forwardRef(function InputCell(
   { value, style, onChangeText, onKeyPress },
@@ -11,7 +11,7 @@ const InputCell = memo(forwardRef(function InputCell(
       ref={ref}
       value={value}
       style={style}
-      keyboardType="number-pad"
+      keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'number-pad'}
       maxLength={1}
       blurOnSubmit={false}
       selectTextOnFocus={true}  // Sélectionne le texte au focus pour remplacement rapide

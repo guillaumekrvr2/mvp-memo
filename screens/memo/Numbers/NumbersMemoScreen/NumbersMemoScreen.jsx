@@ -1,6 +1,6 @@
 // screens/MemoScreen.jsx
 import React, { useState, useRef } from 'react'
-import { SafeAreaView, View, Text, StyleSheet } from 'react-native'
+import { SafeAreaView, View, Text, StyleSheet, Platform } from 'react-native'
 import useAutoAdvance from '../../../../hooks/useAutoAdvance.js'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader.jsx'
 import HighlightBox from '../../../../components/atoms/Commons/HighlightBox/HighlightBox.jsx'
@@ -35,8 +35,10 @@ export default function MemoScreen({ route, navigation }) {
   useAutoScroll(scrollRef, scrollH, highlightIndex, 48 + 12)
   useAutoAdvance(autoAdvance, totalTime, totalGroups, setHighlightIndex) //  Hook d'auto-advance
 
+  const Container = Platform.OS === 'ios' ? View : SafeAreaView;
+
   return (
-  <SafeAreaView style={styles.container}>
+  <Container style={styles.container}>
     {/* HEADER */}
     <MemorizationHeader
       onBack={() => navigation.popToTop()}
@@ -100,7 +102,7 @@ export default function MemoScreen({ route, navigation }) {
         />
       </View>
     </View>
-  </SafeAreaView>
+  </Container>
 )
 }
 

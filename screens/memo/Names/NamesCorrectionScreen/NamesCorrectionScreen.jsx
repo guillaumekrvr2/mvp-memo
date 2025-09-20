@@ -1,5 +1,5 @@
 // screens/memo/Names/NamesCorrectionScreen/NamesCorrectionScreen.jsx
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { SafeAreaView, View, FlatList, Text } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -29,9 +29,11 @@ export default function NamesCorrectionScreen({ route, navigation }) {
   const [revealedAnswers, setRevealedAnswers] = useState({})
   const [showRecordModal, setShowRecordModal] = useState(false)
   const [recordData, setRecordData] = useState(null)
-  
+
   // Ref pour FlatList (identique à NamesRecallScreen)
   const flatListRef = React.useRef(null)
+  // Ref pour éviter les sauvegardes multiples
+  const hasAttemptedSave = useRef(false)
 
   // Hooks - Copie exacte de NamesRecallScreen (sans options)
   const { visibleItems, onViewableItemsChanged, viewabilityConfig, isItemVisible } = useNamesRecallVisibility(memorizedProfiles)
@@ -48,17 +50,20 @@ export default function NamesCorrectionScreen({ route, navigation }) {
   const { saveScoreWithAuth, loading: savingScore } = useSaveScoreWithAuth()
   const insets = useSafeAreaInsets()
 
-  // Calcul du score - 1 point par prénom correct + 1 point par nom correct
+  // Calcul du score - memoïsé pour éviter les recalculs
   const totalProfiles = memorizedProfiles.length
-  const correctAnswers = memorizedProfiles.reduce((acc, profile) => {
-    const userAnswer = userAnswers[profile.id] || {}
-    const isFirstNameCorrect = userAnswer.firstName?.toLowerCase().trim() === profile.firstName?.toLowerCase().trim()
-    const isLastNameCorrect = userAnswer.lastName?.toLowerCase().trim() === profile.lastName?.toLowerCase().trim()
-    return acc + (isFirstNameCorrect ? 1 : 0) + (isLastNameCorrect ? 1 : 0)
-  }, 0)
 
-  const totalPossiblePoints = totalProfiles * 2 // 2 points par profil (prénom + nom)
-  const accuracy = Math.round((correctAnswers / totalPossiblePoints) * 100)
+  const correctAnswers = useMemo(() => {
+    return memorizedProfiles.reduce((acc, profile) => {
+      const userAnswer = userAnswers[profile.id] || {}
+      const isFirstNameCorrect = userAnswer.firstName?.toLowerCase().trim() === profile.firstName?.toLowerCase().trim()
+      const isLastNameCorrect = userAnswer.lastName?.toLowerCase().trim() === profile.lastName?.toLowerCase().trim()
+      return acc + (isFirstNameCorrect ? 1 : 0) + (isLastNameCorrect ? 1 : 0)
+    }, 0)
+  }, [memorizedProfiles, userAnswers])
+
+  const totalPossiblePoints = useMemo(() => totalProfiles * 2, [totalProfiles]) // 2 points par profil (prénom + nom)
+  const accuracy = useMemo(() => Math.round((correctAnswers / totalPossiblePoints) * 100), [correctAnswers, totalPossiblePoints])
 
   // Gestion de la révélation
   const handleReveal = useCallback((profileId) => {
@@ -68,11 +73,13 @@ export default function NamesCorrectionScreen({ route, navigation }) {
     }))
   }, [])
 
-  // Sauvegarde du meilleur score
+  // Sauvegarde du meilleur score - une seule fois
   useEffect(() => {
     const saveScore = async () => {
-      // variant est déjà l'ID (number) envoyé depuis NamesScreen
-      if (!variant || savingScore) return
+      // Garde pour éviter les exécutions multiples
+      if (!variant || savingScore || hasAttemptedSave.current) return
+
+      hasAttemptedSave.current = true
 
       await saveScoreWithAuth(variant, correctAnswers, navigation, (result) => {
         if (result.updated) {

@@ -1,6 +1,6 @@
 // components/molecules/MemorizationHeader/MemorizationHeader.jsx
 import React, { useRef, useEffect, useState } from 'react'
-import { View, StyleSheet, Animated, Easing } from 'react-native'
+import { View, StyleSheet, Animated, Easing, Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import BackButton from '../../../atoms/Commons/BackButton/BackButton'
 import DoneButton from '../../../atoms/Commons/DoneButton/DoneButton'
@@ -80,7 +80,7 @@ export default function MemorizationHeader({
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 5 }]}>
+    <View style={[styles.container, { paddingTop: Platform.OS === 'android' ? insets.top + 25 : insets.top }]}>
       <View style={styles.header}>
         <BackButton onPress={onBack} variant="minimal" />
         <ProgressBar progress={progress} />

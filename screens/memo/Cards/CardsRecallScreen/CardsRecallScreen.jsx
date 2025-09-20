@@ -1,6 +1,6 @@
 // screens/memo/Cards/CardsRecallScreen.jsx
 import React from 'react'
-import { SafeAreaView, View, Text } from 'react-native'
+import { SafeAreaView, View, Text, Platform } from 'react-native'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { CardsRecallOutput } from '../../../../components/organisms/Cards/CardsRecallOutput/CardsRecallOutput'
 import { CardsRecallInput } from '../../../../components/organisms/Cards/CardsRecallInput/CardsRecallInput'
@@ -64,8 +64,10 @@ export default function CardsRecallScreen(props) {
 
 
 
+  const Container = Platform.OS === 'ios' ? View : SafeAreaView;
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors?.background || '#000' }}>
+    <Container style={{ flex: 1, backgroundColor: theme.colors?.background || '#000' }}>
       <MemorizationHeader
         onBack={() => navigation.popToTop()}
         onDone={handleDone}
@@ -93,6 +95,6 @@ export default function CardsRecallScreen(props) {
           onRedo={handleRedo}
         />
       </View>
-    </SafeAreaView>
+    </Container>
   )
 }

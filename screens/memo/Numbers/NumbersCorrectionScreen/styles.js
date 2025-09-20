@@ -33,9 +33,10 @@ export default StyleSheet.create({
     fontSize: 16,
     color: '#a0a9c0', // theme.colors.secondary
   },
-  bottomSection: {
+  buttonContainer: {
+    paddingHorizontal: 20, // 20px de padding horizontal
+    paddingBottom: 10, // 10px d'écart avec le bas
     alignItems: 'center',
-    width: '100%',
   },
   instructionsContainer: {
     alignItems: 'center',
@@ -48,6 +49,6 @@ export default StyleSheet.create({
     marginVertical: 2,
   },
   retryButton: {
-    alignSelf: 'center',
+    width: '100%', // Utilise toute la largeur du container (moins le padding)
   },
 })

@@ -23,6 +23,12 @@
 # Hermes
 -keep class com.facebook.hermes.** { *; }
 
-# Basic optimization
--dontobfuscate
+# Basic optimization avec obfuscation activée
 -optimizations !code/simplification/arithmetic
+-allowaccessmodification
+
+# Obfuscation activée mais garde les noms essentiels
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-keepattributes Signature
+-keepattributes InnerClasses

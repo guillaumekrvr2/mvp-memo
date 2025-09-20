@@ -122,17 +122,10 @@ export default function WordsCorrectionScreen({ route, navigation }) {
           getWordState={getWordState}
         />
 
-        {/* INSTRUCTIONS */}
-        <View style={styles.instructionsContainer}>
-          <Text style={styles.instructionsText}>
-            Cellules vertes = correctes
-          </Text>
-          <Text style={styles.instructionsText}>
-            Cellules rouges = incorrectes (appuyez pour révéler)
-          </Text>
-        </View>
+      </View>
 
-        {/* BOUTON RETRY */}
+      {/* BOUTON RETRY - positionné en bas avec padding */}
+      <View style={styles.buttonContainer}>
         <PrimaryButton
           style={styles.retryButton}
           onPress={handleRetry}
@@ -192,19 +185,13 @@ const styles = StyleSheet.create({
     color: '#888',
   },
   
-  instructionsContainer: {
+  buttonContainer: {
+    paddingHorizontal: 20, // 20px de padding horizontal
+    paddingBottom: 10, // 10px d'écart avec le bas
     alignItems: 'center',
-    marginVertical: 20,
   },
-  
-  instructionsText: {
-    fontSize: 14,
-    color: '#888',
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  
+
   retryButton: {
-    marginTop: 20,
+    width: '100%', // Utilise toute la largeur du container (moins le padding)
   },
 });

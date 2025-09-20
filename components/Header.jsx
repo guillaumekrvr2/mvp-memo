@@ -1,6 +1,6 @@
 // Header.jsx
 import React, { useContext } from 'react'
-import { SafeAreaView, View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native'
+import { SafeAreaView, View, Text, TouchableOpacity, Image, StyleSheet, Platform } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 const LogoImg = require('../assets/icons/Memorize_icon.png')
 import { AccountContext } from '../contexts/AccountContext'
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    marginTop: 20,
+    marginTop: Platform.OS === 'android' ? 20 : 0,
   },
   leftContainer: {
     position: 'absolute',

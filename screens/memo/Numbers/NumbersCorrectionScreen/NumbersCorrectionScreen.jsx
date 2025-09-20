@@ -130,28 +130,28 @@ export default function CorrectionScreen({ route, navigation }) {
           />
         </BorderedContainer>
 
-        {/* INSTRUCTIONS + BOUTON RETRY */}
-        <View style={styles.bottomSection}>
-          <View style={styles.instructionsContainer}>
-            <Text style={styles.instructionsText}>
-              Cellules vertes = correctes
-            </Text>
-            <Text style={styles.instructionsText}>
-              Cellules rouges = incorrectes (appuyez pour révéler)
-            </Text>
-          </View>
-          
-          <PrimaryButton
-            style={styles.retryButton}
-            onPress={handleRetry}
-            disabled={loading}
-          >
-            {loading ? 'Saving...' : 'Retry'}
-          </PrimaryButton>
+        {/* INSTRUCTIONS */}
+        <View style={styles.instructionsContainer}>
+          <Text style={styles.instructionsText}>
+            Cellules vertes = correctes
+          </Text>
+          <Text style={styles.instructionsText}>
+            Cellules rouges = incorrectes (appuyez pour révéler)
+          </Text>
         </View>
       </View>
 
-      
+      {/* BOUTON RETRY - positionné en bas avec padding */}
+      <View style={styles.buttonContainer}>
+        <PrimaryButton
+          style={styles.retryButton}
+          onPress={handleRetry}
+          disabled={loading}
+        >
+          {loading ? 'Saving...' : 'Retry'}
+        </PrimaryButton>
+      </View>
+
       {/* Modal nouveau record */}
       <NewRecordModal
         visible={showNewRecordModal}

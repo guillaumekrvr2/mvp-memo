@@ -48,15 +48,17 @@ export default function SpokenRecallScreen({ route, navigation }) {
 
   // Nettoie l'input utilisateur
   const handleInputChange = useCallback((text) => {
-    const cleanText = text.replace(/[^0-9]/g, '').slice(0, objectif)
+    const cleanText = text.replace(/[^0-9\-]/g, '').slice(0, objectif)
     setUserInput(cleanText)
     setCursorPosition(cleanText.length)
   }, [objectif])
 
   // Transforme l'entrée utilisateur en tableau
   const getUserInputArray = () => {
-    const digits = userInput.split('')
-    return digits.concat(Array(objectif - digits.length).fill(''))
+    const chars = userInput.split('')
+    // Remplace les tirets par des chaînes vides (skip)
+    const processedChars = chars.map(char => char === '-' ? '' : char)
+    return processedChars.concat(Array(objectif - processedChars.length).fill(''))
   }
 
   // Navigation vers la correction
@@ -72,9 +74,11 @@ export default function SpokenRecallScreen({ route, navigation }) {
     })
   }, [navigation, userInput, digitSequence, temps, mode, variant, discipline, objectif])
 
+  const Container = Platform.OS === 'ios' ? View : SafeAreaView;
+
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
+    <Container style={styles.container}>
+      <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
@@ -111,7 +115,7 @@ export default function SpokenRecallScreen({ route, navigation }) {
                 onChangeText={handleInputChange}
                 placeholder={placeholder}
                 placeholderTextColor="#666"
-                keyboardType="number-pad"
+                keyboardType={Platform.OS === 'ios' ? 'default' : 'number-pad'}
                 autoFocus={true}
                 blurOnSubmit={false}
                 multiline={true}
@@ -130,7 +134,7 @@ export default function SpokenRecallScreen({ route, navigation }) {
           </PrimaryButton>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </Container>
   )
 }
 

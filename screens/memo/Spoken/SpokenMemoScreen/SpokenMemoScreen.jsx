@@ -1,21 +1,23 @@
 // screens/memo/Spoken/SpokenMemoScreen/SpokenMemoScreen.jsx
 import React, { useState, useEffect, useRef } from 'react'
-import { SafeAreaView } from 'react-native'
+import { SafeAreaView, View, Platform } from 'react-native'
 import * as Speech from 'expo-speech'
 import { theme } from '../../../../theme'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader.jsx'
 import * as S from './styles'
 
 export default function SpokenMemoScreen({ route, navigation }) {
-  const { 
-    objectif, 
-    temps, 
-    variant, 
+  const {
+    objectif,
+    temps,
+    variant,
     autoAdvance,
     mode,
     speechSpeed = 1.0,
     discipline = 'spokens'
-  } = route.params
+  } = route.params || {}
+
+  console.log('📝 SpokenMemoScreen params:', { objectif, temps, variant, speechSpeed });
 
 
   const [digitSequence, setDigitSequence] = useState([])
@@ -39,16 +41,18 @@ export default function SpokenMemoScreen({ route, navigation }) {
   // Fonction pour prononcer un chiffre avec expo-speech
   const speakDigit = async (digit) => {
     const startTime = Date.now();
-    
+    console.log(`🎤 Speaking digit: ${digit}`);
+
     return new Promise((resolve) => {
       Speech.speak(digit, {
         language: 'en-US',
         rate: 1.2, // Vitesse plus rapide pour libérer du temps pour les délais
-        pitch: 1.0, // Ton de la voix (0.5 à 2.0) 
+        pitch: 1.0, // Ton de la voix (0.5 à 2.0)
         volume: 1.0, // Volume (0.0 à 1.0)
         onDone: () => {
           const endTime = Date.now();
           const actualDuration = endTime - startTime;
+          console.log(`✅ Speech done for '${digit}', duration: ${actualDuration}ms`);
           resolve(actualDuration)
         },
         onError: (error) => {
@@ -73,9 +77,13 @@ export default function SpokenMemoScreen({ route, navigation }) {
 
   // Lecture séquentielle des chiffres avec expo-speech
   const playDigitSequence = async (sequence) => {
+    console.log('🎵 Starting playDigitSequence with:', sequence);
     // Vérifier si le composant est encore monté avant de commencer
-    if (!isMountedRef.current) return
-    
+    if (!isMountedRef.current) {
+      console.log('❌ Component not mounted, aborting sequence');
+      return
+    }
+
     setIsPlaying(true)
     setCurrentDigitIndex(0)
     setShouldStop(false) // Réinitialiser le flag d'arrêt
@@ -170,8 +178,10 @@ export default function SpokenMemoScreen({ route, navigation }) {
 
   // Démarrer automatiquement la diction au montage du composant
   useEffect(() => {
+    console.log('🚀 SpokenMemoScreen mounted, starting sequence...');
     setShouldStop(false) // Réinitialiser le flag d'arrêt
     const sequence = generateDigitSequence()
+    console.log('🔢 Generated sequence:', sequence);
     playDigitSequence(sequence)
   }, [])
 
@@ -203,8 +213,10 @@ export default function SpokenMemoScreen({ route, navigation }) {
     return unsubscribe
   }, [navigation])
 
+  const Container = Platform.OS === 'ios' ? View : SafeAreaView;
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <Container style={{ flex: 1, backgroundColor: theme.colors.background }}>
       {/* HEADER */}
       <MemorizationHeader
         onBack={() => navigation.popToTop()}
@@ -236,6 +248,6 @@ export default function SpokenMemoScreen({ route, navigation }) {
           )}
         </S.ContentWrapper>
       </S.Container>
-    </SafeAreaView>
+    </Container>
   )
 }

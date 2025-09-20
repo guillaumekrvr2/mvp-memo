@@ -1,6 +1,6 @@
 // screens/memo/Cards/CardsScreen.jsx - VERSION AVEC GROUPES/PAQUETS
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react'
-import { SafeAreaView, View, Image } from 'react-native'
+import { SafeAreaView, View, Image, Platform } from 'react-native'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { CardsStack } from '../../../../components/molecules/Cards/CardsStack/CardsStack'
 import { CardsThumbnailRow } from '../../../../components/molecules/Cards/CardsThumbnailRow/CardsThumbnailRow'
@@ -27,7 +27,10 @@ export default function CardsScreen({ route, navigation }) {
   
   // Ref pour nettoyer le setTimeout
   const swipeTimeoutRef = useRef(null)
-  
+
+  // Container conditionnel comme NumbersMemoScreen
+  const Container = Platform.OS === 'ios' ? View : SafeAreaView;
+
   const {
     deck,
     totalCards,
@@ -133,7 +136,7 @@ export default function CardsScreen({ route, navigation }) {
   }, [])
 
   return (
-    <SafeAreaView style={styles.container}>
+    <Container style={styles.container}>
       <MemorizationHeader
         onBack={() => navigation.popToTop()}
         onDone={handleDone} // 🃏 Utilise la nouvelle fonction handleDone
@@ -183,6 +186,6 @@ export default function CardsScreen({ route, navigation }) {
         currentGroupIndex={currentGroupIndex} // 🃏 Progrès par groupes
         groupSize={cardsCount}
       />
-    </SafeAreaView>
+    </Container>
   )
 }

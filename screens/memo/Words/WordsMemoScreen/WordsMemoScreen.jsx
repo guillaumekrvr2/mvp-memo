@@ -1,6 +1,6 @@
 // screens/memo/Words/WordsMemoScreen.jsx
 import React, { useState, useMemo } from 'react'
-import { SafeAreaView, View, Text, StyleSheet } from 'react-native'
+import { SafeAreaView, View, Text, StyleSheet, Platform } from 'react-native'
 import useAutoAdvance from '../../../../hooks/useAutoAdvance.js'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader.jsx'
 import WordsHighlightBox from '../../../../components/atoms/Commons/WordsHighlightBox/WordsHighlightBox.jsx'
@@ -68,8 +68,10 @@ export default function WordsMemoScreen({ route, navigation }) {
     setCurrentIndex(0);
   };
 
+  const Container = Platform.OS === 'ios' ? View : SafeAreaView;
+
   return (
-    <SafeAreaView style={styles.container}>
+    <Container style={styles.container}>
       {/* HEADER */}
       <MemorizationHeader
         onBack={() => navigation.popToTop()}
@@ -105,7 +107,7 @@ export default function WordsMemoScreen({ route, navigation }) {
           />
         </View>
       </View>
-    </SafeAreaView>
+    </Container>
   )
 }
 

@@ -1,6 +1,6 @@
 // screens/memo/Words/WordsRecallScreen.jsx
 import React, { useState } from 'react'
-import { SafeAreaView, View, Text, StyleSheet } from 'react-native'
+import { SafeAreaView, View, Text, StyleSheet, Platform } from 'react-native'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader.jsx'
 import WordsGrid from '../../../../components/atoms/Words/WordsGrid/WordsGrid.jsx'
 import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton.jsx'
@@ -57,8 +57,11 @@ export default function WordsRecallScreen({ route, navigation }) {
     navigation.navigate('Words');
   };
 
+  // Container conditionnel comme NumbersMemoScreen
+  const Container = Platform.OS === 'ios' ? View : SafeAreaView;
+
   return (
-    <SafeAreaView style={styles.container}>
+    <Container style={styles.container}>
       {/* HEADER */}
       <MemorizationHeader
         onBack={() => navigation.popToTop()}
@@ -94,7 +97,7 @@ export default function WordsRecallScreen({ route, navigation }) {
           Valider
         </PrimaryButton>
       </View>
-    </SafeAreaView>
+    </Container>
   )
 }
 

@@ -1,5 +1,5 @@
 // components/molecules/ObjectiveTimePicker/ObjectiveTimePicker.jsx
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Platform } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import styles from './styles'
 import InputField from '../../../atoms/Numbers/InputField/InputField'
@@ -36,7 +36,7 @@ export default function ObjectiveTimePicker({
         <InputField
           style={styles.input}
           placeholder="Objectif"
-          keyboardType="number-pad"
+          keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'number-pad'}
           value={objectif}
           onChangeText={onObjectifChange}
           editable={!disabled}
@@ -72,7 +72,7 @@ export default function ObjectiveTimePicker({
               <InputField
                 style={styles.input}
                 placeholder="Temps (s)"
-                keyboardType="number-pad"
+                keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'number-pad'}
                 value={temps?.toString() || ''}
                 onChangeText={onTempsChange}
                 editable={!disabled}

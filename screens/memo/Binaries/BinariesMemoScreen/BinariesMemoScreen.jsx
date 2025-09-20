@@ -1,6 +1,6 @@
 // screens/memo/Binaries/NumbersMemoScreen.jsx
 import React, { useState, useRef } from 'react'
-import { SafeAreaView, View, Text, StyleSheet } from 'react-native'
+import { SafeAreaView, View, Text, StyleSheet, Platform } from 'react-native'
 import useAutoAdvance from '../../../../hooks/useAutoAdvance.js'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader.jsx'
 import BinariesHighlightBox from '../../../../components/atoms/Commons/BinariesHighlightBox/BinariesHighlightBox.jsx'
@@ -31,8 +31,11 @@ export default function BinaryMemoScreen({ route, navigation }) {
   useAutoScroll(scrollRef, scrollH, groupStartLine, 48 + 12)
   useAutoAdvance(autoAdvance, totalTime, totalGroups, setHighlightIndex) //  Hook d'auto-advance
 
+  // Container conditionnel comme NumbersMemoScreen
+  const Container = Platform.OS === 'ios' ? View : SafeAreaView;
+
   return (
-  <SafeAreaView style={styles.container}>
+  <Container style={styles.container}>
     {/* HEADER */}
     <MemorizationHeader
       onBack={() => navigation.popToTop()}
@@ -89,7 +92,7 @@ export default function BinaryMemoScreen({ route, navigation }) {
         />
       </View>
     </View>
-  </SafeAreaView>
+  </Container>
 )
 }
 

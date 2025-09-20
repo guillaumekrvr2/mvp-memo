@@ -1,6 +1,6 @@
 // screens/shop/PaywallScreen.jsx
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, FlatList, Image, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { theme } from '../../theme';
 import { SecondaryButton } from '../../components/atoms/Commons/SecondaryButton/SecondaryButton';
@@ -8,6 +8,9 @@ import { PrimaryButton } from '../../components/atoms/Commons/PrimaryButton/Prim
 
 const PaywallScreen = ({ navigation, onClose }) => {
   const [selectedPlan, setSelectedPlan] = useState('annual');
+
+  // Container conditionnel comme NumbersMemoScreen
+  const Container = Platform.OS === 'ios' ? View : SafeAreaView;
 
   const features = [
     'Accès illimité à tous les modes de jeu',
@@ -35,7 +38,7 @@ const PaywallScreen = ({ navigation, onClose }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <Container style={styles.container}>
       {/* Header avec croix */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.closeButton}>
@@ -175,7 +178,7 @@ const PaywallScreen = ({ navigation, onClose }) => {
           Devenir Pro
         </PrimaryButton>
       </View>
-    </SafeAreaView>
+    </Container>
   );
 };
 
@@ -183,9 +186,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
+    paddingTop: 20,
   },
   header: {
-    marginTop: 20,
     paddingHorizontal: 20,
     paddingTop: 10,
   },

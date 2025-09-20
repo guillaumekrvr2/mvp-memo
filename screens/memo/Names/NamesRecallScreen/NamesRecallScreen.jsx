@@ -87,8 +87,11 @@ export default function NamesRecallScreen({ route, navigation }) {
     })
   }, [])
 
+  // Container conditionnel comme NumbersMemoScreen
+  const Container = Platform.OS === 'ios' ? View : SafeAreaView;
+
   return (
-    <SafeAreaView style={styles.container}>
+    <Container style={styles.container}>
       <MemorizationHeader
         onBack={() => navigation.popToTop()}
         onDone={handleValidate}
@@ -138,6 +141,6 @@ export default function NamesRecallScreen({ route, navigation }) {
           Valider
         </PrimaryButton>
       </View>
-    </SafeAreaView>
+    </Container>
   )
 }
