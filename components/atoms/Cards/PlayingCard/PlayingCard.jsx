@@ -1,7 +1,8 @@
 
 // 📁 components/atoms/PlayingCard/PlayingCard.jsx
 import React from 'react'
-import { Image, Dimensions, View } from 'react-native'
+import { Dimensions, View } from 'react-native'
+import { Image } from 'expo-image'
 import Animated, { useAnimatedStyle } from 'react-native-reanimated'
 import { GestureDetector } from 'react-native-gesture-handler'
 import { styles } from './styles'
@@ -87,21 +88,25 @@ export function PlayingCard({
       {isSwipable && panGesture ? (
         <GestureDetector gesture={panGesture}>
           <Animated.View style={[styles.animatedCard, animatedStyle]}>
-            <Image 
-              source={card.asset} 
-              style={styles.cardImage} 
-              resizeMode="contain"
-              fadeDuration={0}
+            <Image
+              source={card.asset}
+              style={styles.cardImage}
+              contentFit="contain"
+              priority="high"
+              cachePolicy="memory-disk"
+              transition={{ duration: 0 }}
             />
           </Animated.View>
         </GestureDetector>
       ) : (
         <Animated.View style={[styles.animatedCard, animatedStyle]}>
-          <Image 
-            source={card.asset} 
-            style={styles.cardImage} 
-            resizeMode="contain"
-            fadeDuration={0}
+          <Image
+            source={card.asset}
+            style={styles.cardImage}
+            contentFit="contain"
+            priority="high"
+            cachePolicy="memory-disk"
+            transition={{ duration: 0 }}
           />
         </Animated.View>
       )}

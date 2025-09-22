@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Image } from 'react-native'
+import { View } from 'react-native'
+import { Image } from 'expo-image'
 import { Animated } from 'react-native'
 import { styles } from './styles'
 
@@ -38,11 +39,13 @@ export function CoverFlowCard({
           ]
         }
       ]}>
-        <Image 
-          source={card.asset} 
-          style={styles.cardImage} 
-          resizeMode="contain"
-          fadeDuration={0}
+        <Image
+          source={card.asset}
+          style={styles.cardImage}
+          contentFit="contain"
+          priority="high"
+          cachePolicy="memory-disk"
+          transition={{ duration: 0 }}
         />
       </Animated.View>
     </View>

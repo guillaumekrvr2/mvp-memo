@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { TouchableOpacity, Image, Vibration, Text, View } from 'react-native'
+import { TouchableOpacity, Vibration, Text, View } from 'react-native'
+import { Image } from 'expo-image'
 import { styles } from './styles'
 
 export function PlacedCard({
@@ -83,7 +84,9 @@ export function PlacedCard({
         <Image
           source={displayCard.asset}
           style={styles.cardImage}
-          resizeMode="contain"
+          contentFit="contain"
+          priority="high"
+          cachePolicy="memory-disk"
         />
       </TouchableOpacity>
     </View>

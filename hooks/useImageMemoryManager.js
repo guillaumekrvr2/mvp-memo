@@ -1,40 +1,38 @@
 // hooks/useImageMemoryManager.js
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { Image } from 'react-native'
+import { Image } from 'expo-image'
 
 /**
- * Hook pour gérer intelligemment la mémoire des images
- * - Pool limité d'images en mémoire 
- * - Déchargement automatique des images hors vue
- * - Nettoyage périodique du cache
+ * Hook pour gérer intelligemment la mémoire des images avec expo-image
+ * - Pool augmenté pour expo-image (plus efficace)
+ * - Cache automatique expo-image intégré
+ * - Nettoyage périodique optimisé
  */
-export function useImageMemoryManager(maxImagesInMemory = 15) {
+export function useImageMemoryManager(maxImagesInMemory = 25) {
   const [loadedImages, setLoadedImages] = useState(new Set())
   const imagePool = useRef(new Map()) // Track images currently in memory
   const lastCleanup = useRef(Date.now())
   
-  // Nettoie le cache si nécessaire
+  // Nettoie le cache expo-image si nécessaire
   const cleanupCache = useCallback(() => {
     const now = Date.now()
-    
-    // Nettoyage toutes les 30 secondes
-    if (now - lastCleanup.current > 30000) {
-      console.log('🧹 [ImageMemory] Nettoyage cache automatique')
-      
+
+    // Nettoyage toutes les 45 secondes (expo-image plus efficace)
+    if (now - lastCleanup.current > 45000) {
+      console.log('🧹 [ImageMemory] Nettoyage cache expo-image')
+
       try {
-        // Méthode douce : clear query cache
-        if (Image.queryCache) {
-          Image.queryCache.clear()
-        }
-        
+        // expo-image cache cleanup
+        Image.clearMemoryCache()
+
         lastCleanup.current = now
-        
+
         // Reset notre tracking interne
         setLoadedImages(new Set())
         imagePool.current.clear()
-        
+
       } catch (error) {
-        console.warn('⚠️ [ImageMemory] Erreur nettoyage cache:', error)
+        console.warn('⚠️ [ImageMemory] Erreur nettoyage cache expo-image:', error)
       }
     }
   }, [])
@@ -85,27 +83,26 @@ export function useImageMemoryManager(maxImagesInMemory = 15) {
     return loadedImages.has(profileId)
   }, [loadedImages])
   
-  // Nettoyage complet du cache (méthode d'urgence)
+  // Nettoyage complet expo-image (méthode d'urgence)
   const emergencyCleanup = useCallback(() => {
-    console.log('🚨 [ImageMemory] Nettoyage d\'urgence!')
-    
+    console.log('🚨 [ImageMemory] Nettoyage d\'urgence expo-image!')
+
     try {
-      // Clear tous les caches possibles
-      if (Image.queryCache) {
-        Image.queryCache.clear()
-      }
-      
+      // Clear tous les caches expo-image
+      Image.clearMemoryCache()
+      Image.clearDiskCache()
+
       // Reset notre état
       setLoadedImages(new Set())
       imagePool.current.clear()
-      
+
       // Force garbage collection si disponible
       if (global.gc) {
         global.gc()
       }
-      
+
     } catch (error) {
-      console.warn('⚠️ [ImageMemory] Erreur nettoyage urgence:', error)
+      console.warn('⚠️ [ImageMemory] Erreur nettoyage urgence expo-image:', error)
     }
   }, [])
   

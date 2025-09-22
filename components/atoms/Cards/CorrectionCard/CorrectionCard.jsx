@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { View, TouchableOpacity, Image, Text, Vibration } from 'react-native'
+import { View, TouchableOpacity, Text, Vibration } from 'react-native'
+import { Image } from 'expo-image'
 import { styles } from './styles'
 
 export function CorrectionCard({ 
@@ -58,10 +59,12 @@ export function CorrectionCard({
     >
       {/* Carte utilisateur */}
       <View style={styles.cardContainer}>
-        <Image 
-          source={userCard.asset} 
-          style={styles.cardImage} 
-          resizeMode="contain" 
+        <Image
+          source={userCard.asset}
+          style={styles.cardImage}
+          contentFit="contain"
+          priority="high"
+          cachePolicy="memory-disk"
         />
         {isCorrect && (
           <View style={styles.correctBadge}>
@@ -74,10 +77,12 @@ export function CorrectionCard({
       {!isCorrect && showCorrection && (
         <View style={styles.correctionContainer}>
           <Text style={styles.correctionLabel}>Correct:</Text>
-          <Image 
-            source={correctCard.asset} 
-            style={styles.correctionImage} 
-            resizeMode="contain" 
+          <Image
+            source={correctCard.asset}
+            style={styles.correctionImage}
+            contentFit="contain"
+            priority="high"
+            cachePolicy="memory-disk"
           />
         </View>
       )}

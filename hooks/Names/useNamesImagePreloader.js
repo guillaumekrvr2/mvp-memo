@@ -1,7 +1,9 @@
 // hooks/Names/useNamesImagePreloader.js
 import { useEffect, useState } from 'react'
-import { Image } from 'react-native'
+import { Image } from 'expo-image'
+import { Platform, Image as RNImage } from 'react-native'
 import { getNameImage } from '../../data/imageAssets'
+import { clearAllImageCaches, warmupImageCache } from '../../utils/imageCache'
 
 export function useNamesImagePreloader(profiles, startPreloading = false) {
   const [preloadedImages, setPreloadedImages] = useState(new Set())
@@ -16,40 +18,61 @@ export function useNamesImagePreloader(profiles, startPreloading = false) {
   useEffect(() => {
     if (!startPreloading || profiles.length === 0) return
 
-    setIsPreloading(true)
-    setPreloadProgress(0)
-    
-    
-    // Préchargement par batch pour éviter de surcharger
-    const batchSize = 5
-    let currentIndex = 0
-    let successCount = 0
-    const preloadedSet = new Set()
+    const startPreloadingProcess = async () => {
+      setIsPreloading(true)
+      setPreloadProgress(0)
+
+      // Sur iOS, on purge d'abord le cache pour forcer expo-image
+      if (Platform.OS === 'ios') {
+        console.log('🔄 [iOS] Clearing old cache and warming up expo-image...')
+        await clearAllImageCaches()
+        await warmupImageCache()
+        // Petite pause pour laisser le système se stabiliser
+        await new Promise(resolve => setTimeout(resolve, 500))
+      }
+
+      // Préchargement optimisé pour expo-image
+      const batchSize = Platform.OS === 'ios' ? 6 : 8
+      let currentIndex = 0
+      let successCount = 0
+      const preloadedSet = new Set()
 
     const preloadBatch = () => {
       const batch = profiles.slice(currentIndex, currentIndex + batchSize)
-      
+
       const batchPromises = batch.map((profile, batchIndex) => {
         return new Promise((resolve) => {
           const imageSource = getRealImagePath(profile)
-          
+
           if (!imageSource) {
             console.log(`⚠️ Skipping ${profile.firstName} ${profile.lastName} - image not found`)
             resolve(false)
             return
           }
 
-          // Délai progressif pour éviter la congestion
-          const delay = batchIndex * 100
-          
+          // Délai réduit pour expo-image (plus efficace)
+          const delay = batchIndex * 50
+
           setTimeout(() => {
             try {
-              const resolvedAsset = Image.resolveAssetSource(imageSource)
-              if (resolvedAsset && resolvedAsset.uri) {
-                Image.prefetch(resolvedAsset.uri)
+              // Pour expo-image, il faut résoudre l'asset d'abord
+              let sourceUri
+              if (typeof imageSource === 'string') {
+                sourceUri = imageSource
+              } else if (typeof imageSource === 'object' && imageSource.uri) {
+                sourceUri = imageSource.uri
+              } else {
+                // C'est un require() asset, on doit le résoudre avec React Native Image
+                const resolvedAsset = RNImage.resolveAssetSource ? RNImage.resolveAssetSource(imageSource) : null
+                sourceUri = resolvedAsset?.uri
+              }
+
+              if (sourceUri) {
+                Image.prefetch(sourceUri)
                   .then(() => {
                     preloadedSet.add(profile.id)
                     successCount++
+                    console.log(`✅ Preloaded ${profile.firstName} (${successCount}/${profiles.length})`)
                     resolve(true)
                   })
                   .catch((error) => {
@@ -57,7 +80,7 @@ export function useNamesImagePreloader(profiles, startPreloading = false) {
                     resolve(false)
                   })
               } else {
-                console.log(`❌ Asset non résolu pour ${profile.firstName}`)
+                console.log(`⚠️ Pas d'URI trouvée pour ${profile.firstName}`)
                 resolve(false)
               }
             } catch (error) {
@@ -77,15 +100,19 @@ export function useNamesImagePreloader(profiles, startPreloading = false) {
         
         // Continuer avec le batch suivant
         if (currentIndex < profiles.length) {
-          setTimeout(preloadBatch, 200) // Pause entre les batches
+          setTimeout(preloadBatch, 100) // Pause réduite pour expo-image
         } else {
           setIsPreloading(false)
+          console.log(`🎯 Préchargement terminé: ${successCount}/${profiles.length} images`)
         }
       })
     }
 
-    preloadBatch()
-    
+      preloadBatch()
+    }
+
+    startPreloadingProcess()
+
   }, [startPreloading, profiles])
 
   return {
