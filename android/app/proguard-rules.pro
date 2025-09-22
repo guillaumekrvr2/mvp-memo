@@ -23,12 +23,34 @@
 # Hermes
 -keep class com.facebook.hermes.** { *; }
 
-# Basic optimization avec obfuscation activée
+# 🔒 Configuration de sécurité renforcée pour beta
 -optimizations !code/simplification/arithmetic
 -allowaccessmodification
+-dontskipnonpubliclibraryclasses
 
-# Obfuscation activée mais garde les noms essentiels
+# 🔐 Obfuscation renforcée
 -keepattributes *Annotation*
--keepattributes SourceFile,LineNumberTable
 -keepattributes Signature
 -keepattributes InnerClasses
+
+# ⚠️ RETIRE les attributs de debug en production pour sécurité
+# -keepattributes SourceFile,LineNumberTable
+
+# 🛡️ Protection anti-debug et anti-reverse engineering
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int i(...);
+    public static int w(...);
+    public static int d(...);
+    public static int e(...);
+}
+
+# 🔒 Obfuscation des packages sensibles
+-repackageclasses 'obfuscated'
+
+# 🔐 Protection des constantes sensibles
+-keepclassmembers class * {
+    static final % *;
+    static final java.lang.String *;
+}

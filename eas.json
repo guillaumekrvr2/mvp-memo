@@ -14,17 +14,14 @@
     "beta": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk",
-        "gradleCommand": ":app:assembleRelease"
+        "buildType": "app-bundle"
       },
       "ios": {
         "simulator": false,
         "enterpriseProvisioning": "universal"
       },
       "env": {
-        "EXPO_PUBLIC_ENV": "beta",
-        "SUPABASE_URL": "https://uyxwewlhdfjfwvplihbg.supabase.co",
-        "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5eHdld2xoZGZqZnd2cGxpaGJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzNzkwNTksImV4cCI6MjA2Njk1NTA1OX0.Tr-fezB6ErZ5zs2h2_3lTCw4jX7Aodc1IN-raiHl6_M"
+        "EXPO_PUBLIC_ENV": "beta"
       }
     },
     "preview": {
