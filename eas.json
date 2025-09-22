@@ -17,6 +17,10 @@
         "buildType": "apk",
         "gradleCommand": ":app:assembleRelease"
       },
+      "ios": {
+        "simulator": false,
+        "enterpriseProvisioning": "universal"
+      },
       "env": {
         "EXPO_PUBLIC_ENV": "beta",
         "SUPABASE_URL": "https://uyxwewlhdfjfwvplihbg.supabase.co",
@@ -34,10 +38,20 @@
     }
   },
   "submit": {
+    "beta": {
+      "ios": {
+        "ascAppId": "YOUR_APP_STORE_CONNECT_APP_ID",
+        "appleTeamId": "YOUR_APPLE_TEAM_ID"
+      }
+    },
     "production": {
       "android": {
         "track": "internal",
         "releaseStatus": "draft"
+      },
+      "ios": {
+        "ascAppId": "YOUR_APP_STORE_CONNECT_APP_ID",
+        "appleTeamId": "YOUR_APPLE_TEAM_ID"
       }
     }
   }

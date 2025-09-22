@@ -14,6 +14,16 @@ export default ({ config }) => {
     platforms: ["ios", "android", "web"],
     orientation: "portrait",
 
+    // Configuration iOS
+    ios: {
+      bundleIdentifier: isBeta ? "com.memorize.memorize-beta" : "com.memorize.memorize",
+      buildNumber: "1",
+      supportsTablet: true,
+      infoPlist: {
+        UILaunchStoryboardName: "SplashScreen"
+      }
+    },
+
     // Configuration Android avec icône personnalisée
     android: {
       package: "com.memorize.mvpmemo",
