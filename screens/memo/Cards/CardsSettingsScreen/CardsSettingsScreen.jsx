@@ -105,7 +105,6 @@ export default function CardsSettingsScreen() {
 
   const handleSpecificRevisionsConfirm = (filterParams) => {
     setCardFilters(filterParams);
-    console.log('🎴 Card filters set:', filterParams);
   };
 
   // 🃏 Fonction pour générer l'affichage des cartes dans le HighlightBoxSetter

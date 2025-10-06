@@ -19,7 +19,7 @@ export function useMemoryMonitor() {
       return
     }
     
-    console.log('🚨 [MemoryMonitor] Nettoyage d\'urgence déclenché')
+    
     
     try {
       // 1. Clear du cache React Native Image

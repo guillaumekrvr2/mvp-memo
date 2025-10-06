@@ -81,7 +81,6 @@ export default function CardsCorrectionScreen({ route, navigation }) {
       if (variant && typeof variant === 'number' && score >= 0) {
         await saveScoreWithAuth(variant, score, navigation, (result) => {
           if (result.updated) {
-            console.log('🎉 Showing success popup!')
             Alert.alert(
               "🎉 Nouveau record !",
               `Félicitations ! Vous avez battu votre précédent record avec un score de ${score}/${totalAnswered}`,

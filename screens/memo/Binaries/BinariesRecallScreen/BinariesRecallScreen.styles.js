@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
-    justifyContent: 'space-between', // Espacement équitable comme MemoScreen
+    justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 20,
   },
@@ -35,23 +35,20 @@ export const styles = StyleSheet.create({
   inputScrollContent: {
     flexGrow: 1,
     paddingVertical: 16,
-    paddingHorizontal: Platform.OS === 'ios' ? 8 : 40, // Padding réduit pour iOS uniquement
+    paddingHorizontal: Platform.OS === 'ios' ? 8 : 40, // Même padding que NumbersRecallScreen
   },
   mainInput: {
     color: '#fff',
-    fontSize: Platform.OS === 'ios' ? 24 : 24, // Taille optimisée pour iOS uniquement
-    fontFamily: Platform.OS === 'ios' ? 'Courier New' : 'monospace', // Police monospace plus espacée
+    fontSize: Platform.OS === 'ios' ? 24 : 24, // Même fontSize que NumbersRecallScreen
+    fontFamily: Platform.OS === 'ios' ? 'Courier New' : 'monospace',
     fontWeight: '600',
     backgroundColor: 'transparent',
     textAlign: 'center',
     textAlignVertical: 'top',
-    letterSpacing: Platform.OS === 'ios' ? 8 : 24, // Letter spacing réduit de 50% pour Android
-    lineHeight: Platform.OS === 'ios' ? 36 : 36, // Hauteur réduite de 50% pour Android
-
-    // Optimisations iOS pour le centrage
+    letterSpacing: Platform.OS === 'ios' ? 8 : 24, // Même letterSpacing que NumbersRecallScreen
+    lineHeight: Platform.OS === 'ios' ? 36 : 36,
     ...(Platform.OS === 'ios' && {
-      includeFontPadding: false, // Supprime le padding de police iOS
+      includeFontPadding: false,
     }),
-    // Hauteur maintenant gérée dynamiquement dans mainInputStyle
   },
 })

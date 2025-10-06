@@ -1,8 +1,7 @@
-// screens/memo/Binaries/RecallScreen.jsx - Version avec scroll dans BorderedContainer  
-import React, { useState, useRef, useCallback, useMemo } from 'react'
+// screens/memo/Binaries/RecallScreen.jsx - Version avec scroll dans BorderedContainer
+import React, { useRef, useCallback } from 'react'
 import {
   SafeAreaView,
-  StyleSheet,
   View,
   Text,
   TextInput,
@@ -14,72 +13,40 @@ import {
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton'
 import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
-//import useAutoScrollCursor from '../../../../hooks/useAutoScrollCursor'
+import useBinariesRecallInput from '../../../../hooks/Binaries/useBinariesRecallInput'
+import { styles } from './BinariesRecallScreen.styles'
 
 export default function BinaryRecallScreen({ route, navigation }) {
-  // Debug: voir ce qui est reçu
-  
   const { objectif, binaries, temps, variant, mode, modeVariantId } = route.params
 
   const totalTime = 4 * 60
-  const [userInput, setUserInput] = useState('')
-  const [scrollH, setScrollH] = useState(0) // Hauteur du BorderedContainer
-  const [cursorPosition, setCursorPosition] = useState(0) // Position du curseur
-  const scrollRef = useRef(null) // Référence pour le scroll
+  const scrollRef = useRef(null)
 
   // Configuration 12 colonnes
   const cols = 12
-  const lineHeight = 36 // Hauteur de ligne du TextInput
+  const lineHeight = 36
 
-  // Hook d'autoscroll basé sur la position du curseur
-  //useAutoScrollCursor(scrollRef, scrollH, cursorPosition, cols, lineHeight)
-
-  // Placeholder simple
-  const createPlaceholder = () => {
-    return '010101010101...'
-  }
-
-  // Calcul de la hauteur optimale du TextInput basé sur l'objectif
-  const calculatedInputHeight = useMemo(() => {
-    const cols = 12 // Colonnes approximatives avec letterSpacing: 30
-    const lineHeight = 36
-    const estimatedLines = Math.ceil(objectif / cols)
-    const minHeight = 200 // Hauteur minimale
-    return Math.max(minHeight, estimatedLines * lineHeight + 50) // +50px de marge
-  }, [objectif])
-
-  // Memoized values pour éviter re-renders
-  const placeholder = useMemo(() => createPlaceholder(), [])
-  const mainInputStyle = useMemo(() => ({
-    ...styles.mainInput,
-    height: calculatedInputHeight, // Hauteur calculée au lieu de fixe
-  }), [calculatedInputHeight])
-  const inputScrollContentStyle = useMemo(() => styles.inputScrollContent, [])
-
-  // Nettoie l'input utilisateur - Memoized pour éviter re-renders - BINAIRES: accepte seulement 0 et 1
-  const handleInputChange = useCallback((text) => {
-    const cleanText = text.replace(/[^01]/g, '').slice(0, objectif)
-    setUserInput(cleanText)
-    setCursorPosition(cleanText.length)
-  }, [objectif])
-
-  // Transforme l'entrée utilisateur en tableau
-  const getUserInputArray = () => {
-    const digits = userInput.split('')
-    return digits.concat(Array(objectif - digits.length).fill(''))
-  }
+  // Hook personnalisé pour gérer l'input de rappel binaire avec support des tirets
+  const {
+    displayValue,
+    handleInputChange,
+    getAnswerArray,
+    placeholder,
+    mainInputStyle,
+    inputScrollContentStyle,
+  } = useBinariesRecallInput(objectif, cols, lineHeight)
 
   // Fonction pour naviguer vers la correction - Memoized
   const navigateToCorrection = useCallback(() => {
     navigation.navigate('BinaryCorrection', {
-      inputs: getUserInputArray(),
+      inputs: getAnswerArray(),
       binaries,
       temps,
       mode,
       variant,
       modeVariantId
     })
-  }, [navigation, userInput, binaries, temps, mode, variant, modeVariantId, objectif])
+  }, [navigation, getAnswerArray, binaries, temps, mode, variant, modeVariantId])
 
   const Container = Platform.OS === 'ios' ? View : SafeAreaView;
 
@@ -106,40 +73,35 @@ export default function BinaryRecallScreen({ route, navigation }) {
             </Text>
           </View>
 
-          {/* CHAMP DE SAISIE DANS BORDERCONTAINER AVEC MESURE */}
-          <BorderedContainer onLayout={useCallback(e => setScrollH(e.nativeEvent.layout.height), [])}>
+          {/* CHAMP DE SAISIE DANS BORDERCONTAINER */}
+          <BorderedContainer>
             <ScrollView
               ref={scrollRef}
               style={styles.inputScrollContainer}
-              contentContainerStyle={inputScrollContentStyle}
+              contentContainerStyle={[styles.inputScrollContent, inputScrollContentStyle]}
               showsVerticalScrollIndicator={true}
               keyboardShouldPersistTaps="handled"
-              onScroll={(e) => {
-                const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent
-              }}
-              onLayout={(e) => {
-                const { width, height } = e.nativeEvent.layout
-              }}
-              scrollEventThrottle={16}
             >
               <TextInput
-                style={mainInputStyle}
-                value={userInput}
+                style={[styles.mainInput, mainInputStyle]}
+                value={displayValue}
                 onChangeText={handleInputChange}
                 placeholder={placeholder}
                 placeholderTextColor="#666"
-                keyboardType={Platform.OS === 'ios' ? 'default' : 'number-pad'}
+                keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'number-pad'}
                 autoFocus={true}
                 blurOnSubmit={false}
                 multiline={true}
                 scrollEnabled={false}
                 editable={true}
                 selectTextOnFocus={false}
-                removeClippedSubviews={true}
-                maxLength={objectif}
-                onLayout={(e) => {
-                  const { width, height, x, y } = e.nativeEvent.layout
-                }}
+                autoCorrect={false}
+                autoCapitalize="none"
+                spellCheck={false}
+                enablesReturnKeyAutomatically={false}
+                clearButtonMode="never"
+                textContentType="none"
+                smartDashesType="no"
               />
             </ScrollView>
           </BorderedContainer>
@@ -153,54 +115,3 @@ export default function BinaryRecallScreen({ route, navigation }) {
     </Container>
   )
 }
-
-const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#000' 
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
-  mainContent: {
-    flex: 1,
-    justifyContent: 'space-between', // Espacement équitable comme MemoScreen
-    alignItems: 'center',
-    paddingVertical: 20,
-  },
-  instructionsContainer: {
-    alignItems: 'center',
-  },
-  instructionsTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 8,
-  },
-  instructionsText: {
-    fontSize: 16,
-    color: '#888',
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  inputScrollContainer: {
-    flex: 1,
-  },
-  inputScrollContent: {
-    flexGrow: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-  },
-  mainInput: {
-    color: '#fff',
-    fontSize: 18,
-    fontFamily: 'monospace',
-    fontWeight: '600',
-    backgroundColor: 'transparent',
-    textAlign: 'center',
-    textAlignVertical: 'top',
-    letterSpacing: 35,
-    lineHeight: 36,
-    // Hauteur maintenant gérée dynamiquement dans mainInputStyle
-  },
-})

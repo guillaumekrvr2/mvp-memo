@@ -17,7 +17,7 @@ export default function SpokenMemoScreen({ route, navigation }) {
     discipline = 'spokens'
   } = route.params || {}
 
-  console.log('📝 SpokenMemoScreen params:', { objectif, temps, variant, speechSpeed });
+  
 
 
   const [digitSequence, setDigitSequence] = useState([])

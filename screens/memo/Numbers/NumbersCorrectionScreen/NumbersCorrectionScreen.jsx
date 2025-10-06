@@ -17,8 +17,7 @@ import Header from '../../../../components/Header.jsx'
 import styles from './styles'
 
 export default function CorrectionScreen({ route, navigation }) {
-  // Debug: logguer les paramètres reçus
-  console.log('CorrectionScreen route.params:', route.params)
+  
 
   const { inputs, numbers, temps, variant, mode } = route.params
 
@@ -57,13 +56,7 @@ export default function CorrectionScreen({ route, navigation }) {
   // Calcul de la précision
   const accuracy = Math.round((score / total) * 100)
 
-  console.log('CorrectionScreen rendering with:', { 
-    inputsLength: inputs.length, 
-    numbersLength: numbers.length, 
-    score, 
-    total, 
-    accuracy 
-  })
+  
 
   // Flag pour éviter les sauvegardes multiples
   const hasSavedRef = useRef(false)
@@ -78,7 +71,7 @@ export default function CorrectionScreen({ route, navigation }) {
       }
 
       if (!modeVariantId || typeof modeVariantId !== 'number') {
-        console.log('No valid modeVariantId to save score for:', modeVariantId)
+        
         return
       }
 

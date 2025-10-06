@@ -43,7 +43,7 @@ export default function ProfileScreen({ navigation }) {
     
     if (words.length > 0) {
       console.log('📝 [ProfileScreen] Words variants:', words.map(v => ({ id: v.id, label: v.label })))
-      console.log('📝 [ProfileScreen] Words records:', wordRecs)
+      
     }
   }, [byDiscipline, current, isLoggingOut])
 

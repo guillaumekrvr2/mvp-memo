@@ -59,7 +59,7 @@ export default function DecompteScreen({ route, navigation }) {
               Image.prefetch(resolvedAsset.uri)
             }
           } catch (error) {
-            console.log(`❌ Erreur preload carte ${index + 1}:`, error)
+            
           }
         }, index * 50) // 50ms entre chaque = 300ms total pour 6 cartes
       })
