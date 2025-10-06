@@ -58,11 +58,7 @@ Score: ${score}
 Temps: ${time}s`
         )
       } catch (e) {
-        // Log de l'erreur et alerte d'échec
-        console.error(
-          `[useSaveRecord] erreur saving ${discipline}`,
-          e
-        )
+        
         Alert.alert('Erreur', "Impossible de sauvegarder le record.")
       }
     },
@@ -86,4 +82,4 @@ function ResultsScreen() {
   return <Button onPress={onRetry}>Retry</Button>
 }
 
-Cette section détaille l’implémentation interne de useSaveRecord, comment l’utiliser et gérer les retours d’erreur.
+Cette section détaille l’implémentation interne de useSaveRecord, comment l’utiliser et gérer les retours d’erreur.’erreur.

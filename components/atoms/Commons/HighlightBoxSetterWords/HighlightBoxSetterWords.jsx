@@ -27,8 +27,6 @@ export default function HighlightBoxSetterWords({
   }, [wordsCount]);
   
   const handlePress = () => {
-    console.log('📝 HighlightBoxSetterWords pressed with words:', displayedWords);
-    console.log('📝 Words count:', wordsCount);
     if (onPress) {
       onPress();
     }

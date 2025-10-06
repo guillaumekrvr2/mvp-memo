@@ -84,7 +84,7 @@ export function useNamesImagePreloader(profiles, startPreloading = false) {
                 resolve(false)
               }
             } catch (error) {
-              console.log(`❌ Erreur générale preload ${profile.firstName}:`, error)
+              
               resolve(false)
             }
           }, delay)
@@ -121,5 +121,7 @@ export function useNamesImagePreloader(profiles, startPreloading = false) {
     preloadProgress,
     totalImages: profiles.length,
     isImagePreloaded: (profileId) => preloadedImages.has(profileId)
+  }
+})
   }
 }

@@ -43,9 +43,7 @@ export default function App() {
           await NavigationBar.setBackgroundColorAsync('#00000000');
           // Configuration du comportement de réapparition
           await NavigationBar.setBehaviorAsync('inset-swipe');
-          console.log('📱 Navigation bar configured for Android');
         } catch (error) {
-          console.log('⚠️ Navigation bar configuration failed (normal sur les appareils avec gestes):', error.message);
         }
       }
     };

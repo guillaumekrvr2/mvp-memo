@@ -71,7 +71,7 @@ export function useCardsImagePreloader(cards, startPreloading = false) {
                       resolve(false)
                     })
                 } else {
-                  console.log(`⚠️ Pas d'URI trouvée pour card ${card.id}`)
+                  
                   resolve(false)
                 }
               } catch (error) {

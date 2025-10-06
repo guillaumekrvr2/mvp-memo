@@ -63,7 +63,7 @@ Exemple d'utilisation
 
 function TimedProgressBar({ duration }) {
   const progress = useProgressWithCallback(duration, () => {
-    console.log('Progression terminée')
+    
   })
 
   return (

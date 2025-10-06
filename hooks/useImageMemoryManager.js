@@ -58,7 +58,7 @@ export function useImageMemoryManager(maxImagesInMemory = 25) {
     imagePool.current.set(profileId, imageUri)
     setLoadedImages(prev => new Set([...prev, profileId]))
     
-    console.log(`📷 [ImageMemory] Image chargée ${profileId}, pool: ${imagePool.current.size}/${maxImagesInMemory}`)
+    
     
     // Nettoyage périodique
     cleanupCache()
@@ -114,4 +114,8 @@ export function useImageMemoryManager(maxImagesInMemory = 25) {
     poolSize: imagePool.current.size,
     maxPoolSize: maxImagesInMemory
   }
+}urrent.size,
+    maxPoolSize: maxImagesInMemory
+  }
+}
 }
