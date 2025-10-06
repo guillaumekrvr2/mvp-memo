@@ -16,11 +16,7 @@ import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButto
 import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
 
 export default function RecallScreen({ route, navigation }) {
-  // Debug: voir ce qui est reçu
-
   const { objectif, numbers, temps, variant, mode } = route.params
-
-  
 
   const totalTime = 4 * 60
   const [userInput, setUserInput] = useState('')
@@ -41,7 +37,6 @@ export default function RecallScreen({ route, navigation }) {
     const estimatedLines = Math.ceil(objectif / cols)
     const minHeight = 300 // Hauteur minimale augmentée
     const calculatedHeight = estimatedLines * lineHeight + 100 // +100px de marge
-    console.log('calculatedInputHeight - objectif:', objectif, 'estimatedLines:', estimatedLines, 'calculatedHeight:', calculatedHeight)
     return Math.max(minHeight, calculatedHeight)
   }, [objectif, cols])
 
@@ -68,27 +63,38 @@ export default function RecallScreen({ route, navigation }) {
     })
   }), [])
 
-  // Fonction pour ajouter espacement visuel avec Unicode sur iOS
+  // Fonction pour ajouter espacement visuel avec Unicode ET retours à la ligne forcés tous les 6 caractères
   const addVisualSpacing = useCallback((text) => {
     if (Platform.OS !== 'ios') return text;
-    // Utilise l'espace fin Unicode pour espacement visuel
-    return text.split('').join('\u2009'); // THIN SPACE U+2009
-  }, []);
+
+    // Crée des lignes de 6 caractères avec espaces Unicode
+    const lines = [];
+    for (let i = 0; i < text.length; i += cols) {
+      const line = text.slice(i, i + cols);
+      // Ajoute espaces Unicode entre chaque caractère de la ligne
+      const spacedLine = line.split('').join('\u2009');
+      lines.push(spacedLine);
+    }
+
+    // Joint les lignes avec des retours à la ligne
+    return lines.join('\n');
+  }, [cols]);
 
   // Nettoie l'input utilisateur - Memoized pour éviter re-renders
   const handleInputChange = useCallback((text) => {
-    // Retire les espaces Unicode ajoutés pour l'affichage
-    let cleanText = text.replace(/\u2009/g, '');
+    // Retire les espaces Unicode ajoutés pour l'affichage ET les retours à la ligne
+    let cleanText = text.replace(/\u2009/g, '').replace(/\n/g, '');
 
-    // Remplace les tirets iOS "intelligents" par des tirets normaux
+    // Remplace les tirets iOS "intelligents" par des tirets simples
     cleanText = cleanText
-      .replace(/—/g, '---')  // tiret cadratin → triple tiret
-      .replace(/–/g, '--')   // tiret demi-cadratin → double tiret
+      .replace(/—/g, '-')  // tiret cadratin → tiret simple
+      .replace(/–/g, '-')   // tiret demi-cadratin → tiret simple
 
+    // Garde uniquement les chiffres et tirets simples
     cleanText = cleanText.replace(/[^0-9\-]/g, '').slice(0, objectif)
-    console.log('handleInputChange - cleanText length:', cleanText.length, 'objectif:', objectif, 'text:', cleanText)
+
     setUserInput(cleanText)
-  }, [objectif])
+  }, [objectif, userInput])
 
   // Transforme l'entrée utilisateur en tableau
   const getUserInputArray = () => {
@@ -149,11 +155,7 @@ export default function RecallScreen({ route, navigation }) {
                 value={addVisualSpacing(userInput)}
                 onChangeText={handleInputChange}
                 onSelectionChange={(event) => {
-                  const { start, end } = event.nativeEvent.selection
-                  console.log('Cursor position - start:', start, 'end:', end, 'userInput.length:', userInput.length)
-                  if (start > 36) {
-                    console.log('CURSOR ISSUE: Position > 36!')
-                  }
+                  // Position du curseur pour debug si nécessaire
                 }}
                 placeholder={placeholder}
                 placeholderTextColor="#666"
@@ -169,6 +171,8 @@ export default function RecallScreen({ route, navigation }) {
                 spellCheck={false}
                 enablesReturnKeyAutomatically={false}
                 clearButtonMode="never"
+                textContentType="none"
+                smartDashesType="no"
               />
             </ScrollView>
           </BorderedContainer>

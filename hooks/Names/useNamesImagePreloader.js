@@ -122,6 +122,4 @@ export function useNamesImagePreloader(profiles, startPreloading = false) {
     totalImages: profiles.length,
     isImagePreloaded: (profileId) => preloadedImages.has(profileId)
   }
-})
-  }
 }
