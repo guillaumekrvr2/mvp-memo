@@ -1,8 +1,7 @@
-// screens/memo/RecallScreen.jsx - Version avec scroll dans BorderedContainer  
+// screens/memo/RecallScreen.jsx - Version avec scroll dans BorderedContainer
 import React, { useState, useRef, useCallback, useMemo } from 'react'
 import {
   SafeAreaView,
-  StyleSheet,
   View,
   Text,
   TextInput,
@@ -14,6 +13,7 @@ import {
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton'
 import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
+import { styles } from './NumbersRecallScreen.styles'
 
 export default function RecallScreen({ route, navigation }) {
   const { objectif, numbers, temps, variant, mode } = route.params
@@ -186,58 +186,3 @@ export default function RecallScreen({ route, navigation }) {
     </Container>
   )
 }
-
-const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#000' 
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
-  mainContent: {
-    flex: 1,
-    justifyContent: 'space-between', // Espacement équitable comme MemoScreen
-    alignItems: 'center',
-    paddingVertical: 20,
-  },
-  instructionsContainer: {
-    alignItems: 'center',
-  },
-  instructionsTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 8,
-  },
-  instructionsText: {
-    fontSize: 16,
-    color: '#888',
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  inputScrollContainer: {
-    flex: 1,
-  },
-  inputScrollContent: {
-    flexGrow: 1,
-    paddingVertical: 16,
-    paddingHorizontal: Platform.OS === 'ios' ? 8 : 40, // Padding réduit pour iOS uniquement
-  },
-  mainInput: {
-    color: '#fff',
-    fontSize: Platform.OS === 'ios' ? 24 : 32, // Taille optimisée pour iOS uniquement
-    fontFamily: Platform.OS === 'ios' ? 'Courier New' : 'monospace', // Police monospace plus espacée
-    fontWeight: '600',
-    backgroundColor: 'transparent',
-    textAlign: 'center',
-    textAlignVertical: 'top',
-    letterSpacing: Platform.OS === 'ios' ? 8 : 35, // Letter spacing réduit pour iOS uniquement
-    lineHeight: Platform.OS === 'ios' ? 36 : 72, // Hauteur réduite pour iOS uniquement
-    // Optimisations iOS pour le centrage
-    ...(Platform.OS === 'ios' && {
-      includeFontPadding: false, // Supprime le padding de police iOS
-    }),
-    // Hauteur maintenant gérée dynamiquement dans mainInputStyle
-  },
-})
