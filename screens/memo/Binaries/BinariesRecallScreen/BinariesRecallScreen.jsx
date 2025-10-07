@@ -22,8 +22,8 @@ export default function BinaryRecallScreen({ route, navigation }) {
   const totalTime = 4 * 60
   const scrollRef = useRef(null)
 
-  // Configuration 12 colonnes
-  const cols = 12
+  // Configuration 6 colonnes (comme Numbers)
+  const cols = 6
   const lineHeight = 36
 
   // Hook personnalisé pour gérer l'input de rappel binaire avec support des tirets

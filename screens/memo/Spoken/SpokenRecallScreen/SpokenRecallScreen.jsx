@@ -1,8 +1,7 @@
 // screens/memo/Spoken/SpokenRecallScreen/SpokenRecallScreen.jsx
-import React, { useState, useRef, useCallback, useMemo } from 'react'
+import React, { useRef, useCallback } from 'react'
 import {
   SafeAreaView,
-  StyleSheet,
   View,
   Text,
   TextInput,
@@ -14,57 +13,33 @@ import {
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton'
 import BorderedContainer from '../../../../components/atoms/Commons/BorderedContainer/BorderedContainer'
+import useSpokenRecallInput from '../../../../hooks/Spoken/useSpokenRecallInput'
+import { styles } from './SpokenRecallScreen.styles'
 
 export default function SpokenRecallScreen({ route, navigation }) {
   const { objectif, digitSequence, temps, variant, mode, discipline = 'spokens' } = route.params
 
   const totalTime = 4 * 60 // 4 minutes pour le recall
-  const [userInput, setUserInput] = useState('')
-  const [scrollH, setScrollH] = useState(0)
-  const [cursorPosition, setCursorPosition] = useState(0)
   const scrollRef = useRef(null)
 
-  // Placeholder simple
-  const createPlaceholder = () => {
-    return '123456789012...'
-  }
+  // Configuration 6 colonnes (comme Numbers et Binaries)
+  const cols = 6
+  const lineHeight = 36
 
-  // Calcul de la hauteur optimale du TextInput basé sur l'objectif
-  const calculatedInputHeight = useMemo(() => {
-    const cols = 12 // Colonnes approximatives avec letterSpacing: 30
-    const lineHeight = 36
-    const estimatedLines = Math.ceil(objectif / cols)
-    const minHeight = 200 // Hauteur minimale
-    return Math.max(minHeight, estimatedLines * lineHeight + 50) // +50px de marge
-  }, [objectif])
-
-  // Memoized values pour éviter re-renders
-  const placeholder = useMemo(() => createPlaceholder(), [])
-  const mainInputStyle = useMemo(() => ({
-    ...styles.mainInput,
-    height: calculatedInputHeight,
-  }), [calculatedInputHeight])
-  const inputScrollContentStyle = useMemo(() => styles.inputScrollContent, [])
-
-  // Nettoie l'input utilisateur
-  const handleInputChange = useCallback((text) => {
-    const cleanText = text.replace(/[^0-9\-]/g, '').slice(0, objectif)
-    setUserInput(cleanText)
-    setCursorPosition(cleanText.length)
-  }, [objectif])
-
-  // Transforme l'entrée utilisateur en tableau
-  const getUserInputArray = () => {
-    const chars = userInput.split('')
-    // Remplace les tirets par des chaînes vides (skip)
-    const processedChars = chars.map(char => char === '-' ? '' : char)
-    return processedChars.concat(Array(objectif - processedChars.length).fill(''))
-  }
+  // Hook personnalisé pour gérer l'input de rappel spoken avec support des tirets
+  const {
+    displayValue,
+    handleInputChange,
+    getAnswerArray,
+    placeholder,
+    mainInputStyle,
+    inputScrollContentStyle,
+  } = useSpokenRecallInput(objectif, cols, lineHeight)
 
   // Navigation vers la correction
   const navigateToCorrection = useCallback(() => {
     navigation.navigate('SpokenCorrection', {
-      inputs: getUserInputArray(),
+      inputs: getAnswerArray(),
       digitSequence,
       temps,
       mode,
@@ -72,7 +47,7 @@ export default function SpokenRecallScreen({ route, navigation }) {
       discipline,
       objectif
     })
-  }, [navigation, userInput, digitSequence, temps, mode, variant, discipline, objectif])
+  }, [navigation, getAnswerArray, digitSequence, temps, mode, variant, discipline, objectif])
 
   const Container = Platform.OS === 'ios' ? View : SafeAreaView;
 
@@ -100,30 +75,34 @@ export default function SpokenRecallScreen({ route, navigation }) {
           </View>
 
           {/* CHAMP DE SAISIE DANS BORDERCONTAINER */}
-          <BorderedContainer onLayout={useCallback(e => setScrollH(e.nativeEvent.layout.height), [])}>
+          <BorderedContainer>
             <ScrollView
               ref={scrollRef}
               style={styles.inputScrollContainer}
-              contentContainerStyle={inputScrollContentStyle}
+              contentContainerStyle={[styles.inputScrollContent, inputScrollContentStyle]}
               showsVerticalScrollIndicator={true}
               keyboardShouldPersistTaps="handled"
-              scrollEventThrottle={16}
             >
               <TextInput
-                style={mainInputStyle}
-                value={userInput}
+                style={[styles.mainInput, mainInputStyle]}
+                value={displayValue}
                 onChangeText={handleInputChange}
                 placeholder={placeholder}
                 placeholderTextColor="#666"
-                keyboardType={Platform.OS === 'ios' ? 'default' : 'number-pad'}
+                keyboardType={Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'number-pad'}
                 autoFocus={true}
                 blurOnSubmit={false}
                 multiline={true}
                 scrollEnabled={false}
                 editable={true}
                 selectTextOnFocus={false}
-                removeClippedSubviews={true}
-                maxLength={objectif}
+                autoCorrect={false}
+                autoCapitalize="none"
+                spellCheck={false}
+                enablesReturnKeyAutomatically={false}
+                clearButtonMode="never"
+                textContentType="none"
+                smartDashesType="no"
               />
             </ScrollView>
           </BorderedContainer>
@@ -137,53 +116,3 @@ export default function SpokenRecallScreen({ route, navigation }) {
     </Container>
   )
 }
-
-const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#000' 
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
-  mainContent: {
-    flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 20,
-  },
-  instructionsContainer: {
-    alignItems: 'center',
-  },
-  instructionsTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 8,
-  },
-  instructionsText: {
-    fontSize: 16,
-    color: '#888',
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  inputScrollContainer: {
-    flex: 1,
-  },
-  inputScrollContent: {
-    flexGrow: 1,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-  },
-  mainInput: {
-    color: '#fff',
-    fontSize: 18,
-    fontFamily: 'monospace',
-    fontWeight: '600',
-    backgroundColor: 'transparent',
-    textAlign: 'center',
-    textAlignVertical: 'top',
-    letterSpacing: 35,
-    lineHeight: 36,
-  },
-})

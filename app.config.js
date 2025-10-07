@@ -58,10 +58,11 @@ export default ({ config }) => {
     plugins: [
       "expo-audio",
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-localization"
     ],
 
-    // Variables extra, dont les clés Supabase et l'ID EAS
+    // Variables extra, dont les clés Supabase, PostHog et l'ID EAS
     extra: {
       eas: {
         projectId: "0422222f-d110-4848-8949-09dd8146672a"
@@ -69,6 +70,9 @@ export default ({ config }) => {
       // Les clés Supabase sont gérées via EAS secrets pour la sécurité
       SUPABASE_URL: process.env.SUPABASE_URL,
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+      // PostHog Analytics
+      POSTHOG_API_KEY: process.env.POSTHOG_API_KEY,
+      POSTHOG_HOST: process.env.POSTHOG_HOST,
       IS_BETA: isBeta
     }
   };

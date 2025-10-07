@@ -4,10 +4,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import AppNavigator from './AppNavigator'
 import ProfileScreen from '../screens/account/ProfileScreen'
 import ArticleScreen from '../screens/ArticleScreen'
+import { useAppOpenedTracking } from '../hooks/Analytics'
 
 const Stack = createNativeStackNavigator()
 
 export default function MainStackNavigator() {
+  // Track app opened - maintenant à l'intérieur du NavigationContainer
+  useAppOpenedTracking();
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {/* 1. Les onglets principaux */}

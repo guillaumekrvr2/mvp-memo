@@ -15,9 +15,10 @@ import useSaveScoreWithAuth from '../../../../hooks/useSaveScoreWithAuth'
 import NewRecordModal from '../../../../components/molecules/Commons/NewRecordModal/NewRecordModal'
 import Header from '../../../../components/Header.jsx'
 import styles from './styles'
+import { usePracticeTracking } from '../../../../hooks/Analytics'
 
 export default function CorrectionScreen({ route, navigation }) {
-  
+  const { trackPracticeCompleted } = usePracticeTracking();
 
   const { inputs, numbers, temps, variant, mode } = route.params
 
@@ -71,7 +72,7 @@ export default function CorrectionScreen({ route, navigation }) {
       }
 
       if (!modeVariantId || typeof modeVariantId !== 'number') {
-        
+
         return
       }
 
@@ -87,10 +88,19 @@ export default function CorrectionScreen({ route, navigation }) {
           setShowNewRecordModal(true)
         }
       })
+
+      // Track practice completed
+      trackPracticeCompleted('numbers', safeMode, {
+        score,
+        total,
+        accuracy,
+        memorizeTime: temps,
+        isNewRecord: result?.updated || false,
+      });
     }
 
     saveScore()
-  }, [modeVariantId, score, saveScoreWithAuth, navigation]) // Toutes les dépendances nécessaires
+  }, [modeVariantId, score, saveScoreWithAuth, navigation, trackPracticeCompleted, safeMode, total, accuracy, temps]) // Toutes les dépendances nécessaires
 
   const handleRetry = () => {
     navigation.navigate('Numbers')
