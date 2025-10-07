@@ -4,6 +4,7 @@ import { SafeAreaView, View, Platform } from 'react-native'
 import * as Speech from 'expo-speech'
 import { theme } from '../../../../theme'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader.jsx'
+import { usePracticeTracking } from '../../../../hooks/Analytics'
 import * as S from './styles'
 
 export default function SpokenMemoScreen({ route, navigation }) {
@@ -16,6 +17,18 @@ export default function SpokenMemoScreen({ route, navigation }) {
     speechSpeed = 1.0,
     discipline = 'spokens'
   } = route.params || {}
+
+  const { trackPracticeStarted } = usePracticeTracking();
+
+  // Track practice started
+  useEffect(() => {
+    trackPracticeStarted('spoken', variant || mode || 'custom', {
+      digitCount: objectif,
+      memorizeTime: temps,
+      speechSpeed,
+      autoAdvance,
+    });
+  }, []);
 
   
 

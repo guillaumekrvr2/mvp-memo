@@ -7,9 +7,11 @@ import { CardsThumbnailRow } from '../../../../components/molecules/Cards/CardsT
 import { SmallChevronButton } from '../../../../components/atoms/Commons/SmallChevronButton/SmallChevronButton'
 import { useCardDeck } from '../../../../hooks/Cards/useCardDeck'
 import useAutoAdvance from '../../../../hooks/useAutoAdvance'
+import { usePracticeTracking } from '../../../../hooks/Analytics'
 import { styles } from './styles'
 
 export default function CardsScreen({ route, navigation }) {
+  const { trackPracticeStarted } = usePracticeTracking();
   // 🃏 Récupération des paramètres depuis la navigation avec valeurs par défaut
   const { 
     objectif = 52, 
@@ -36,6 +38,16 @@ export default function CardsScreen({ route, navigation }) {
     totalCards,
     isComplete
   } = useCardDeck(objectif, 1, cardFilters) // 🃏 Le hook génère le deck complet avec filtres
+
+  // Track practice started
+  useEffect(() => {
+    trackPracticeStarted('cards', variant || mode || 'custom', {
+      cardCount: objectif,
+      memorizeTime: temps,
+      cardsPerGroup: cardsCount,
+      autoAdvance,
+    });
+  }, []);
 
   // 🃏 Preload fait maintenant dans DecompteScreen pendant les 3 secondes
 

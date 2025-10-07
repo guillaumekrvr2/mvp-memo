@@ -1,5 +1,5 @@
 // screens/memo/Names/NamesMemoScreen/NamesMemoScreen.jsx
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { SafeAreaView, View, Platform } from 'react-native'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import NamesStack from '../../../../components/molecules/Names/NamesStack/NamesStack'
@@ -8,13 +8,14 @@ import { SmallChevronButton } from '../../../../components/atoms/Commons/SmallCh
 import { useNamesData } from '../../../../hooks/Names/useNamesData'
 import useAutoAdvance from '../../../../hooks/useAutoAdvance'
 import { useMemoryMonitor } from '../../../../hooks/useMemoryMonitor'
+import { usePracticeTracking } from '../../../../hooks/Analytics'
 import { styles } from './styles'
 
 export default function NamesMemoScreen({ route, navigation }) {
   // Récupération des paramètres depuis la navigation
-  const { 
-    objectif = 20, 
-    temps = 120, 
+  const {
+    objectif = 20,
+    temps = 120,
     mode,
     variant,
     autoAdvance,
@@ -23,6 +24,17 @@ export default function NamesMemoScreen({ route, navigation }) {
     toValue,
     useSpecificRange
   } = route.params || {}
+
+  const { trackPracticeStarted } = usePracticeTracking();
+
+  // Track practice started
+  useEffect(() => {
+    trackPracticeStarted('names', variant || mode || 'custom', {
+      nameCount: objectif,
+      memorizeTime: temps,
+      autoAdvance,
+    });
+  }, []);
   
   // État local pour l'index du profil actuel - SIMPLICITÉ CARDS
   const [currentProfileIndex, setCurrentProfileIndex] = useState(0)

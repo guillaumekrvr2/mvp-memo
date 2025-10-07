@@ -1,5 +1,5 @@
 // screens/memo/Binaries/NumbersMemoScreen.jsx
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { SafeAreaView, View, Text, StyleSheet, Platform } from 'react-native'
 import useAutoAdvance from '../../../../hooks/useAutoAdvance.js'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader.jsx'
@@ -12,9 +12,22 @@ import useTimer         from '../../../../hooks/useTimer.js'
 import useGrid          from '../../../../hooks/useGrid.js'
 import useAutoScroll    from '../../../../hooks/useAutoScroll.js'
 import { cellStyles } from '../../../../components/atoms/Numbers/Grid/styles.js';
+import { usePracticeTracking } from '../../../../hooks/Analytics';
 
 export default function BinaryMemoScreen({ route, navigation }) {
   const { objectif, temps, variant, digitCount, autoAdvance, discipline, mode, modeVariantId, columns, rows: matrixRows } = route.params // routes
+  const { trackPracticeStarted } = usePracticeTracking();
+
+  // Track practice started
+  useEffect(() => {
+    trackPracticeStarted('binaries', variant || mode || 'custom', {
+      binaryCount: objectif,
+      memorizeTime: temps,
+      matrixColumns: columns,
+      matrixRows: matrixRows,
+      autoAdvance,
+    });
+  }, []);
   const binaries = useBinaries(objectif) // Génération des chiffres binaires (0 et 1)
   const totalTime     = parseInt(temps, 10) || 0 // Chrono
   const [timeLeft]    = useTimer(totalTime) 

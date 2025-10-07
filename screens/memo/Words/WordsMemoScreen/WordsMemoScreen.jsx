@@ -1,5 +1,5 @@
 // screens/memo/Words/WordsMemoScreen.jsx
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { SafeAreaView, View, Text, StyleSheet, Platform } from 'react-native'
 import useAutoAdvance from '../../../../hooks/useAutoAdvance.js'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader.jsx'
@@ -7,9 +7,11 @@ import WordsHighlightBox from '../../../../components/atoms/Commons/WordsHighlig
 import ChevronButton from '../../../../components/atoms/Commons/ChevronButton/ChevronButton.jsx'
 import WordsGrid from '../../../../components/atoms/Words/WordsGrid/WordsGrid.jsx'
 import wordsRandomizer from '../../../../usecases/WordsRandomizer.js'
+import { usePracticeTracking } from '../../../../hooks/Analytics'
 
 export default function WordsMemoScreen({ route, navigation }) {
   const { objectif, temps, variant, wordsCount, autoAdvance, mode, discipline, modeVariantId } = route.params // routes
+  const { trackPracticeStarted } = usePracticeTracking();
   
   // 📝 Génération des mots aléatoires depuis la base de données complète
   const words = useMemo(() => {
@@ -22,7 +24,17 @@ export default function WordsMemoScreen({ route, navigation }) {
       return [];
     }
   }, [objectif]);
-  
+
+  // Track practice started
+  useEffect(() => {
+    trackPracticeStarted('words', variant || mode || 'custom', {
+      wordCount: objectif,
+      memorizeTime: temps,
+      wordsPerGroup: wordsCount,
+      autoAdvance,
+    });
+  }, []);
+
   // 📝 Gestion de l'affichage des mots avec groupes
   const [currentIndex, setCurrentIndex] = useState(0);
   const totalTime = parseInt(temps, 10) || 0;
