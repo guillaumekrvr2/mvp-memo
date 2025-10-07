@@ -1,6 +1,7 @@
 // screens/memo/Cards/CardsScreen.jsx - VERSION AVEC GROUPES/PAQUETS
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { SafeAreaView, View, Platform } from 'react-native'
+import { useFocusEffect } from '@react-navigation/native'
 import MemorizationHeader from '../../../../components/molecules/Commons/MemorizationHeader/MemorizationHeader'
 import { CardsStack } from '../../../../components/molecules/Cards/CardsStack/CardsStack'
 import { CardsThumbnailRow } from '../../../../components/molecules/Cards/CardsThumbnailRow/CardsThumbnailRow'
@@ -26,9 +27,12 @@ export default function CardsScreen({ route, navigation }) {
   
   // État local pour l'index du groupe actuel
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0)
-  
+
   // Ref pour nettoyer le setTimeout
   const swipeTimeoutRef = useRef(null)
+
+  // 🆕 Ref pour suivre si le composant est monté
+  const isMountedRef = useRef(true)
 
   // Container conditionnel comme NumbersMemoScreen
   const Container = Platform.OS === 'ios' ? View : SafeAreaView;
@@ -38,6 +42,12 @@ export default function CardsScreen({ route, navigation }) {
     totalCards,
     isComplete
   } = useCardDeck(objectif, 1, cardFilters) // 🃏 Le hook génère le deck complet avec filtres
+
+  // 🆕 Ref pour garder deck à jour sans recréer navigateToRecall
+  const deckRef = useRef(deck)
+  useEffect(() => {
+    deckRef.current = deck
+  }, [deck])
 
   // Track practice started
   useEffect(() => {
@@ -84,7 +94,11 @@ export default function CardsScreen({ route, navigation }) {
 
   // 🃏 Navigation vers CardsRecall
   const navigateToRecall = useCallback(() => {
-    
+    // 🆕 Triple vérification : composant monté + écran en focus + navigation possible
+    if (!isMountedRef.current || !navigation.isFocused()) {
+      return
+    }
+
     try {
       navigation.navigate('CardsRecall', {
         objectif,
@@ -92,13 +106,13 @@ export default function CardsScreen({ route, navigation }) {
         mode,
         variant,
         discipline,
-        memorizedCards: deck
+        memorizedCards: deckRef.current // ✅ Utilise la ref au lieu de deck
       })
     } catch (error) {
       console.error('❌ Navigation failed:', error)
       console.error('Error details:', error.message)
     }
-  }, [navigation, objectif, temps, mode, variant, discipline, deck])
+  }, [navigation, objectif, temps, mode, variant, discipline]) // ✅ Retiré deck des dépendances
 
   // 🃏 Gestion du swipe de groupe - tout le groupe part d'un coup
   const handleGroupSwipe = () => {
@@ -137,15 +151,36 @@ export default function CardsScreen({ route, navigation }) {
     setCurrentGroupIndex(0)
   }, [])
 
-  // Nettoyage du timeout lors du démontage
+  // 🆕 Suivre l'état monté du composant et nettoyer au démontage
   useEffect(() => {
+    isMountedRef.current = true
+
     return () => {
+      isMountedRef.current = false
+      // Nettoyer le timeout
       if (swipeTimeoutRef.current) {
         clearTimeout(swipeTimeoutRef.current)
         swipeTimeoutRef.current = null
       }
     }
   }, [])
+
+  // 🛡️ Protection ultime : détecter quand l'écran perd le focus
+  useFocusEffect(
+    useCallback(() => {
+      // Écran devient visible/actif
+      isMountedRef.current = true
+
+      return () => {
+        // Écran perd le focus → TOUT annuler immédiatement
+        isMountedRef.current = false
+        if (swipeTimeoutRef.current) {
+          clearTimeout(swipeTimeoutRef.current)
+          swipeTimeoutRef.current = null
+        }
+      }
+    }, [])
+  )
 
   return (
     <Container style={styles.container}>

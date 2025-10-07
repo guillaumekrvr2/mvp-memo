@@ -12,7 +12,8 @@ export default function useProgressWithCallback(durationSec, onComplete) {
   const progress = useRef(new Animated.Value(0)).current
   const callbackRef = useRef(onComplete)
   const [isMounted, setIsMounted] = useState(true)
-  
+  const animationRef = useRef(null) // 🆕 Ref pour l'animation
+
   // Mettre à jour la référence du callback sans redémarrer l'animation
   useEffect(() => {
     callbackRef.current = onComplete
@@ -23,6 +24,8 @@ export default function useProgressWithCallback(durationSec, onComplete) {
     setIsMounted(true)
     return () => {
       setIsMounted(false)
+      // 🆕 Cleanup supplémentaire : annuler le callback pour empêcher les navigations fantômes
+      callbackRef.current = null
     }
   }, [])
 
@@ -34,18 +37,24 @@ export default function useProgressWithCallback(durationSec, onComplete) {
       easing: Easing.linear,
       useNativeDriver: false,
     })
-    
+
+    animationRef.current = animation // 🆕 Sauvegarder la ref de l'animation
+
     animation.start(({ finished }) => {
-      if (finished && isMounted) {
-        callbackRef.current?.()
+      // 🆕 Double vérification : isMounted ET callbackRef existe
+      if (finished && isMounted && callbackRef.current) {
+        callbackRef.current()
       }
     })
 
-    // Cleanup: arrêter l'animation si le composant se démonte ou si durationSec change
+    // Cleanup amélioré : stop explicite de l'animation
     return () => {
-      animation.stop()
+      if (animationRef.current) {
+        animationRef.current.stop() // 🆕 Stop explicite via la ref
+        animationRef.current = null
+      }
     }
-  }, [durationSec, progress]) // Retiré onComplete des dépendances
+  }, [durationSec, progress]) // ✅ Retiré isMounted - ne doit pas relancer l'animation
 
   return progress
 }
