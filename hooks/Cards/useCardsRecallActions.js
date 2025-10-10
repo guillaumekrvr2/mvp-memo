@@ -20,19 +20,30 @@ export function useCardsRecallActions({
   memorizedCards,
   variant,
   mode,
-  temps
+  temps,
+  isMountedRef // 🛡️ Nouvelle prop pour vérifier si l'écran est actif
 }) {
   const handleComplete = useCallback((finalSlots) => {
+    // 🛡️ Vérifier que l'écran est toujours actif avant de naviguer
+    if (isMountedRef && !isMountedRef.current) {
+      return
+    }
+
+    // 🛡️ Double vérification avec navigation.isFocused()
+    if (navigation && !navigation.isFocused()) {
+      return
+    }
+
     const endTime = Date.now()
     const durationMs = endTime - startTime.current
     const placedCards = finalSlots.map(slot => slot.card).filter(Boolean)
-    
+
     // Calcul des erreurs en comparant avec les cartes mémorisées
     const errorsCount = placedCards.reduce((errors, placedCard, index) => {
       const correctCard = memorizedCards[index]
       return errors + (placedCard && correctCard && placedCard.id !== correctCard.id ? 1 : 0)
     }, 0)
-    
+
     const result = {
       userCards: placedCards,
       correctCards: memorizedCards,
@@ -46,7 +57,7 @@ export function useCardsRecallActions({
 
     // Navigation vers l'écran de correction des cartes
     navigation.navigate('CardsCorrection', result)
-  }, [navigation, startTime, memorizedCards, objectif, variant, mode, temps])
+  }, [navigation, startTime, memorizedCards, objectif, variant, mode, temps, isMountedRef])
 
   const handleSlotSelect = useCallback((slotIndex) => {
     const slot = outputSlots[slotIndex]

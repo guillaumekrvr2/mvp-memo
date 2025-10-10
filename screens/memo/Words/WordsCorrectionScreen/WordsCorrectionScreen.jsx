@@ -1,6 +1,6 @@
 // screens/memo/Words/WordsCorrectionScreen.jsx
 import React, { useState, useRef, useEffect } from 'react'
-import { SafeAreaView, View, Text, ScrollView, StyleSheet } from 'react-native'
+import { SafeAreaView, View, Text, ScrollView, StyleSheet, Platform } from 'react-native'
 import { PrimaryButton } from '../../../../components/atoms/Commons/PrimaryButton/PrimaryButton.jsx'
 import WordsGrid from '../../../../components/atoms/Words/WordsGrid/WordsGrid.jsx'
 import Header from '../../../../components/Header.jsx'
@@ -115,7 +115,7 @@ export default function WordsCorrectionScreen({ route, navigation }) {
           currentGroupIndex={-1}
           groupSize={1}
           rowHeight={60}
-          scrollHeight={390} // Réduit de 520 à 390 (25% de réduction)
+          scrollHeight={Platform.OS === 'android' ? 450 : 390} // Android: +15% (390 * 1.15 ≈ 450)
           isInputMode={false}
           isCorrectionMode={true}
           onWordReveal={handleWordReveal}
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   
   mainContent: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: Platform.OS === 'android' ? 'flex-start' : 'space-between',
     alignItems: 'center',
     paddingTop: 24, // Padding pour éviter le chevauchement avec le header
     paddingBottom: 20,

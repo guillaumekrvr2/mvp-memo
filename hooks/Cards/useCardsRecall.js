@@ -4,7 +4,7 @@ import { useCardsBySuit } from './useCardsBySuit'
 import { useCardsRecallState } from './useCardsRecallState'
 import { useCardsRecallActions } from './useCardsRecallActions'
 
-export function useCardsRecall({ objectif, navigation, memorizedCards = [], variant, mode, temps }) {
+export function useCardsRecall({ objectif, navigation, memorizedCards = [], variant, mode, temps, isMountedRef }) {
   const { deck } = useCardDeck(objectif)
 
   const {
@@ -53,7 +53,8 @@ export function useCardsRecall({ objectif, navigation, memorizedCards = [], vari
     memorizedCards,
     variant,
     mode,
-    temps
+    temps,
+    isMountedRef // 🛡️ Passer la ref pour protection
   })
 
   return {

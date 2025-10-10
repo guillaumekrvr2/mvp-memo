@@ -27,7 +27,7 @@ export default ({ config }) => {
     // Configuration Android avec icône personnalisée
     android: {
       package: "com.memorize.mvpmemo",
-      versionCode: 1,
+      versionCode: 2,
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#0a0a0a"
@@ -45,7 +45,11 @@ export default ({ config }) => {
       enabled: isBeta,  // Activé pour la bêta
       fallbackToCacheTimeout: isBeta ? 30000 : 0,
       checkAutomatically: isBeta ? "ON_LOAD" : "NEVER",
+      url: "https://u.expo.dev/0422222f-d110-4848-8949-09dd8146672a"
     },
+
+    // Runtime version pour EAS Update
+    runtimeVersion: "1.0.0",
 
     // Configuration complète des icônes
     splash: {
@@ -56,7 +60,6 @@ export default ({ config }) => {
 
     // Configuration des plugins
     plugins: [
-      "expo-audio",
       "expo-font",
       "expo-web-browser",
       "expo-localization"
