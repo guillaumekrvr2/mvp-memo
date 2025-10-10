@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingTop: Platform.OS === 'ios' ? 20 : 10,
   },
   closeButton: {
     width: 32,

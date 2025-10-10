@@ -5,7 +5,7 @@ import { useCardsRecallState } from './useCardsRecallState'
 import { useCardsRecallActions } from './useCardsRecallActions'
 
 export function useCardsRecall({ objectif, navigation, memorizedCards = [], variant, mode, temps, isMountedRef }) {
-  const { deck } = useCardDeck(objectif)
+  const { deck } = useCardDeck(52)
 
   const {
     startTime,
