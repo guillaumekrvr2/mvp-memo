@@ -8,11 +8,7 @@ export const AnalyticsProvider = ({ children }) => {
 
   const trackEvent = (eventName, properties = {}) => {
     if (posthog) {
-      console.log(`PostHog: Capturing event "${eventName}" with properties:`, properties);
       posthog.capture(eventName, properties);
-      console.log(`PostHog: Event "${eventName}" captured successfully`);
-    } else {
-      console.warn(`PostHog: Cannot track event "${eventName}" - client not initialized`);
     }
   };
 

@@ -11,29 +11,24 @@ export const useAppOpenedTracking = () => {
   useEffect(() => {
     // Attendre que PostHog soit initialisé avant de tracker
     if (posthog) {
-      console.log('PostHog: Tracking app_opened event');
       trackEvent('app_opened', {
         timestamp: new Date().toISOString(),
       });
 
       // Forcer l'envoi immédiat
       setTimeout(() => {
-        console.log('PostHog: Flushing events to server');
         posthog.flush();
       }, 500);
     } else {
-      console.warn('PostHog: Not initialized yet, retrying app_opened...');
       // Retry après un court délai si PostHog n'est pas prêt
       const timer = setTimeout(() => {
         if (posthog) {
-          console.log('PostHog: Tracking app_opened event (retry)');
           trackEvent('app_opened', {
             timestamp: new Date().toISOString(),
           });
 
           // Forcer l'envoi immédiat
           setTimeout(() => {
-            console.log('PostHog: Flushing events to server');
             posthog.flush();
           }, 500);
         }

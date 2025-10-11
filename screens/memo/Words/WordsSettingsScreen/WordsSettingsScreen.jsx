@@ -121,9 +121,7 @@ export default function WordsScreen() {
       discipline: 'words', // 📝 CLEF : Indique la discipline
       modeVariantId: selectedVariant?.id
     }
-    
-    console.log('📝 WordsScreen - Navigation params:', navigationParams)
-    
+
     navigation.navigate('Decompte', navigationParams)
   }
 

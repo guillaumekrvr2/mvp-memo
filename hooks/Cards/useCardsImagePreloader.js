@@ -18,7 +18,6 @@ export function useCardsImagePreloader(cards, startPreloading = false) {
 
       // Sur iOS, purger le cache pour forcer expo-image
       if (Platform.OS === 'ios') {
-        console.log('🔄 [iOS Cards] Clearing old cache and warming up expo-image...')
         await clearAllImageCaches()
         await warmupImageCache()
         await new Promise(resolve => setTimeout(resolve, 300))
@@ -36,7 +35,6 @@ export function useCardsImagePreloader(cards, startPreloading = false) {
         const batchPromises = batch.map((card, batchIndex) => {
           return new Promise((resolve) => {
             if (!card.asset) {
-              console.log(`⚠️ Skipping card ${card.id} - asset not found`)
               resolve(false)
               return
             }
@@ -63,19 +61,15 @@ export function useCardsImagePreloader(cards, startPreloading = false) {
                     .then(() => {
                       preloadedSet.add(card.id)
                       successCount++
-                      console.log(`🃏 Preloaded card ${card.id} (${successCount}/${cards.length})`)
                       resolve(true)
                     })
-                    .catch((error) => {
-                      console.log(`❌ Erreur preload card ${card.id}:`, error)
+                    .catch(() => {
                       resolve(false)
                     })
                 } else {
-                  
                   resolve(false)
                 }
               } catch (error) {
-                console.log(`❌ Erreur générale preload card ${card.id}:`, error)
                 resolve(false)
               }
             }, delay)
@@ -94,7 +88,6 @@ export function useCardsImagePreloader(cards, startPreloading = false) {
             setTimeout(preloadBatch, 50) // Pause très courte pour cartes
           } else {
             setIsPreloading(false)
-            console.log(`🎯 Préchargement cartes terminé: ${successCount}/${cards.length} images`)
           }
         })
       }

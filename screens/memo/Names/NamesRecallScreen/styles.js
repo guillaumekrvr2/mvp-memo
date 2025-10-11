@@ -38,12 +38,10 @@ export const styles = StyleSheet.create({
 
   buttonContainer: {
     position: 'absolute',
-    // bottom calculé dynamiquement avec les insets
-    left: 24, // Margin left au lieu de paddingHorizontal
-    right: 24, // Margin right au lieu de paddingHorizontal
-    paddingVertical: 10,
-    backgroundColor: 'rgba(255, 255, 255)', // Transparent maintenant
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.1)',
+    left: 0,
+    right: 0,
+    paddingHorizontal: 24,
+    paddingTop: 10,
+    backgroundColor: '#0a0a0a',
   },
 })

@@ -132,40 +132,47 @@ export default function NamesMemoScreen({ route, navigation }) {
 
       {/* Container pour les profils avec chevrons */}
       <View style={{ flex: 1, position: 'relative' }}>
-        {/* Chevron gauche */}
-        <SmallChevronButton
-          direction="left"
-          onPress={handlePreviousProfile}
-          onLongPress={handleResetToBeginning} // Long press → retour au début
-          disabled={currentProfileIndex === 0}
-          style={{
-            left: 20,
-            top: '45%',
-            zIndex: 1000,
-            elevation: 1000
-          }}
-        />
+        {/* Zone NamesStack - 76% de l'espace disponible */}
+        <View style={{ flex: 0.76, position: 'relative' }}>
+          {/* Chevron gauche */}
+          <SmallChevronButton
+            direction="left"
+            onPress={handlePreviousProfile}
+            onLongPress={handleResetToBeginning} // Long press → retour au début
+            disabled={currentProfileIndex === 0}
+            style={{
+              left: 20,
+              top: '45%',
+              zIndex: 1000,
+              elevation: 1000
+            }}
+          />
 
-        {/* Chevron droit */}
-        <SmallChevronButton
-          direction="right"
-          onPress={handleNextProfile}
-          disabled={currentProfileIndex >= totalProfiles - 1}
-          style={{
-            right: 20,
-            top: '45%',
-            zIndex: 1000,
-            elevation: 1000
-          }}
-        />
+          {/* Chevron droit */}
+          <SmallChevronButton
+            direction="right"
+            onPress={handleNextProfile}
+            disabled={currentProfileIndex >= totalProfiles - 1}
+            style={{
+              right: 20,
+              top: '45%',
+              zIndex: 1000,
+              elevation: 1000
+            }}
+          />
 
-        <NamesStack
-          key={`stack-${currentProfileIndex}`} // CLÉ pour reset complet comme Cards
-          profilesToDisplay={profilesToDisplay}
-          currentProfile={currentProfile}
-          isTransitioning={isTransitioning}
-          onProfileSwipe={handleProfileSwipe}
-        />
+          <NamesStack
+            key={`stack-${currentProfileIndex}`} // CLÉ pour reset complet comme Cards
+            profilesToDisplay={profilesToDisplay}
+            currentProfile={currentProfile}
+            isTransitioning={isTransitioning}
+            onProfileSwipe={handleProfileSwipe}
+            style={styles.namesStack}
+          />
+        </View>
+
+        {/* Spacer pour réserver l'espace du NamesThumbnailRow - 24% */}
+        <View style={{ flex: 0.24 }} />
       </View>
 
       <NamesThumbnailRow

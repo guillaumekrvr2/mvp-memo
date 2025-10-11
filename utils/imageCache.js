@@ -8,16 +8,12 @@ import { Platform } from 'react-native'
 
 export const clearAllImageCaches = async () => {
   try {
-    console.log('🧹 [ImageCache] Clearing all image caches...')
-
     // Clear expo-image caches
     await Image.clearMemoryCache()
     await Image.clearDiskCache()
 
-    console.log('✅ [ImageCache] All caches cleared successfully')
     return true
   } catch (error) {
-    console.warn('⚠️ [ImageCache] Error clearing caches:', error)
     return false
   }
 }
@@ -50,13 +46,11 @@ export const preloadImagesOptimized = async (imageSources) => {
 
 export const warmupImageCache = async () => {
   if (Platform.OS === 'ios') {
-    console.log('🔥 [ImageCache] Warming up iOS image cache...')
     // Configuration optimale pour iOS
     try {
       // Ici on pourrait ajouter des configurations spécifiques iOS si nécessaire
-      console.log('✅ [ImageCache] iOS cache warmed up')
     } catch (error) {
-      console.warn('⚠️ [ImageCache] Error warming up cache:', error)
+      // Silent error
     }
   }
 }

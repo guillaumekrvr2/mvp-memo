@@ -6,10 +6,9 @@ const { width, height } = Dimensions.get('window')
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    paddingTop: height * 0.15, // Remonte les cartes de 20% (15% du haut au lieu de 50% centré)
   },
 
   profileCard: {

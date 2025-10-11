@@ -24,7 +24,6 @@ export function useNamesImagePreloader(profiles, startPreloading = false) {
 
       // Sur iOS, on purge d'abord le cache pour forcer expo-image
       if (Platform.OS === 'ios') {
-        console.log('🔄 [iOS] Clearing old cache and warming up expo-image...')
         await clearAllImageCaches()
         await warmupImageCache()
         // Petite pause pour laisser le système se stabiliser
@@ -45,7 +44,6 @@ export function useNamesImagePreloader(profiles, startPreloading = false) {
           const imageSource = getRealImagePath(profile)
 
           if (!imageSource) {
-            console.log(`⚠️ Skipping ${profile.firstName} ${profile.lastName} - image not found`)
             resolve(false)
             return
           }
@@ -72,15 +70,12 @@ export function useNamesImagePreloader(profiles, startPreloading = false) {
                   .then(() => {
                     preloadedSet.add(profile.id)
                     successCount++
-                    console.log(`✅ Preloaded ${profile.firstName} (${successCount}/${profiles.length})`)
                     resolve(true)
                   })
-                  .catch((error) => {
-                    console.log(`❌ Erreur preload ${profile.firstName}:`, error)
+                  .catch(() => {
                     resolve(false)
                   })
               } else {
-                console.log(`⚠️ Pas d'URI trouvée pour ${profile.firstName}`)
                 resolve(false)
               }
             } catch (error) {
@@ -103,7 +98,6 @@ export function useNamesImagePreloader(profiles, startPreloading = false) {
           setTimeout(preloadBatch, 100) // Pause réduite pour expo-image
         } else {
           setIsPreloading(false)
-          console.log(`🎯 Préchargement terminé: ${successCount}/${profiles.length} images`)
         }
       })
     }

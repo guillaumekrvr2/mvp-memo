@@ -10,11 +10,12 @@ import { styles } from './styles'
 
 const { width } = Dimensions.get('window')
 
-export function NamesStack({ 
-  profilesToDisplay, 
+export function NamesStack({
+  profilesToDisplay,
   currentProfile,
   isTransitioning,
-  onProfileSwipe 
+  onProfileSwipe,
+  style
 }) {
   // Générer une clé unique pour forcer la réinitialisation du hook comme Cards
   const topProfileKey = profilesToDisplay[0]?.id || 'empty'
@@ -27,7 +28,7 @@ export function NamesStack({
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       {/* Profiles empilées (effet de profondeur) */}
       {profilesToDisplay.map((profile, index) => {
         const isTopProfile = index === 0

@@ -136,7 +136,7 @@ export default function NamesRecallScreen({ route, navigation }) {
         </KeyboardAvoidingView>
       </View>
 
-      <View style={[styles.buttonContainer, { bottom: insets.bottom + 10 }]}>
+      <View style={[styles.buttonContainer, { bottom: 0, paddingBottom: insets.bottom + 10 }]}>
         <PrimaryButton onPress={handleValidate}>
           Valider
         </PrimaryButton>
