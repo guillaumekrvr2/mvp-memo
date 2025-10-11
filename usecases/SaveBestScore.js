@@ -15,14 +15,19 @@ export default class SaveBestScore {
   /**
    * Exécute la sauvegarde conditionnelle.
    *
-   * @param {string} userId            – id de l’utilisateur
+   * @param {string} userId            – id de l'utilisateur
    * @param {number} modeVariantId     – id du variant de mode
    * @param {number} newScore          – score obtenu
    * @returns {Promise<{ updated: boolean, record: Object }>}
    *          updated = false si score pas meilleur, true sinon
    */
   async execute(userId, modeVariantId, newScore) {
-    // 1. Récupérer l’ancien record (null si aucun)
+    // 0. Validation : ignorer les scores de 0 ou négatifs
+    if (newScore <= 0) {
+      return { updated: false, record: null };
+    }
+
+    // 1. Récupérer l'ancien record (null si aucun)
     const existing = await this.recordRepository.getBestScore(userId, modeVariantId);
 
     // 2. Si on a déjà un score ≥ newScore, on ne fait rien
